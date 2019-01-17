@@ -9,11 +9,8 @@ Sentry is an outgoing request optimizer for creating fast and scalable applicati
 - 😎  **Easy Implementation** Sentry can be easily implemented with a few lines of codes. ✅
 - 🔌  **Support** Sentry can be used with anything but it has out of the box support for [request](https://github.com/request/request). 📝
 
-## Guide
-* [Installing](#installing)
-
 ## Getting started
-    * [Installing](#Installing)
+-   [Installing](#Installing)
     
 ### Installing
 
