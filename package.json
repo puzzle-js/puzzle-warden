@@ -11,9 +11,12 @@
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
+    "@types/couchbase": "^2.4.1",
+    "@types/faker": "^4.1.4",
     "@types/jest": "^23.3.12",
     "@types/sinon": "^7.0.3",
     "chai": "^4.2.0",
+    "faker": "^4.1.0",
     "jest": "^23.6.0",
     "sinon": "^7.2.2",
     "ts-jest": "^23.10.5",
@@ -21,6 +24,7 @@
     "typescript": "^3.2.2"
   },
   "dependencies": {
+    "couchbase": "^2.6.2",
     "inversify": "^5.0.1",
     "reflect-metadata": "^0.1.13"
   }
