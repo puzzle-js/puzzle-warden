@@ -1,7 +1,7 @@
 import {CachePlugin, CouchbaseOptions} from "./cache-plugin";
 import Couchbase from "couchbase";
 
-export class CouchbaseCache extends CachePlugin {
+class CouchbaseCache extends CachePlugin {
 
   private readonly options: CouchbaseOptions;
   private cluster: Couchbase.Cluster | null;
@@ -55,3 +55,7 @@ export class CouchbaseCache extends CachePlugin {
   }
 
 }
+
+export {
+  CouchbaseCache,
+};

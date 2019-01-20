@@ -1,7 +1,7 @@
 import {CachePlugin, RedisOptions} from "./cache-plugin";
 import Redis, {RedisClient} from "redis";
 
-export class RedisCache extends CachePlugin {
+class RedisCache extends CachePlugin {
 
   private readonly options: RedisOptions;
   private client: null | RedisClient;
@@ -45,4 +45,8 @@ export class RedisCache extends CachePlugin {
     return this.options;
   }
 
+}
+
+export {
+  RedisCache,
 }
