@@ -34,7 +34,7 @@ describe("[couchbase.ts]", () => {
     // Act
     const couchbaseCache = new CouchbaseCache(options);
     // Assert
-    expect(couchbaseCache.getOptions()).to.deep.eq(options);
+    expect(couchbaseCache.options).to.deep.eq(options);
     expect(couchbaseCache.getBucket()).to.eq(null);
     expect(couchbaseCache.getCluster()).to.eq(null);
   });
@@ -48,10 +48,11 @@ describe("[couchbase.ts]", () => {
 
     sinon.stub(Couchbase, "Cluster").returns(mockClusterClass);
 
-    couchbaseCache.connect();
-    // Assert
-    expect(couchbaseCache.getCluster()).to.eq(mockClusterClass);
-    expect(couchbaseCache.getOptions()).to.deep.eq(options);
-    expect(couchbaseCache.getOptions().bucket).to.eq(options.bucket);
+    couchbaseCache.connect().then( () => {
+      // Assert
+      expect(couchbaseCache.getCluster()).to.eq(mockClusterClass);
+      expect(couchbaseCache.options.bucket).to.eq(options.bucket);
+    });
+
   });
 });

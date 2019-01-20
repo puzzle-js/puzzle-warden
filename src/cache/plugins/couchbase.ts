@@ -3,7 +3,7 @@ import Couchbase from "couchbase";
 
 class CouchbaseCache extends CachePlugin {
 
-  private readonly options: CouchbaseOptions;
+  public readonly options: CouchbaseOptions;
   private cluster: Couchbase.Cluster | null;
   private bucket: Couchbase.Bucket | null;
 
@@ -38,15 +38,19 @@ class CouchbaseCache extends CachePlugin {
     });
   }
 
-  connect(): void{
-    this.cluster = new Couchbase.Cluster(this.options.cluster);
-    this.cluster.authenticate(this.options.username, this.options.password);
-    this.bucket = this.cluster.openBucket(this.options.bucket);
+  connect(): Promise<void>{
+    return new Promise((resolve, reject) => {
+      this.cluster = new Couchbase.Cluster(this.options.cluster);
+      this.cluster.authenticate(this.options.username, this.options.password);
+      this.bucket = this.cluster.openBucket(this.options.bucket, (err: Couchbase.CouchbaseError) => {
+        if(err){
+          return reject(err);
+        }
+        return resolve();
+      });
+    });
   }
 
-  getOptions(): CouchbaseOptions {
-    return this.options;
-  }
   getCluster(): Couchbase.Cluster | null {
     return this.cluster;
   }

@@ -31,14 +31,20 @@ class RedisCache extends CachePlugin {
     });
   }
 
-  connect(): void {
-    this.client = Redis.createClient(this.options.port, this.options.host);
-    this.client.on('connect', () => {
-      console.log('Redis client on');
+  connect(): Promise<void> | void {
+    return new Promise((resolve, reject) => {
+      this.client = Redis.createClient(this.options.port, this.options.host);
+
+      this.client.on('connect', () => {
+          return resolve();
+      });
+
+      this.client.on('error', () => {
+          return reject();
+      });
+
     });
-    this.client.on('error', () => {
-      console.log('Redis Error');
-    });
+
   }
 
   getOptions(): RedisOptions {
