@@ -9,3 +9,8 @@ export interface CouchbaseOptions {
   password: string;
   bucket: string;
 }
+
+export interface RedisOptions {
+  port: number;
+  host: string;
+}

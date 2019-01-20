@@ -14,7 +14,7 @@ export class CouchbaseCache extends CachePlugin {
     this.options = options;
   }
 
-  get(key: string): Promise<string> | null | string{
+  get(key: string): Promise<string> | null {
     return new Promise((resolve, reject) => {
       if(!this.bucket) return reject();
       this.bucket.get(key, function (err, result) {
