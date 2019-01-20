@@ -2,7 +2,7 @@ import {inject, injectable} from "inversify";
 import {Configuration} from "../configuration";
 
 @injectable()
-class Cache {
+class CacheManager {
   private configuration: Configuration;
 
   constructor(
@@ -14,5 +14,5 @@ class Cache {
 }
 
 export {
-  Cache
+  CacheManager
 }

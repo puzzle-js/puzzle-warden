@@ -1,23 +1,19 @@
 import {inject, injectable} from "inversify";
-import {Cache} from "./cache/cache";
 import {Configuration, IWardenInitialConfig, IWardenRouteConfiguration} from "./configuration";
-
-interface IWardenRequest {
-
-}
+import {IWardenRequest, RequestManager} from "./request-manager";
 
 @injectable()
 export class Warden {
-  private readonly cache: Cache;
   private readonly configuration: Configuration;
+  private readonly requestManager: RequestManager;
 
   constructor(
-    @inject(Cache) cache?: Cache,
-    @inject(Configuration) configuration?: Configuration
+    @inject(Configuration) configuration: Configuration,
+    @inject(RequestManager) requestManager: RequestManager
   ) {
 
-    this.configuration = configuration || new Configuration();
-    this.cache = cache || new Cache(this.configuration);
+    this.configuration = configuration;
+    this.requestManager = requestManager;
   }
 
   async init() {
@@ -28,12 +24,12 @@ export class Warden {
     this.configuration.config(wardenConfiguration);
   }
 
-  setRoute(routeConfiguration: IWardenRouteConfiguration) {
-
+  setRoute(name: string, routeConfiguration: IWardenRouteConfiguration) {
+    this.configuration.route(name, routeConfiguration);
   }
 
-  async request(requestName: IWardenRequest, cb: () => Promise<string | object>) {
-    const response = await cb();
+  async request(requestConfiguration: IWardenRequest, cb: () => Promise<string | object>) {
+    await this.requestManager.handle(requestConfiguration, cb);
   }
 }
 
