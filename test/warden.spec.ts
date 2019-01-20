@@ -49,13 +49,14 @@ describe("[warden.ts]", () => {
   it("should set route configuration", () => {
     // Arrange
     const routeConfig = {
-      identifier: faker.random.word()
+      identifier: faker.random.word(),
+      cache: {}
     };
     const name = faker.random.word();
     const keyMaker = {} as any;
     const parsedCacheConfig = {} as any;
     tokenizerMock.expects('tokenize').withExactArgs(name, routeConfig.identifier).returns(keyMaker);
-    cacheManagerMock.expects('parseCacheConfig').withExactArgs(routeConfig).returns(parsedCacheConfig);
+    cacheManagerMock.expects('parseCacheConfig').withExactArgs(routeConfig.cache).returns(parsedCacheConfig);
     configurationMock.expects('route').withExactArgs(name, keyMaker, parsedCacheConfig);
 
     // Act

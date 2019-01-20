@@ -10,7 +10,7 @@ interface StorageConfig {
 
 interface WardenRouteConfig {
   keyMaker: KeyMaker;
-  cache: RequestCacheConfig | null;
+  cache: RequestCacheConfig | false;
 }
 
 interface WardenConfig {
@@ -47,7 +47,7 @@ class Configuration {
 
   }
 
-  route(name: string, keyMaker: KeyMaker, cache: RequestCacheConfig | null) {
+  route(name: string, keyMaker: KeyMaker, cache: RequestCacheConfig | false) {
     this.configuration.requests[name] = {
       cache,
       keyMaker

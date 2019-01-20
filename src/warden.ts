@@ -2,15 +2,11 @@ import {inject, injectable} from "inversify";
 import {Configuration, WardenInitialConfig} from "./configuration";
 import {WardenRequest, RequestManager} from "./request-manager";
 import {Tokenizer} from "./tokenizer";
-import {CacheManager, CachePlugin, CachingStrategy} from "./cache/cache-manager";
+import {CacheManager, UserRouteCacheInput} from "./cache/cache-manager";
 
 interface WardenUserRouteConfig {
   identifier: string;
-  cache?: {
-    strategy?: CachingStrategy;
-    plugin?: CachePlugin;
-    duration?: string;
-  } | string | number;
+  cache?: UserRouteCacheInput | null | string | undefined | number | boolean;
   shadowing?: any;
   holder?: any;
   queue?: any;
@@ -48,7 +44,7 @@ class Warden {
     this.configuration.route(
       name,
       this.tokenizer.tokenize(name, routeConfiguration.identifier),
-      this.cacheManager.parseCacheConfig(routeConfiguration
+      this.cacheManager.parseCacheConfig(routeConfiguration.cache
       ));
   }
 
