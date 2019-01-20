@@ -6,8 +6,9 @@
   "license": "MIT",
   "scripts": {
     "test": "jest --coverage",
-    "build": "tsc",
-    "test:watch": "jest --coverage --watch"
+    "build": "tsc -p .",
+    "test:watch": "jest --coverage --watch",
+    "lint":"tslint -c tslint.json 'src/**/*.ts'"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
@@ -20,6 +21,7 @@
     "sinon": "^7.2.2",
     "ts-jest": "^23.10.5",
     "ts-node": "^7.0.1",
+    "tslint": "^5.12.1",
     "typescript": "^3.2.2"
   },
   "dependencies": {

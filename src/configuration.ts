@@ -1,19 +1,19 @@
 import {injectable} from "inversify";
 
-interface IStorageConfiguration {
+interface StorageConfig {
   couchbase: {
-    enabled: boolean
-  }
+    enabled: boolean,
+  };
 }
 
-interface IWardenConfig {
+interface WardenConfig {
   requests: {
-    [key: string]: IWardenRouteConfiguration;
-  }
-  storage: IStorageConfiguration;
+    [key: string]: WardenRouteConfig;
+  };
+  storage: StorageConfig;
 }
 
-interface IWardenInitialConfig {
+interface WardenInitialConfig {
   storage: {
     couchbase?: {
       host: string;
@@ -21,11 +21,11 @@ interface IWardenInitialConfig {
       username?: string;
       password?: string;
     }
-    memory?: boolean
-  }
+    memory?: boolean,
+  };
 }
 
-interface IWardenRouteConfiguration {
+interface WardenRouteConfig {
   cache: any;
   shadowing: any;
   holder: any;
@@ -34,27 +34,27 @@ interface IWardenRouteConfiguration {
 
 @injectable()
 class Configuration {
-  configuration: IWardenConfig = {
+  configuration: WardenConfig = {
     requests: {},
     storage: {
       couchbase: {
-        enabled: false
-      }
-    }
+        enabled: false,
+      },
+    },
   };
 
-  config(configuration: IWardenInitialConfig) {
+  config(configuration: WardenInitialConfig) {
 
   }
 
-  route(name: string, config: IWardenRouteConfiguration) {
+  route(name: string, config: WardenRouteConfig) {
     this.configuration.requests[name] = config;
   }
 }
 
 export {
-  IWardenConfig,
-  IWardenInitialConfig,
-  IWardenRouteConfiguration,
-  Configuration
-}
+  WardenConfig,
+  WardenInitialConfig,
+  WardenRouteConfig,
+  Configuration,
+};

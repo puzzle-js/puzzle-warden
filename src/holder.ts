@@ -6,5 +6,5 @@ class Holder {
 }
 
 export {
-  Holder
-}
+  Holder,
+};

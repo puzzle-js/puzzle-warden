@@ -6,5 +6,5 @@ class Network {
 }
 
 export {
-  Network
-}
+  Network,
+};

@@ -1,11 +1,11 @@
 import {inject, injectable} from "inversify";
-import {Holder} from "./holder";
-import {Configuration} from "./configuration";
-import {Queue} from "./queue";
-import {Network} from "./network";
 import {CacheManager} from "./cache/cache-manager";
+import {Configuration} from "./configuration";
+import {Holder} from "./holder";
+import {Network} from "./network";
+import {Queue} from "./queue";
 
-interface IWardenRequest {
+interface WardenRequest {
 
 }
 
@@ -22,7 +22,7 @@ class RequestManager {
     @inject(Holder) holder: Holder,
     @inject(CacheManager) cacheManager: CacheManager,
     @inject(Queue) queue: Queue,
-    @inject(Network) network: Network
+    @inject(Network) network: Network,
   ) {
     this.configuration = configuration;
     this.holder = holder;
@@ -31,12 +31,12 @@ class RequestManager {
     this.network = network;
   }
 
-  async handle(request: IWardenRequest, cb: () => Promise<string | object>) {
+  async handle(request: WardenRequest, cb: () => Promise<string | object>) {
 
   }
 }
 
 export {
-  IWardenRequest,
-  RequestManager
-}
+  WardenRequest,
+  RequestManager,
+};

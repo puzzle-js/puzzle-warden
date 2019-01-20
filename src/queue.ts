@@ -6,5 +6,5 @@ class Queue {
 }
 
 export {
-  Queue
-}
+  Queue,
+};

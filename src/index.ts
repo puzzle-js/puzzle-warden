@@ -1,15 +1,15 @@
 import "reflect-metadata";
 
 import {Container} from "inversify";
-import {Warden} from "./warden";
-import {bootstrap} from "./ioc";
-import {Tokenizer} from "./tokenizer";
 import {CacheManager} from "./cache/cache-manager";
 import {Configuration} from "./configuration";
-import {RequestManager} from "./request-manager";
 import {Holder} from "./holder";
-import {Queue} from "./queue";
+import {bootstrap} from "./ioc";
 import {Network} from "./network";
+import {Queue} from "./queue";
+import {RequestManager} from "./request-manager";
+import {Tokenizer} from "./tokenizer";
+import {Warden} from "./warden";
 
 const container = new Container();
 
@@ -21,11 +21,10 @@ bootstrap([
   RequestManager,
   Holder,
   Queue,
-  Network
+  Network,
 ], container);
-
 
 export {
   Warden,
-  container
-}
+  container,
+};

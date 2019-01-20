@@ -6,7 +6,7 @@ class CacheManager {
   private configuration: Configuration;
 
   constructor(
-    @inject(Configuration) configuration: Configuration
+    @inject(Configuration) configuration: Configuration,
   ) {
 
     this.configuration = configuration;
@@ -14,5 +14,5 @@ class CacheManager {
 }
 
 export {
-  CacheManager
-}
+  CacheManager,
+};

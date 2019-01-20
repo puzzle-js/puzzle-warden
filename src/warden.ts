@@ -1,6 +1,6 @@
 import {inject, injectable} from "inversify";
-import {Configuration, IWardenInitialConfig, IWardenRouteConfiguration} from "./configuration";
-import {IWardenRequest, RequestManager} from "./request-manager";
+import {Configuration, WardenInitialConfig, WardenRouteConfig} from "./configuration";
+import {WardenRequest, RequestManager} from "./request-manager";
 
 @injectable()
 export class Warden {
@@ -9,7 +9,7 @@ export class Warden {
 
   constructor(
     @inject(Configuration) configuration: Configuration,
-    @inject(RequestManager) requestManager: RequestManager
+    @inject(RequestManager) requestManager: RequestManager,
   ) {
 
     this.configuration = configuration;
@@ -20,21 +20,20 @@ export class Warden {
 
   }
 
-  config(wardenConfiguration: IWardenInitialConfig) {
+  config(wardenConfiguration: WardenInitialConfig) {
     this.configuration.config(wardenConfiguration);
   }
 
-  setRoute(name: string, routeConfiguration: IWardenRouteConfiguration) {
+  setRoute(name: string, routeConfiguration: WardenRouteConfig) {
     this.configuration.route(name, routeConfiguration);
   }
 
-  async request(requestConfiguration: IWardenRequest, cb: () => Promise<string | object>) {
+  async request(requestConfiguration: WardenRequest, cb: () => Promise<string | object>) {
     await this.requestManager.handle(requestConfiguration, cb);
   }
 }
 
-
-/**
+/*
 
  warden.request('request_name','http://blabla.com/blabla', headers, () => {
 
@@ -49,7 +48,5 @@ export class Warden {
  request({
 	warden: 'request_name'
 });
-
-
 
  */

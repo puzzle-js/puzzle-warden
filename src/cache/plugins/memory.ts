@@ -13,5 +13,5 @@ class MemoryCache extends CachePlugin {
 }
 
 export {
-  MemoryCache
-}
+  MemoryCache,
+};
