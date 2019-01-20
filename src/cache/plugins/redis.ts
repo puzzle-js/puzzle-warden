@@ -24,7 +24,7 @@ class RedisCache extends CachePlugin {
     });
   }
 
-  set(key: string, value: any): Promise<void> {
+  set(key: string, value: string): Promise<void> {
     return new Promise( (resolve, reject) => {
       if(!this.client) return reject(null);
       this.client.set(key, value);
@@ -38,7 +38,7 @@ class RedisCache extends CachePlugin {
     });
     this.client.on('error', () => {
       console.log('Redis Error');
-    })
+    });
   }
 
   getOptions(): RedisOptions {
@@ -49,4 +49,4 @@ class RedisCache extends CachePlugin {
 
 export {
   RedisCache,
-}
+};

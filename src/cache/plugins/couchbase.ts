@@ -17,7 +17,7 @@ class CouchbaseCache extends CachePlugin {
   get(key: string): Promise<string> | null {
     return new Promise((resolve, reject) => {
       if(!this.bucket) return reject();
-      this.bucket.get(key, function (err, result) {
+      this.bucket.get(key, (err, result) => {
         if(err) {
             return reject(err);
         }
@@ -26,7 +26,7 @@ class CouchbaseCache extends CachePlugin {
     });
   }
 
-  set(key: string, value: any): Promise<void> {
+  set(key: string, value: object | string): Promise<void> {
     return new Promise( (resolve, reject) => {
       if(!this.bucket) return reject();
       this.bucket.upsert(key, value, (err, result) => {
