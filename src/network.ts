@@ -1,10 +1,10 @@
 import {injectable} from "inversify";
 
 @injectable()
-class Cache {
+class Network {
 
 }
 
 export {
-  Cache
-}
+  Network,
+};

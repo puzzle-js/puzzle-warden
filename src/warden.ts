@@ -1,15 +1,52 @@
 import {inject, injectable} from "inversify";
-import {Cache} from "./cache/cache";
+import {Configuration, WardenInitialConfig, WardenRouteConfig} from "./configuration";
+import {WardenRequest, RequestManager} from "./request-manager";
 
 @injectable()
 export class Warden {
-  private cache: Cache;
+  private readonly configuration: Configuration;
+  private readonly requestManager: RequestManager;
 
   constructor(
-    @inject(Cache) cache: Cache
-  ){
+    @inject(Configuration) configuration: Configuration,
+    @inject(RequestManager) requestManager: RequestManager,
+  ) {
 
-    this.cache = cache;
+    this.configuration = configuration;
+    this.requestManager = requestManager;
+  }
+
+  async init() {
+
+  }
+
+  config(wardenConfiguration: WardenInitialConfig) {
+    this.configuration.config(wardenConfiguration);
+  }
+
+  setRoute(name: string, routeConfiguration: WardenRouteConfig) {
+    this.configuration.route(name, routeConfiguration);
+  }
+
+  async request(requestConfiguration: WardenRequest, cb: () => Promise<string | object>) {
+    await this.requestManager.handle(requestConfiguration, cb);
   }
 }
 
+/*
+
+ warden.request('request_name','http://blabla.com/blabla', headers, () => {
+
+});
+
+ warden.config({
+	'request_name': {
+  	//...configuration
+  }
+});
+
+ request({
+	warden: 'request_name'
+});
+
+ */
