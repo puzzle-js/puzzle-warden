@@ -1,8 +1,2 @@
 lib/
 test/
-src/
-.circleci/
-coverage/
-node_modules/
-.idea/
-
