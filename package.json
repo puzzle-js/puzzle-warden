@@ -8,12 +8,13 @@
     "test": "jest --coverage",
     "build": "tsc -p .",
     "test:watch": "jest --coverage --watch",
-    "lint":"tslint -c tslint.json 'src/**/*.ts'"
+    "lint": "tslint -c tslint.json 'src/**/*.ts'"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/faker": "^4.1.5",
     "@types/jest": "^23.3.12",
+    "@types/ms": "^0.7.30",
     "@types/sinon": "^7.0.3",
     "chai": "^4.2.0",
     "faker": "^4.1.0",
@@ -26,6 +27,7 @@
   },
   "dependencies": {
     "inversify": "^5.0.1",
+    "ms": "^2.1.1",
     "reflect-metadata": "^0.1.13"
   }
 }

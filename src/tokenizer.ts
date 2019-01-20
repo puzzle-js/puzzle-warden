@@ -24,5 +24,6 @@ class Tokenizer {
 }
 
 export {
+  KeyMaker,
   Tokenizer,
 };

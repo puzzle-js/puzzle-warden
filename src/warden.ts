@@ -1,19 +1,39 @@
 import {inject, injectable} from "inversify";
-import {Configuration, WardenInitialConfig, WardenRouteConfig} from "./configuration";
+import {Configuration, WardenInitialConfig} from "./configuration";
 import {WardenRequest, RequestManager} from "./request-manager";
+import {Tokenizer} from "./tokenizer";
+import {CacheManager, CachePlugin, CachingStrategy} from "./cache/cache-manager";
+
+interface WardenUserRouteConfig {
+  identifier: string;
+  cache?: {
+    strategy?: CachingStrategy;
+    plugin?: CachePlugin;
+    duration?: string;
+  } | string | number;
+  shadowing?: any;
+  holder?: any;
+  queue?: any;
+}
 
 @injectable()
-export class Warden {
+class Warden {
   private readonly configuration: Configuration;
   private readonly requestManager: RequestManager;
+  private readonly tokenizer: Tokenizer;
+  private readonly cacheManager: CacheManager;
 
   constructor(
     @inject(Configuration) configuration: Configuration,
     @inject(RequestManager) requestManager: RequestManager,
+    @inject(Tokenizer) tokenizer: Tokenizer,
+    @inject(CacheManager) cacheManager: CacheManager
   ) {
 
     this.configuration = configuration;
     this.requestManager = requestManager;
+    this.tokenizer = tokenizer;
+    this.cacheManager = cacheManager;
   }
 
   async init() {
@@ -24,14 +44,23 @@ export class Warden {
     this.configuration.config(wardenConfiguration);
   }
 
-  setRoute(name: string, routeConfiguration: WardenRouteConfig) {
-    this.configuration.route(name, routeConfiguration);
+  setRoute(name: string, routeConfiguration: WardenUserRouteConfig) {
+    this.configuration.route(
+      name,
+      this.tokenizer.tokenize(name, routeConfiguration.identifier),
+      this.cacheManager.parseCacheConfig(routeConfiguration
+      ));
   }
 
   async request(requestConfiguration: WardenRequest, cb: () => Promise<string | object>) {
     await this.requestManager.handle(requestConfiguration, cb);
   }
 }
+
+export {
+  WardenUserRouteConfig,
+  Warden
+};
 
 /*
 

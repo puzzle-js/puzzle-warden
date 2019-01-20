@@ -51,5 +51,10 @@
             "allow-leading-underscore",
             "allow-trailing-underscore"
         ]
+    },
+    "linterOptions": {
+        "exclude": [
+            "test/**/*.ts"
+        ]
     }
 }

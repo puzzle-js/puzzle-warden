@@ -1,9 +1,16 @@
 import {injectable} from "inversify";
+import {RequestCacheConfig} from "./cache/cache-manager";
+import {KeyMaker} from "./tokenizer";
 
 interface StorageConfig {
   couchbase: {
-    enabled: boolean,
+    enabled: boolean;
   };
+}
+
+interface WardenRouteConfig {
+  keyMaker: KeyMaker;
+  cache: RequestCacheConfig | null;
 }
 
 interface WardenConfig {
@@ -21,15 +28,8 @@ interface WardenInitialConfig {
       username?: string;
       password?: string;
     }
-    memory?: boolean,
+    memory?: boolean;
   };
-}
-
-interface WardenRouteConfig {
-  cache: any;
-  shadowing: any;
-  holder: any;
-  queue: any;
 }
 
 @injectable()
@@ -47,14 +47,18 @@ class Configuration {
 
   }
 
-  route(name: string, config: WardenRouteConfig) {
-    this.configuration.requests[name] = config;
+  route(name: string, keyMaker: KeyMaker, cache: RequestCacheConfig | null) {
+    this.configuration.requests[name] = {
+      cache,
+      keyMaker
+    };
   }
+
+
 }
 
 export {
   WardenConfig,
   WardenInitialConfig,
-  WardenRouteConfig,
   Configuration,
 };
