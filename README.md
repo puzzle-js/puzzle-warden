@@ -9,6 +9,8 @@ Warden is an outgoing request optimizer for creating fast and scalable applicati
 - 😎  **Easy Implementation** Warden can be easily implemented with a few lines of codes. ✅
 - 🔌  **Support** Warden can be used with anything but it has out of the box support for [request](https://github.com/request/request). 📝
 
+![Warden Achitecture](/warden_architecture.svg)
+
 ## Getting started
 -   [Installing](#Installing)
     
