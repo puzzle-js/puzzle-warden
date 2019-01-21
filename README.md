@@ -8,7 +8,8 @@ Warden is an outgoing request optimizer for creating fast and scalable applicati
 - 🚥  **API Queue** Throttles API calls to protect target service. 📝
 - 😎  **Easy Implementation** Warden can be easily implemented with a few lines of codes. ✅
 - 🔌  **Support** Warden can be used with anything but it has out of the box support for [request](https://github.com/request/request). 📝
-- 🚉  **Reverse Proxy** It can be deployable as an external application which can serve as reverse proxy.
+- 🚉  **Reverse Proxy** It can be deployable as an external application which can serve as reverse proxy. 📝
+- 🔩  **Ingress Controller** Warden can be used as Ingress Controller. 📝
 
 ![Warden Achitecture](/warden_architecture.svg)
 
