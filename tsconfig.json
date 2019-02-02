@@ -7,7 +7,9 @@
     "esModuleInterop": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "declaration": true
+    "declaration": true,
+    "sourceMap": true,
+    "noEmitOnError": true
   },
   "exclude": [
     "./test/**"

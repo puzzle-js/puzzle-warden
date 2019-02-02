@@ -7,12 +7,12 @@ import {Configuration, WardenInitialConfig} from "../src/configuration";
 import {WardenRequest} from "../src/request-manager";
 import faker = require("faker");
 import {Tokenizer} from "../src/tokenizer";
-import {CacheManager} from "../src/cache/cache-manager";
+import {Cache} from "../src/cache/cache";
 
 const sandbox = sinon.createSandbox();
 const tokenizer = new Tokenizer();
 const configuration = new Configuration();
-const cacheManager = new CacheManager(configuration);
+const cacheManager = new Cache(configuration);
 const requestManager = {
   handle() {
     throw new Error('Mocked method call');

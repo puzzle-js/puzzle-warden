@@ -1,7 +1,7 @@
 import "reflect-metadata";
 
 import {expect} from "chai";
-import {CacheManager, CachingStrategy} from "../../src/cache/cache-manager";
+import {Cache, CachingStrategy} from "../../src/cache/cache";
 import sinon, {SinonMock} from "sinon";
 import {Configuration} from "../../src/configuration";
 import faker from "faker";
@@ -11,12 +11,12 @@ const sandbox = sinon.createSandbox();
 const configuration = new Configuration();
 
 let configurationMock: SinonMock;
-let cacheManager: CacheManager;
+let cacheManager: Cache;
 
 describe("[cache-manager.ts]", () => {
   beforeEach(() => {
     configurationMock = sandbox.mock(configuration);
-    cacheManager = new CacheManager(configuration);
+    cacheManager = new Cache(configuration);
   });
 
   afterEach(() => {
@@ -25,10 +25,10 @@ describe("[cache-manager.ts]", () => {
 
   it("should create new Cache Manager", () => {
     // Arrange
-    const cacheManager = new CacheManager(configuration);
+    const cacheManager = new Cache(configuration);
 
     // Assert
-    expect(cacheManager).to.be.instanceOf(CacheManager);
+    expect(cacheManager).to.be.instanceOf(Cache);
   });
 
   it("should parse cache config boolean: true", () => {

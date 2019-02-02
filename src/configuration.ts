@@ -1,5 +1,5 @@
 import {injectable} from "inversify";
-import {RequestCacheConfig} from "./cache/cache-manager";
+import {CacheConfig} from "./cache/cache";
 import {KeyMaker} from "./tokenizer";
 
 interface StorageConfig {
@@ -10,7 +10,7 @@ interface StorageConfig {
 
 interface WardenRouteConfig {
   keyMaker: KeyMaker;
-  cache: RequestCacheConfig | false;
+  cache: CacheConfig | false;
 }
 
 interface WardenConfig {
@@ -47,7 +47,7 @@ class Configuration {
 
   }
 
-  route(name: string, keyMaker: KeyMaker, cache: RequestCacheConfig | false) {
+  route(name: string, keyMaker: KeyMaker, cache: CacheConfig | false) {
     this.configuration.requests[name] = {
       cache,
       keyMaker

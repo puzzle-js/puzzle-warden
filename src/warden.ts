@@ -2,7 +2,7 @@ import {inject, injectable} from "inversify";
 import {Configuration, WardenInitialConfig} from "./configuration";
 import {WardenRequest, RequestManager} from "./request-manager";
 import {Tokenizer} from "./tokenizer";
-import {CacheManager, UserRouteCacheInput} from "./cache/cache-manager";
+import {Cache, UserRouteCacheInput} from "./cache/cache";
 
 interface WardenUserRouteConfig {
   identifier: string;
@@ -17,13 +17,13 @@ class Warden {
   private readonly configuration: Configuration;
   private readonly requestManager: RequestManager;
   private readonly tokenizer: Tokenizer;
-  private readonly cacheManager: CacheManager;
+  private readonly cacheManager: Cache;
 
   constructor(
     @inject(Configuration) configuration: Configuration,
     @inject(RequestManager) requestManager: RequestManager,
     @inject(Tokenizer) tokenizer: Tokenizer,
-    @inject(CacheManager) cacheManager: CacheManager
+    @inject(Cache) cacheManager: Cache
   ) {
 
     this.configuration = configuration;
