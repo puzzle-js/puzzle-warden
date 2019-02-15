@@ -5,16 +5,22 @@ type RequestChunk = {
   version: number;
 };
 
+type ResponseChunk = {
+  key: string;
+  data: string;
+  startMs: number;
+};
+
 abstract class WardenStream {
   rightStream: Transform;
   leftStream: Transform;
-  protected name: string;
-  private rightLogStream: PassThrough;
-  private leftLogStream: PassThrough;
-  private sideStreamNames: {left: string, right: string} = {
+  name: string;
+  leftLogStream: PassThrough;
+  sideStreamNames: {left: string, right: string} = {
     left: 'leftOutStream',
     right: 'rightOutStream'
   };
+  private rightLogStream: PassThrough;
 
   protected constructor(name: string) {
     this.name = name;
@@ -33,13 +39,13 @@ abstract class WardenStream {
       transform: this.onRightStream
     });
 
-    this.rightLogStream.on('data', (chunk: RequestChunk) => {
-      console.log(`${this.name} --> ${this.sideStreamNames.right}`, chunk);
-    });
-
-    this.leftLogStream.on('data', (chunk: RequestChunk) => {
-      console.log(`${this.sideStreamNames.left} <-- ${this.name}`, chunk);
-    });
+    // this.rightLogStream.on('data', (chunk: RequestChunk) => {
+    //   console.log(`${this.name} --> ${this.sideStreamNames.right}`, chunk);
+    // });
+    //
+    // this.leftLogStream.on('data', (chunk: RequestChunk) => {
+    //   console.log(`${this.sideStreamNames.left} <-- ${this.name}`, chunk);
+    // });
   }
 
   connect(wardenStream: WardenStream) {
@@ -59,10 +65,11 @@ abstract class WardenStream {
 
   abstract onRightStream(chunk: RequestChunk, encoding: string, callback: TransformCallback): void;
 
-  abstract onLeftStream(chunk: RequestChunk, encoding: string, callback: TransformCallback): void;
+  abstract onLeftStream(chunk: ResponseChunk, encoding: string, callback: TransformCallback): void;
 }
 
 export {
   WardenStream,
-  RequestChunk
+  RequestChunk,
+  ResponseChunk
 };
