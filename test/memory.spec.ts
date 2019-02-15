@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import {MemoryCache} from "../src/cache/plugins/memory";
+import {MemoryCache} from "../src/memory-cache";
 import faker = require("faker");
 import {expect} from "chai";
 

@@ -15,8 +15,9 @@
     "@types/couchbase": "^2.4.1",
     "@types/faker": "^4.1.4",
     "@types/jest": "^23.3.12",
-    "@types/redis": "^2.8.10",
     "@types/ms": "^0.7.30",
+    "@types/redis": "^2.8.10",
+    "@types/request": "^2.48.1",
     "@types/sinon": "^7.0.3",
     "chai": "^4.2.0",
     "faker": "^4.1.0",
@@ -30,8 +31,9 @@
   "dependencies": {
     "couchbase": "^2.6.2",
     "inversify": "^5.0.1",
-    "redis": "^2.8.0",
     "ms": "^2.1.1",
-    "reflect-metadata": "^0.1.13"
+    "redis": "^2.8.0",
+    "reflect-metadata": "^0.1.13",
+    "request": "^2.88.0"
   }
 }

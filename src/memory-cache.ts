@@ -1,9 +1,9 @@
-import {CachePlugin} from "./cache-plugin";
+import {CachePlugin} from "./cache";
 
-class MemoryCache extends CachePlugin {
+class MemoryCache implements CachePlugin {
   cache: { [key: string]: string } = {};
 
-  get(key: string): string | null {
+  get(key: string): any  {
     return this.cache[key];
   }
 

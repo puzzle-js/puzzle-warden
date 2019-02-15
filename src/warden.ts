@@ -1,77 +1,32 @@
-import {inject, injectable} from "inversify";
-import {Configuration, WardenInitialConfig} from "./configuration";
-import {WardenRequest, RequestManager} from "./request-manager";
-import {Tokenizer} from "./tokenizer";
-import {Cache, UserRouteCacheInput} from "./cache/cache";
+import {CacheConfiguration, CacheFactory} from "./cache-factory";
+import {Network} from "./network";
+import {StreamHead} from "./stream-head";
 
-interface WardenUserRouteConfig {
+interface RouteConfiguration {
   identifier: string;
-  cache?: UserRouteCacheInput | null | string | undefined | number | boolean;
-  shadowing?: any;
-  holder?: any;
-  queue?: any;
+  cache: CacheConfiguration;
 }
 
-@injectable()
 class Warden {
-  private readonly configuration: Configuration;
-  private readonly requestManager: RequestManager;
-  private readonly tokenizer: Tokenizer;
-  private readonly cacheManager: Cache;
+  private cacheFactory: CacheFactory;
 
-  constructor(
-    @inject(Configuration) configuration: Configuration,
-    @inject(RequestManager) requestManager: RequestManager,
-    @inject(Tokenizer) tokenizer: Tokenizer,
-    @inject(Cache) cacheManager: Cache
-  ) {
-
-    this.configuration = configuration;
-    this.requestManager = requestManager;
-    this.tokenizer = tokenizer;
-    this.cacheManager = cacheManager;
+  constructor(cacheFactory: CacheFactory) {
+    this.cacheFactory = cacheFactory;
   }
 
-  async init() {
+  setRoute(name: string, routeConfiguration: RouteConfiguration) {
+    const startStream = new StreamHead();
+    const cache = this.cacheFactory.create(routeConfiguration.cache);
+    const network = new Network();
 
-  }
+    startStream
+      .connect(cache)
+      .connect(network);
 
-  config(wardenConfiguration: WardenInitialConfig) {
-    this.configuration.config(wardenConfiguration);
-  }
-
-  setRoute(name: string, routeConfiguration: WardenUserRouteConfig) {
-    this.configuration.route(
-      name,
-      this.tokenizer.tokenize(name, routeConfiguration.identifier),
-      this.cacheManager.parseCacheConfig(routeConfiguration.cache
-      ));
-  }
-
-  async request(requestConfiguration: WardenRequest, cb: () => Promise<string | object>) {
-    await this.requestManager.handle(requestConfiguration, cb);
+    return startStream;
   }
 }
 
 export {
-  WardenUserRouteConfig,
   Warden
 };
-
-/*
-
- warden.request('request_name','http://blabla.com/blabla', headers, () => {
-
-});
-
- warden.config({
-	'request_name': {
-  	//...configuration
-  }
-});
-
- request({
-	warden: 'request_name'
-});
-
- */
