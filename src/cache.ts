@@ -26,15 +26,15 @@ class Cache extends WardenStream {
     this.storage = plugin;
   }
 
-  onLeftStream(chunk: CacheResponse, encoding: string, callback: TransformCallback): void {
+  async onLeftStream(chunk: CacheResponse, callback: TransformCallback): Promise<void> {
     if (!chunk.cacheHit) {
-      this.storage.set(chunk.key, chunk.data);
+      await this.storage.set(chunk.key, chunk.data);
     }
     callback(undefined, chunk);
   }
 
-  onRightStream(chunk: RequestChunk, encoding: string, callback: TransformCallback): void {
-    const response = this.storage.get(chunk.key);
+  async onRightStream(chunk: RequestChunk, callback: TransformCallback): Promise<void> {
+    const response = await this.storage.get(chunk.key);
     if (response) {
       this.leftStream.push({
         ...chunk,

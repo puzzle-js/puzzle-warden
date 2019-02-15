@@ -6,17 +6,17 @@ class Network extends WardenStream {
     super('Network');
   }
 
-  onLeftStream(chunk: ResponseChunk, encoding: string, callback: TransformCallback): void {
+  onLeftStream(chunk: ResponseChunk, callback: TransformCallback): void {
     callback();
   }
 
-  onRightStream(chunk: RequestChunk, encoding: string, callback: TransformCallback): void {
+  onRightStream(chunk: RequestChunk, callback: TransformCallback): void {
     setTimeout(() => {
       this.leftStream.push({
         ...chunk,
-        data: Math.random()
+        data: 'data'
       });
-    }, 200);
+    }, 80);
     callback();
   }
 }

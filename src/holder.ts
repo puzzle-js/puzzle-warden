@@ -8,13 +8,13 @@ class Holder extends WardenStream {
     super('Holder');
   }
 
-  onLeftStream(chunk: ResponseChunk, encoding: string, callback: TransformCallback): void {
+  onLeftStream(chunk: ResponseChunk, callback: TransformCallback): void {
     const holdQueue = this.holdQueue[chunk.key];
     if (holdQueue && Array.isArray(holdQueue)) {
       holdQueue.forEach(holdChunk => {
         this.leftStream.push({
           ...holdChunk,
-          ...chunk
+          data: chunk.data
         });
       });
       this.holdQueue[chunk.key] = null;
@@ -22,7 +22,7 @@ class Holder extends WardenStream {
     }
   }
 
-  onRightStream(chunk: RequestChunk, encoding: string, callback: TransformCallback): void {
+  onRightStream(chunk: RequestChunk, callback: TransformCallback): void {
     const holdQueue = this.holdQueue[chunk.key];
     if (holdQueue && Array.isArray(holdQueue)) {
       holdQueue.push(chunk);

@@ -1,45 +1,17 @@
-import {PassThrough, Readable, Writable} from "stream";
+import {TransformCallback} from "stream";
 import {RequestChunk, ResponseChunk, WardenStream} from "./warden-stream";
-import {performance} from "perf_hooks";
 
-class StreamHead {
-  name = 'Stream Head';
-  readStream: Readable = new Readable({
-    read: () => {},
-    objectMode: true
-  });
 
-  private returnStream: Writable = new Writable({
-    objectMode: true,
-    write(chunk: ResponseChunk, encoding: string, callback: (error?: Error | null) => void){
-      console.log(performance.now() - chunk.startMs);
-      callback();
-    }
-  });
-
-  private rightStreamName!: string;
-  private rightLogStream: PassThrough = new PassThrough({objectMode: true});
-
-  constructor(){
-    // this.rightLogStream.on('data', (chunk: RequestChunk) => {
-    //   console.log(`${this.name} --> ${this.rightStreamName}`, chunk);
-    // });
+class StreamHead extends WardenStream {
+  constructor() {
+    super('Head', true);
   }
 
-  connect(wardenStream: WardenStream) {
-    this.rightStreamName = wardenStream.name;
+  onLeftStream(chunk: ResponseChunk, callback: TransformCallback): void {
+    callback(undefined, chunk);
+  }
 
-    this.readStream
-      .pipe(this.rightLogStream)
-      .pipe(wardenStream.rightStream);
-
-    wardenStream.sideStreamNames.left = this.name;
-
-    wardenStream.leftStream
-      .pipe(wardenStream.leftLogStream)
-      .pipe(this.returnStream);
-
-    return wardenStream;
+  onRightStream(chunk: RequestChunk, callback: TransformCallback): void {
   }
 }
 
