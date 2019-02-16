@@ -17,10 +17,11 @@ describe("[tokenizer.ts]", () => {
     const tokenizer = new Tokenizer();
     const name = '_name_';
     const cacheKey = '_special_cache_key';
+    const method = 'get';
 
     // Act
     const keyMaker = tokenizer.tokenize(name, cacheKey);
-    const key = keyMaker('/path',{},{},{});
+    const key = keyMaker('/path',{},{},{}, method);
 
     // Assert
     expect(keyMaker).to.be.a('function');
@@ -32,10 +33,11 @@ describe("[tokenizer.ts]", () => {
     const tokenizer = new Tokenizer();
     const name = '_name_';
     const cacheKey = '_special_{cookies.test}_{headers.test}_{query.test}_{url}_key';
+    const method = 'get';
 
     // Act
     const keyMaker = tokenizer.tokenize(name, cacheKey);
-    const key = keyMaker('/he',{test:'c'},{test:'a'},{test:'c'});
+    const key = keyMaker('/he',{test:'c'},{test:'a'},{test:'c'}, method);
 
     // Assert
     expect(keyMaker).to.be.a('function');
@@ -47,10 +49,11 @@ describe("[tokenizer.ts]", () => {
     const tokenizer = new Tokenizer();
     const name = '_name_';
     const cacheKey = '_special_{cookies.test}_\\{escaped}_{headers.test}_{query.test}_{url}_key';
+    const method = 'get';
 
     // Act
     const keyMaker = tokenizer.tokenize(name, cacheKey);
-    const key = keyMaker('/he',{test:'c'},{test:'a'},{test:'c'});
+    const key = keyMaker('/he',{test:'c'},{test:'a'},{test:'c'}, method);
 
     // Assert
     expect(keyMaker).to.be.a('function');

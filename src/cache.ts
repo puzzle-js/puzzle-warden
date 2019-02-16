@@ -2,9 +2,9 @@ import {RequestChunk, ResponseChunk, WardenStream} from "./warden-stream";
 import {TransformCallback} from "stream";
 
 interface CachePlugin {
-  get(key: string): any;
+  get<T>(key: string): T | null;
 
-  set(key: string, value: string): any;
+  set(key: string, value: string): Promise<void> | void;
 }
 
 interface CacheResponse extends ResponseChunk {

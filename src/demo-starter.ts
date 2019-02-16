@@ -1,36 +1,50 @@
 import {Warden} from "./warden";
 import {CacheFactory} from "./cache-factory";
+import {RequestManager} from "./request-manager";
+import {Tokenizer} from "./tokenizer";
+import {StreamFactory} from "./stream-factory";
 
 const cacheFactory = new CacheFactory();
-const warden = new Warden(cacheFactory);
 
-const stream: any = warden.setRoute('test', {
-  identifier: 'test_${cookies_test3}',
+const tokenizer = new Tokenizer();
+const streamFactory = new StreamFactory(cacheFactory);
+const requestManager = new RequestManager(streamFactory, tokenizer);
+const warden = new Warden(requestManager);
+
+const stream: any = warden.register('test', {
+  identifier: '{query.pid}',
   cache: {
     duration: 200
   }
 });
 
 
-//
-//
-// let input = 0;
-// let response = 0;
-//
-// setInterval(() => {
-//   stream.rightStream.push({
-//     identifier: 'test',
-//     key: Math.random().toFixed(1)
-//   });
-//   input++;
-// }, 0);
-//
-// stream.leftStream.on('data', () => {
-//   response++;
+// stream.rightStream.push({
+//   identifier: 'test',
+//   key: 'test'
 // });
 //
 //
-// setTimeout(() => {
-//   console.log(`${response}/${input}`);
-//   process.kill(0);
-// }, 3000);
+// stream.rightStream.push({
+//   identifier: 'test',
+//   key:'test'
+// });
+
+let input = 0;
+let output = 0;
+setInterval(() => {
+  input++;
+  warden.request('test', {
+    url: 'https://www.trendyol.com?pid='+Math.random().toFixed(2),
+    headers: {},
+    method: "get"
+  }, (err, response, body) => {
+    output++;
+  });
+}, 0);
+
+
+setTimeout(() => {
+  console.log(`${output}/${input}`);
+  process.kill(0)
+}, 2000);

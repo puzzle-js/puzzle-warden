@@ -1,16 +1,19 @@
 import {PassThrough, Readable, Transform, TransformCallback} from "stream";
 import ParallelTransform from "parallel-transform";
+import {RequestCallback} from "request";
+import {RequestOptions} from "./request-manager";
 
-type RequestChunk = {
+interface RequestChunk {
   key: string;
-  version: number;
-};
+  requestOptions: RequestOptions;
+  cb: RequestCallback;
+}
 
-type ResponseChunk = {
+interface ResponseChunk extends RequestChunk {
   key: string;
   data: string;
-  startMs: number;
-};
+  error: any;
+}
 
 abstract class WardenStream {
   protected readonly rightStream: Transform | Readable;
@@ -39,10 +42,10 @@ abstract class WardenStream {
         read: this.onRightStream as () => void
       });
     } else {
-      this.rightStream = new ParallelTransform(100,  this.onRightStream);
+      this.rightStream = new ParallelTransform(5000, {ordered: false} ,this.onRightStream);
     }
 
-    this.leftStream = new ParallelTransform(100, this.onLeftStream);
+    this.leftStream = new ParallelTransform(5000,{ordered: false}, this.onLeftStream);
 
     // this.rightLogStream.on('data', (chunk: RequestChunk) => {
     //   console.log(`${this.name} --> ${this.sideStreamNames.right}`, chunk);

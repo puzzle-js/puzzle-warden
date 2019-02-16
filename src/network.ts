@@ -11,13 +11,13 @@ class Network extends WardenStream {
   }
 
   onRightStream(chunk: RequestChunk, callback: TransformCallback): void {
+    callback();
     setTimeout(() => {
       this.leftStream.push({
         ...chunk,
         data: 'data'
       });
     }, 80);
-    callback();
   }
 }
 

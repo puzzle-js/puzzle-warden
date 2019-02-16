@@ -1,32 +1,22 @@
-import {CacheConfiguration, CacheFactory} from "./cache-factory";
-import {Network} from "./network";
-import {StreamHead} from "./stream-head";
-import {Holder} from "./holder";
-
-interface RouteConfiguration {
-  identifier: string;
-  cache: CacheConfiguration;
-}
+import {CacheConfiguration} from "./cache-factory";
+import {RequestManager, RequestOptions, RouteConfiguration} from "./request-manager";
+import {RequestCallback} from "request";
 
 class Warden {
-  private cacheFactory: CacheFactory;
+  private requestManager: RequestManager;
 
-  constructor(cacheFactory: CacheFactory) {
-    this.cacheFactory = cacheFactory;
+  constructor(
+    requestManager: RequestManager
+  ) {
+    this.requestManager = requestManager;
   }
 
-  setRoute(name: string, routeConfiguration: RouteConfiguration) {
-    const startStream = new StreamHead();
-    const cache = this.cacheFactory.create(routeConfiguration.cache);
-    const network = new Network();
-    const holder = new Holder();
+  register(name: string, routeConfiguration: RouteConfiguration) {
+    this.requestManager.register(name, routeConfiguration);
+  }
 
-    startStream
-      .connect(holder)
-      .connect(cache)
-      .connect(network);
-
-    return startStream;
+  request(name: string, requestOptions: RequestOptions, cb: RequestCallback) {
+    this.requestManager.handle(name, requestOptions, cb);
   }
 }
 
