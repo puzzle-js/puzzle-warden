@@ -42,10 +42,10 @@ abstract class WardenStream {
         read: this.onRightStream as () => void
       });
     } else {
-      this.rightStream = new ParallelTransform(5000, {ordered: false} ,this.onRightStream);
+      this.rightStream = new ParallelTransform(10, {ordered: false}, this.onRightStream);
     }
 
-    this.leftStream = new ParallelTransform(5000,{ordered: false}, this.onLeftStream);
+    this.leftStream = new ParallelTransform(10, {ordered: false}, this.onLeftStream);
 
     // this.rightLogStream.on('data', (chunk: RequestChunk) => {
     //   console.log(`${this.name} --> ${this.sideStreamNames.right}`, chunk);

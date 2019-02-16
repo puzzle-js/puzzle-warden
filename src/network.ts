@@ -1,5 +1,6 @@
 import {RequestChunk, ResponseChunk, WardenStream} from "./warden-stream";
 import {TransformCallback} from "stream";
+import * as request from "request";
 
 class Network extends WardenStream {
   constructor() {
@@ -7,17 +8,17 @@ class Network extends WardenStream {
   }
 
   onLeftStream(chunk: ResponseChunk, callback: TransformCallback): void {
-    callback();
+    callback(undefined, chunk);
   }
 
   onRightStream(chunk: RequestChunk, callback: TransformCallback): void {
-    callback();
-    setTimeout(() => {
+    request[chunk.requestOptions.method](chunk.requestOptions.url, (err, response, body) => {
       this.leftStream.push({
         ...chunk,
-        data: 'data'
+        data: body
       });
-    }, 80);
+    });
+    callback(undefined, null);
   }
 }
 

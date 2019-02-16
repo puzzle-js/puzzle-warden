@@ -44,8 +44,10 @@ class RequestManager {
     const network = this.streamFactory.createNetwork();
     const keyMaker = this.tokenizer.tokenize(name, routeConfiguration.identifier);
     const cache = this.streamFactory.createCache({});
+    const holder = this.streamFactory.createHolder();
 
     stream
+      .connect(holder)
       .connect(cache)
       .connect(network);
 
@@ -65,7 +67,7 @@ class RequestManager {
       requestOptions.method
     );
 
-    this.streams[name].stream.start(key, requestOptions, cb);
+    return this.streams[name].stream.start(key, requestOptions, cb);
   }
 }
 

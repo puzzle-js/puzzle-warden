@@ -41,7 +41,7 @@ class Cache extends WardenStream {
         data: response,
         cacheHit: true
       });
-      callback();
+      callback(undefined, null);
     } else {
       callback(undefined, chunk);
     }

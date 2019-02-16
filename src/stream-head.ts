@@ -10,7 +10,7 @@ class StreamHead extends WardenStream {
   }
 
   onLeftStream(chunk: ResponseChunk, callback: TransformCallback): void {
-    callback(undefined, chunk);
+    callback(undefined, null);
     chunk.cb(
       chunk.error,
       {
@@ -24,7 +24,7 @@ class StreamHead extends WardenStream {
   }
 
   start(key: string, requestOptions: RequestOptions, cb: RequestCallback){
-    this.rightStream.push({
+    return this.rightStream.push({
       key,
       requestOptions,
       cb

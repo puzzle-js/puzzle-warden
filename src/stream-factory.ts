@@ -1,6 +1,7 @@
 import {Network} from "./network";
 import {CacheConfiguration, CacheFactory} from "./cache-factory";
 import {StreamHead} from "./stream-head";
+import {Holder} from "./holder";
 
 
 class StreamFactory {
@@ -12,6 +13,10 @@ class StreamFactory {
 
   createCache(configuration: CacheConfiguration) {
     return this.cacheFactory.create(configuration);
+  }
+
+  createHolder(){
+    return new Holder();
   }
 
   createHead() {

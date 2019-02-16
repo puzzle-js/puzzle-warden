@@ -16,7 +16,7 @@ class Warden {
   }
 
   request(name: string, requestOptions: RequestOptions, cb: RequestCallback) {
-    this.requestManager.handle(name, requestOptions, cb);
+    return this.requestManager.handle(name, requestOptions, cb);
   }
 }
 

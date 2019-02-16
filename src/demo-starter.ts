@@ -32,19 +32,23 @@ const stream: any = warden.register('test', {
 
 let input = 0;
 let output = 0;
+let failedToPush = 0;
 setInterval(() => {
   input++;
-  warden.request('test', {
-    url: 'https://www.trendyol.com?pid='+Math.random().toFixed(2),
+
+  const pRes = warden.request('test', {
+    url: 'https://postman-echo.com/get?foo1=bar1&foo2=bar2',
     headers: {},
     method: "get"
   }, (err, response, body) => {
     output++;
   });
+
+  if(!pRes) failedToPush++;
 }, 0);
 
 
 setTimeout(() => {
-  console.log(`${output}/${input}`);
-  process.kill(0)
-}, 2000);
+  console.log(`${output}/${failedToPush}/${input}`);
+  process.kill(0);
+}, 6000);
