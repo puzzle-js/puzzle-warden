@@ -2,9 +2,9 @@ import "reflect-metadata";
 
 import {expect} from "chai";
 import sinon, {SinonMock} from "sinon";
-import {RequestManager, RequestOptions, RouteConfiguration, StreamType} from "../src/request-manager";
+import {RequestManager, RequestOptions, RouteConfiguration} from "../src/request-manager";
 import {CacheFactory} from "../src/cache-factory";
-import {StreamFactory} from "../src/stream-factory";
+import {StreamFactory, StreamType} from "../src/stream-factory";
 import {Tokenizer} from "../src/tokenizer";
 import faker from "faker";
 
