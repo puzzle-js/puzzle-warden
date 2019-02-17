@@ -12,7 +12,7 @@ const requestManager = new RequestManager(streamFactory, tokenizer);
 const warden = new Warden(requestManager);
 
 const stream: any = warden.register('test', {
-  identifier: '{query.pid}',
+  identifier: '{query.foo1}',
   cache: {
     duration: 200
   }
@@ -37,7 +37,7 @@ setInterval(() => {
   input++;
 
   const pRes = warden.request('test', {
-    url: 'https://postman-echo.com/get?foo1=bar1&foo2=bar2',
+    url: `https://postman-echo.com/get?foo1=${Math.random().toFixed(2)}&foo2=bar2`,
     headers: {},
     method: "get"
   }, (err, response, body) => {

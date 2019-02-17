@@ -18,7 +18,8 @@ interface CacheConfiguration {
 const defaultCachingDuration = 60000;
 
 class CacheFactory {
-  create(configuration: CacheConfiguration) {
+  create(configuration: CacheConfiguration | true) {
+    if(configuration === true) configuration = {};
     const plugin = this.getPlugin(configuration.plugin);
     const cacheDuration = this.parseMs(configuration.duration);
 

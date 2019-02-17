@@ -47,13 +47,13 @@ abstract class WardenStream {
 
     this.leftStream = new ParallelTransform(10, {ordered: false}, this.onLeftStream);
 
-    // this.rightLogStream.on('data', (chunk: RequestChunk) => {
-    //   console.log(`${this.name} --> ${this.sideStreamNames.right}`, chunk);
-    // });
-    //
-    // this.leftLogStream.on('data', (chunk: RequestChunk) => {
-    //   console.log(`${this.sideStreamNames.left} <-- ${this.name}`, chunk);
-    // });
+    this.rightLogStream.on('data', (chunk: RequestChunk) => {
+      console.log(`${this.name} --> ${this.sideStreamNames.right}`, chunk);
+    });
+
+    this.leftLogStream.on('data', (chunk: RequestChunk) => {
+      console.log(`${this.sideStreamNames.left} <-- ${this.name}`, chunk);
+    });
   }
 
   connect(wardenStream: WardenStream) {

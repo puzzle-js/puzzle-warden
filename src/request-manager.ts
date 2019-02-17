@@ -4,6 +4,7 @@ import {RequestCallback} from "request";
 import Url from "fast-url-parser";
 import {StreamFactory} from "./stream-factory";
 import {CacheConfiguration} from "./cache-factory";
+import {WardenStream} from "./warden-stream";
 
 interface StreamMap {
   [routeName: string]: {
@@ -23,7 +24,8 @@ interface RequestOptions {
 
 interface RouteConfiguration {
   identifier: string;
-  cache: CacheConfiguration;
+  cache: CacheConfiguration | boolean;
+  holder: boolean;
 }
 
 class RequestManager {
@@ -34,21 +36,30 @@ class RequestManager {
   constructor(
     streamFactory: StreamFactory,
     tokenizer: Tokenizer,
-  ){
+  ) {
     this.tokenizer = tokenizer;
     this.streamFactory = streamFactory;
   }
 
   register(name: string, routeConfiguration: RouteConfiguration) {
     const stream = this.streamFactory.createHead();
+    let streamLink: WardenStream = stream;
     const network = this.streamFactory.createNetwork();
     const keyMaker = this.tokenizer.tokenize(name, routeConfiguration.identifier);
-    const cache = this.streamFactory.createCache({});
-    const holder = this.streamFactory.createHolder();
 
-    stream
-      .connect(holder)
-      .connect(cache)
+    if (routeConfiguration.cache) {
+      const cache = this.streamFactory.createCache(routeConfiguration.cache);
+      streamLink = streamLink
+        .connect(cache);
+    }
+
+    if (routeConfiguration.holder) {
+      const holder = this.streamFactory.createHolder(routeConfiguration.holder);
+      streamLink = streamLink
+        .connect(holder);
+    }
+
+    streamLink
       .connect(network);
 
     this.streams[name] = {
