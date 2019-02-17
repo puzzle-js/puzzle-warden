@@ -1,7 +1,21 @@
 import {Network} from "./network";
-import {CacheConfiguration, CacheFactory} from "./cache-factory";
+import {CacheFactory} from "./cache-factory";
 import {StreamHead} from "./stream-head";
-import {Holder, HolderConfiguration} from "./holder";
+import {Holder} from "./holder";
+
+const enum StreamType {
+  HOLDER = 'holder',
+  CACHE = 'cache',
+  NETWORK = 'network',
+  QUEUE = 'queue',
+  CIRCUIT = 'circuit',
+  HEAD = 'head'
+}
+
+enum ConfigurableStream {
+  HOLDER = StreamType.HOLDER,
+  CACHE = StreamType.CACHE
+}
 
 
 class StreamFactory {
@@ -11,23 +25,26 @@ class StreamFactory {
     this.cacheFactory = cacheFactory;
   }
 
-  createCache(configuration: CacheConfiguration | true) {
-    return this.cacheFactory.create(configuration);
-  }
-
-  createHolder(configuration: HolderConfiguration | true) {
-    return new Holder();
-  }
-
-  createHead() {
-    return new StreamHead();
-  }
-
-  createNetwork() {
-    return new Network();
+  create<U, T = {}>(streamType: string, configuration?: T) {
+    switch (streamType) {
+      case StreamType.CACHE:
+        return this.cacheFactory.create(configuration as T) as unknown as U;
+      case StreamType.HOLDER:
+        return new Holder() as unknown as U;
+      case StreamType.CIRCUIT:
+        throw new Error('Not implemented');
+      case StreamType.NETWORK:
+        return new Network() as unknown as U;
+      case StreamType.HEAD:
+        return new StreamHead() as unknown as U;
+      default:
+        throw new Error('Unknown stream type');
+    }
   }
 }
 
 export {
+  ConfigurableStream,
+  StreamType,
   StreamFactory
 };

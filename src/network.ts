@@ -7,15 +7,17 @@ class Network extends WardenStream {
     super('Network');
   }
 
-  onLeftStream(chunk: ResponseChunk, callback: TransformCallback): void {
+  onResponseStream(chunk: ResponseChunk, callback: TransformCallback): void {
     callback(undefined, chunk);
   }
 
-  onRightStream(chunk: RequestChunk, callback: TransformCallback): void {
-    request[chunk.requestOptions.method](chunk.requestOptions.url, (err, response, body) => {
-      this.leftStream.push({
-        ...chunk,
-        data: body
+  onRequestStream(chunk: RequestChunk, callback: TransformCallback): void {
+    request[chunk.requestOptions.method](chunk.requestOptions.url, (error, response, data) => {
+      this.pushResponse({
+        key: chunk.key,
+        cb: chunk.cb,
+        data,
+        error
       });
     });
     callback(undefined, null);

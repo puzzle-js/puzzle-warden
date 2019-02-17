@@ -9,71 +9,108 @@ interface RequestChunk {
   cb: RequestCallback;
 }
 
-interface ResponseChunk extends RequestChunk {
+interface ResponseChunk {
+  cb: RequestCallback;
   key: string;
-  data: string;
-  error: any;
+  data?: any;
+  error?: any;
+  cacheHit?: true;
 }
 
 abstract class WardenStream {
-  protected readonly rightStream: Transform | Readable;
-  protected readonly leftStream: Transform;
-  private readonly sideStreamNames: { left: string, right: string } = {
-    left: 'leftOutStream',
-    right: 'rightOutStream'
+  private readonly requestStream: Transform | Readable;
+  private readonly responseStream: Transform;
+  private readonly streamLinks: { previous: string, next: string } = {
+    previous: 'leftOutStream',
+    next: 'rightOutStream'
   };
   private readonly name: string;
   private readonly head: boolean;
-  private readonly end: boolean;
-  private readonly leftLogStream: PassThrough = new PassThrough({objectMode: true});
-  private readonly rightLogStream: PassThrough = new PassThrough({objectMode: true});
+  private readonly debug: boolean;
+  private readonly requestStreamPassThrough: PassThrough | undefined;
+  private readonly responseStreamPassThrough: PassThrough | undefined;
 
 
-  protected constructor(name: string, head = false, end = false) {
+  protected constructor(name: string, head = false, debug = process.env.WARDEN_LOGGER === 'true') {
     this.name = name;
-    this.end = end;
+    this.debug = debug;
     this.head = head;
-    this.onRightStream = this.onRightStream.bind(this);
-    this.onLeftStream = this.onLeftStream.bind(this);
+    this.onRequestStream = this.onRequestStream.bind(this);
+    this.onResponseStream = this.onResponseStream.bind(this);
 
-    if (head) {
-      this.rightStream = new Readable({
+    const [requestStream, responseStream, requestStreamPassThrough, responseStreamPassThrough] = this.createStreams();
+    this.requestStream = requestStream;
+    this.responseStream = responseStream;
+    this.requestStreamPassThrough = requestStreamPassThrough;
+    this.responseStreamPassThrough = responseStreamPassThrough;
+  }
+
+  private createStreams(): [Readable | Transform, Transform, PassThrough | undefined, PassThrough | undefined] {
+    let requestStream: Readable | Transform;
+    let responseStream: Transform;
+    let requestStreamPassThrough: PassThrough | undefined;
+    let responseStreamPassThrough: PassThrough | undefined;
+
+    if (this.head) {
+      requestStream = new Readable({
         objectMode: true,
-        read: this.onRightStream as () => void
+        read: this.onRequestStream as () => void
       });
     } else {
-      this.rightStream = new ParallelTransform(10, {ordered: false}, this.onRightStream);
+      requestStream = new ParallelTransform(10, {ordered: false}, this.onRequestStream);
     }
 
-    this.leftStream = new ParallelTransform(10, {ordered: false}, this.onLeftStream);
+    responseStream = new ParallelTransform(10, {ordered: false}, this.onResponseStream);
 
-    this.rightLogStream.on('data', (chunk: RequestChunk) => {
-      console.log(`${this.name} --> ${this.sideStreamNames.right}`, chunk);
-    });
+    if (this.debug) {
+      requestStreamPassThrough = new PassThrough({objectMode: true});
+      requestStreamPassThrough.on('data', (chunk: RequestChunk) => {
+        console.log(`${this.name} --> ${this.streamLinks.next}`, chunk);
+      });
 
-    this.leftLogStream.on('data', (chunk: RequestChunk) => {
-      console.log(`${this.sideStreamNames.left} <-- ${this.name}`, chunk);
-    });
+      responseStreamPassThrough = new PassThrough({objectMode: true});
+      responseStreamPassThrough.on('data', (chunk: RequestChunk) => {
+        console.log(`${this.streamLinks.previous} <-- ${this.name}`, chunk);
+      });
+    }
+
+    return [requestStream, responseStream, requestStreamPassThrough, responseStreamPassThrough];
   }
 
   connect(wardenStream: WardenStream) {
-    this.rightStream
-      .pipe(this.rightLogStream)
-      .pipe(wardenStream.rightStream as Transform);
+    let requestStream = this.requestStream;
+    let responseStream = wardenStream.responseStream;
 
-    wardenStream.sideStreamNames.left = this.name;
-    this.sideStreamNames.right = wardenStream.name;
+    if (this.debug) {
+      requestStream = requestStream
+        .pipe(this.requestStreamPassThrough!);
+      responseStream = responseStream
+        .pipe(wardenStream.responseStreamPassThrough!);
+    }
 
-    wardenStream.leftStream
-      .pipe(wardenStream.leftLogStream)
-      .pipe(this.leftStream);
+    requestStream
+      .pipe(wardenStream.requestStream as Transform);
+
+    wardenStream.streamLinks.previous = this.name;
+    this.streamLinks.next = wardenStream.name;
+
+    responseStream
+      .pipe(this.responseStream);
 
     return wardenStream;
   }
 
-  abstract onRightStream(chunk: RequestChunk, callback: TransformCallback): void;
+  pushResponse(chunk: ResponseChunk): boolean {
+    return this.responseStream.push(chunk);
+  }
 
-  abstract onLeftStream(chunk: ResponseChunk, callback: TransformCallback): void;
+  pushRequest(chunk: RequestChunk): boolean {
+    return this.requestStream.push(chunk);
+  }
+
+  abstract onRequestStream(chunk: RequestChunk, callback: TransformCallback): void;
+
+  abstract onResponseStream(chunk: ResponseChunk, callback: TransformCallback): void;
 }
 
 export {

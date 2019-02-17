@@ -36,7 +36,7 @@ describe("[request-manager]", () => {
     expect(requestManager).to.be.instanceOf(RequestManager);
   });
 
-  it("should create new stream and register to request manager", () => {
+  it("should create new stream and register to request manager without any plugins", () => {
     // Arrange
     const routeName = faker.random.word();
     const routeConfiguration = {
@@ -56,5 +56,33 @@ describe("[request-manager]", () => {
     // Act
     requestManager.register(routeName, routeConfiguration);
     expect(streamHead.connect.calledWithExactly(network)).to.eq(true);
+  });
+
+  it("should connect to cache when cache config enabled", () => {
+    // Arrange
+    const routeName = faker.random.word();
+    const routeConfiguration = {
+      identifier: 'test',
+      cache: true
+    } as RouteConfiguration;
+    const keyMaker = {};
+    const network = {};
+    const cache = {
+      connect: sandbox.stub()
+    };
+    const streamHead = {
+      connect: sandbox.stub()
+    };
+    streamFactoryMock.expects('createHead').returns(streamHead);
+    streamFactoryMock.expects('createNetwork').returns(network);
+    streamFactoryMock.expects('createCache').returns(cache);
+    tokenizerMock.expects('tokenize').withExactArgs(routeName, routeConfiguration.identifier).returns(keyMaker);
+    const requestManager = new RequestManager(streamFactory, tokenizer);
+
+
+    // Act
+    requestManager.register(routeName, routeConfiguration);
+    expect(streamHead.connect.calledWithExactly(cache)).to.eq(true);
+    expect(cache.connect.calledWithExactly(network)).to.eq(true);
   });
 });

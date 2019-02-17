@@ -32,7 +32,7 @@ describe("[tokenizer.ts]", () => {
     // Arrange
     const tokenizer = new Tokenizer();
     const name = '_name_';
-    const cacheKey = '_special_{cookies.test}_{headers.test}_{query.test}_{url}_key';
+    const cacheKey = '_special_{cookie.test}_{headers.test}_{query.test}_{url}_key';
     const method = 'get';
 
     // Act
@@ -44,11 +44,27 @@ describe("[tokenizer.ts]", () => {
     expect(key).to.eq('_name___special_c_a_c_/he_key');
   });
 
+  it("should create new tokenizer from key with interpolation wıth default ?", () => {
+    // Arrange
+    const tokenizer = new Tokenizer();
+    const name = '_name_';
+    const cacheKey = '_special_{cookie.test}_{headers.test}_{query.test}_{url}_key';
+    const method = 'get';
+
+    // Act
+    const keyMaker = tokenizer.tokenize(name, cacheKey);
+    const key = keyMaker('/he',{},{test:'a'},{test:'c'}, method);
+
+    // Assert
+    expect(keyMaker).to.be.a('function');
+    expect(key).to.eq('_name___special_?_a_c_/he_key');
+  });
+
   it("should create new tokenizer from key with interpolation", () => {
     // Arrange
     const tokenizer = new Tokenizer();
     const name = '_name_';
-    const cacheKey = '_special_{cookies.test}_\\{escaped}_{headers.test}_{query.test}_{url}_key';
+    const cacheKey = '_special_{cookie.test}_\\{escaped}_{headers.test}_{query.test}_{url}_key';
     const method = 'get';
 
     // Act

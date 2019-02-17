@@ -1,4 +1,3 @@
-import {CacheConfiguration} from "./cache-factory";
 import {RequestManager, RequestOptions, RouteConfiguration} from "./request-manager";
 import {RequestCallback} from "request";
 

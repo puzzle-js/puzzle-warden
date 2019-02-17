@@ -9,7 +9,10 @@
     "experimentalDecorators": true,
     "declaration": true,
     "sourceMap": true,
-    "noEmitOnError": true
+    "noEmitOnError": true,
+    "lib": [
+      "es2017"
+    ]
   },
   "exclude": [
     "./test/**"

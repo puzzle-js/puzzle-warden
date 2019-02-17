@@ -12,11 +12,13 @@ type KeyMaker = (
 class Tokenizer {
   tokenize(name: string, identifier: string): KeyMaker {
     const reversedIdentifier = reverseString(identifier);
-    const interpolationsAdded = reversedIdentifier.replace(/{(?!\\)/g, "{$");
+    const interpolationsAdded = reversedIdentifier
+      .replace(/{(?!\\)/g, `{$`)
+      .replace(/}([\w|.]+){(?!\\)\$/g, `}"?"||$1{\$`);
     const cacheKey = reverseString(interpolationsAdded);
     const cacheName = name.replace(/\W/g, "");
 
-    const fnContent = `${cacheName}_tokenizer(url,cookies,headers,query,method){return \`${cacheName}_${cacheKey}\`}`;
+    const fnContent = `${cacheName}_tokenizer(url,cookie,headers,query,method){return \`${cacheName}_${cacheKey}\`}`;
     const fn = new Function(`return function ${fnContent}`);
 
     return fn();

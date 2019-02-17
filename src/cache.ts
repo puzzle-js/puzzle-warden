@@ -2,13 +2,9 @@ import {RequestChunk, ResponseChunk, WardenStream} from "./warden-stream";
 import {TransformCallback} from "stream";
 
 interface CachePlugin {
-  get<T>(key: string): T | null;
+  get<T>(key: string): any;
 
   set(key: string, value: string): Promise<void> | void;
-}
-
-interface CacheResponse extends ResponseChunk {
-  cacheHit?: boolean;
 }
 
 const enum CACHING_STRATEGY {
@@ -26,17 +22,17 @@ class Cache extends WardenStream {
     this.storage = plugin;
   }
 
-  async onLeftStream(chunk: CacheResponse, callback: TransformCallback): Promise<void> {
+  async onResponseStream(chunk: ResponseChunk, callback: TransformCallback): Promise<void> {
     if (!chunk.cacheHit) {
       await this.storage.set(chunk.key, chunk.data);
     }
     callback(undefined, chunk);
   }
 
-  async onRightStream(chunk: RequestChunk, callback: TransformCallback): Promise<void> {
+  async onRequestStream(chunk: RequestChunk, callback: TransformCallback): Promise<void> {
     const response = await this.storage.get(chunk.key);
     if (response) {
-      this.leftStream.push({
+      this.pushResponse({
         ...chunk,
         data: response,
         cacheHit: true
