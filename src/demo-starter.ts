@@ -3,7 +3,6 @@ import {CacheFactory} from "./cache-factory";
 import {RequestManager} from "./request-manager";
 import {Tokenizer} from "./tokenizer";
 import {StreamFactory} from "./stream-factory";
-import request from "request";
 
 const cacheFactory = new CacheFactory();
 
@@ -12,25 +11,32 @@ const streamFactory = new StreamFactory(cacheFactory);
 const requestManager = new RequestManager(streamFactory, tokenizer);
 const warden = new Warden(requestManager);
 
-const stream: any = warden.register('test', {
+warden.register('test', {
   identifier: '{query.foo1}_{cookie.osman}',
-  cache: {
-    duration: 200
-  },
-  holder: true
+  cache: false,
+  holder: false
 });
 
 let input = 0;
 let output = 0;
 let failedToPush = 0;
+let stop = false;
+
+setTimeout(() => {
+  stop = true;
+  console.log(`${output}/${failedToPush}/${input}`);
+  console.log(`${(output / 100).toFixed(2)} rps`);
+}, 30000);
 
 
-const t = setInterval(() => {
+const newRequest = () => {
   input++;
 
   const pRes = warden.request('test', {
     url: `https://postman-echo.com/get?foo1=${Math.random().toFixed(2)}&foo2=bar2`,
-    headers: {},
+    headers: {
+      cookie: `osman=${Math.random().toFixed(1)}`
+    },
     method: "get",
   }, (err, response, body) => {
     output++;
@@ -41,10 +47,9 @@ const t = setInterval(() => {
   // });
 
   if (!pRes) failedToPush++;
-}, 0);
+  if (!stop) setImmediate(newRequest, 0);
+
+};
 
 
-setTimeout(() => {
-  console.log(`${output}/${failedToPush}/${input}`);
-  clearInterval(t);
-}, 10000);
+newRequest();

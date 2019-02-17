@@ -38,6 +38,7 @@
     "parallel-transform": "^1.1.0",
     "redis": "^2.8.0",
     "reflect-metadata": "^0.1.13",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "why-is-node-running": "^2.0.3"
   }
 }

@@ -70,6 +70,7 @@ abstract class WardenStream implements WardenStreamer {
     responseStream = new ParallelTransform(10, {ordered: false}, this.onResponse);
 
     if (this.debug) {
+      console.log('DEBUUUUG');
       requestStreamPassThrough = new PassThrough({objectMode: true});
       requestStreamPassThrough.on('data', (chunk: RequestChunk) => {
         console.log(`${this.name} --> ${this.streamLinks.next}`, chunk);
