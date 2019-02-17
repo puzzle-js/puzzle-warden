@@ -104,6 +104,21 @@ describe("[cache-factory.ts]", () => {
 
     // Assert
     expect(test).to.throw();
+  });
 
+  it("should create default cache when configuration provided as true", () => {
+    // Arrange
+    const cacheFactory = new CacheFactory();
+    const cacheConfiguration = true;
+    const pluginStub = sandbox.stub(cacheFactory, 'getPlugin');
+    const msStub = sandbox.stub(cacheFactory, 'parseMs');
+
+    // Act
+    const cache = cacheFactory.create(cacheConfiguration);
+
+    // Assert
+    expect(pluginStub.calledWithExactly(undefined)).to.eq(true);
+    expect(msStub.calledWithExactly(undefined)).to.eq(true);
+    expect(cache).to.be.instanceOf(Cache);
   });
 });

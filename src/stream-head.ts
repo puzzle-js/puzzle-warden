@@ -9,7 +9,7 @@ class StreamHead extends WardenStream {
     super('Head', true);
   }
 
-  onResponseStream(chunk: ResponseChunk, callback: TransformCallback): void {
+  onResponse(chunk: ResponseChunk, callback: TransformCallback): void {
     chunk.cb(
       chunk.error,
       {
@@ -21,11 +21,11 @@ class StreamHead extends WardenStream {
     callback(undefined, null);
   }
 
-  onRequestStream(chunk: RequestChunk, callback: TransformCallback): void {
+  onRequest(chunk: RequestChunk, callback: TransformCallback): void {
   }
 
   start(key: string, requestOptions: RequestOptions, cb: RequestCallback){
-    return this.pushRequest({
+    return this.request({
       key,
       requestOptions,
       cb

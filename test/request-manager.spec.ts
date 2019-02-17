@@ -2,7 +2,7 @@ import "reflect-metadata";
 
 import {expect} from "chai";
 import sinon, {SinonMock} from "sinon";
-import {RequestManager, RouteConfiguration} from "../src/request-manager";
+import {RequestManager, RequestOptions, RouteConfiguration, StreamType} from "../src/request-manager";
 import {CacheFactory} from "../src/cache-factory";
 import {StreamFactory} from "../src/stream-factory";
 import {Tokenizer} from "../src/tokenizer";
@@ -17,11 +17,14 @@ const tokenizer = new Tokenizer();
 
 let streamFactoryMock: SinonMock;
 let tokenizerMock: SinonMock;
+let requestManager: RequestManager;
 
 describe("[request-manager]", () => {
   beforeEach(() => {
     streamFactoryMock = sandbox.mock(streamFactory);
     tokenizerMock = sandbox.mock(tokenizer);
+
+    requestManager = new RequestManager(streamFactory, tokenizer);
   });
 
   afterEach(() => {
@@ -36,53 +39,126 @@ describe("[request-manager]", () => {
     expect(requestManager).to.be.instanceOf(RequestManager);
   });
 
-  it("should create new stream and register to request manager without any plugins", () => {
+  it("should register new route without any plugin", () => {
     // Arrange
-    const routeName = faker.random.word();
+    const name = faker.random.word();
     const routeConfiguration = {
-      identifier: 'test'
+      identifier: faker.random.word()
     } as RouteConfiguration;
-    const keyMaker = {};
-    const network = {};
-    const streamHead = {
-      connect: sandbox.stub()
+    const headStream = {
+      connect: sandbox.stub().returnsArg(0)
     };
-    streamFactoryMock.expects('createHead').returns(streamHead);
-    streamFactoryMock.expects('createNetwork').returns(network);
-    tokenizerMock.expects('tokenize').withExactArgs(routeName, routeConfiguration.identifier).returns(keyMaker);
-    const requestManager = new RequestManager(streamFactory, tokenizer);
-
+    const networkStream = {
+      connect: sandbox.stub().returnsArg(0)
+    };
+    const keyMaker = sandbox.stub();
+    streamFactoryMock.expects('create').withExactArgs(StreamType.HEAD).returns(headStream);
+    streamFactoryMock.expects('create').withExactArgs(StreamType.NETWORK).returns(networkStream);
+    tokenizerMock.expects('tokenize').withExactArgs(name, routeConfiguration.identifier).returns(keyMaker);
 
     // Act
-    requestManager.register(routeName, routeConfiguration);
-    expect(streamHead.connect.calledWithExactly(network)).to.eq(true);
+    requestManager.register(name, routeConfiguration);
+
+    // Assert
+    expect(headStream.connect.calledWithExactly(networkStream)).to.eq(true);
   });
 
-  it("should connect to cache when cache config enabled", () => {
+  it("should register new route without any plugin with boolean false", () => {
     // Arrange
-    const routeName = faker.random.word();
+    const name = faker.random.word();
     const routeConfiguration = {
-      identifier: 'test',
-      cache: true
+      identifier: faker.random.word(),
+      cache: false,
+      holder: false
     } as RouteConfiguration;
-    const keyMaker = {};
-    const network = {};
-    const cache = {
-      connect: sandbox.stub()
+    const headStream = {
+      connect: sandbox.stub().returnsArg(0)
     };
-    const streamHead = {
-      connect: sandbox.stub()
+    const networkStream = {
+      connect: sandbox.stub().returnsArg(0)
     };
-    streamFactoryMock.expects('createHead').returns(streamHead);
-    streamFactoryMock.expects('createNetwork').returns(network);
-    streamFactoryMock.expects('createCache').returns(cache);
-    tokenizerMock.expects('tokenize').withExactArgs(routeName, routeConfiguration.identifier).returns(keyMaker);
-    const requestManager = new RequestManager(streamFactory, tokenizer);
-
+    const keyMaker = sandbox.stub();
+    streamFactoryMock.expects('create').withExactArgs(StreamType.HEAD).returns(headStream);
+    streamFactoryMock.expects('create').withExactArgs(StreamType.NETWORK).returns(networkStream);
+    tokenizerMock.expects('tokenize').withExactArgs(name, routeConfiguration.identifier).returns(keyMaker);
 
     // Act
-    requestManager.register(routeName, routeConfiguration);
-    expect(streamHead.connect.calledWithExactly(cache)).to.eq(true);
-    expect(cache.connect.calledWithExactly(network)).to.eq(true);
+    requestManager.register(name, routeConfiguration);
+
+    // Assert
+    expect(headStream.connect.calledWithExactly(networkStream)).to.eq(true);
+  });
+
+  it("should register new route with a plugin", () => {
+    // Arrange
+    const name = faker.random.word();
+    const routeConfiguration = {
+      identifier: faker.random.word(),
+      cache: true
+    } as RouteConfiguration;
+    const headStream = {
+      connect: sandbox.stub().returnsArg(0)
+    };
+    const networkStream = {
+      connect: sandbox.stub().returnsArg(0)
+    };
+    const cacheStream = {
+      connect: sandbox.stub().returnsArg(0)
+    };
+    const keyMaker = sandbox.stub();
+    streamFactoryMock.expects('create').withExactArgs(StreamType.HEAD).returns(headStream);
+    streamFactoryMock.expects('create').withExactArgs(StreamType.NETWORK).returns(networkStream);
+    streamFactoryMock.expects('create').withExactArgs(StreamType.CACHE, routeConfiguration.cache).returns(cacheStream);
+    tokenizerMock.expects('tokenize').withExactArgs(name, routeConfiguration.identifier).returns(keyMaker);
+
+    // Act
+    requestManager.register(name, routeConfiguration);
+
+    // Assert
+    expect(headStream.connect.calledWithExactly(cacheStream)).to.eq(true);
+    expect(cacheStream.connect.calledWithExactly(networkStream)).to.eq(true);
+  });
+
+  it("should handle new requests", () => {
+    // Arrange
+    const name = faker.random.word();
+    const requestOptions: RequestOptions = {
+      url: faker.internet.url(),
+      headers: {},
+      method: 'get'
+    };
+    const routeConfiguration = {
+      identifier: faker.random.word()
+    } as RouteConfiguration;
+    const headStream = {
+      connect: sandbox.stub().returnsArg(0),
+      start: sandbox.stub()
+    };
+    const networkStream = {
+      connect: sandbox.stub().returnsArg(0)
+    };
+    const key = faker.random.word();
+    const keyMaker = sandbox.stub().returns(key);
+    streamFactoryMock.expects('create').withExactArgs(StreamType.HEAD).returns(headStream);
+    streamFactoryMock.expects('create').withExactArgs(StreamType.NETWORK).returns(networkStream);
+    tokenizerMock.expects('tokenize').withExactArgs(name, routeConfiguration.identifier).returns(keyMaker);
+    const stub = sandbox.stub();
+
+    // Act
+    requestManager.register(name, routeConfiguration);
+    requestManager.handle(name, requestOptions, stub);
+
+    // Assert
+    expect(headStream.start.calledWithExactly(key, requestOptions, stub)).to.eq(true);
+  });
+
+  it("should throw error if not registered route tries to handle", () => {
+    // Act
+    const test = () => {
+      requestManager.handle(faker.random.word(), {} as any, sandbox.stub());
+    };
+
+    // Assert
+    expect(test).to.throw();
   });
 });

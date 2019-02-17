@@ -24,34 +24,27 @@ let input = 0;
 let output = 0;
 let failedToPush = 0;
 
-console.log(process.memoryUsage());
-
-const a = setInterval(() => {
-  console.log("========")
-  console.log(process.memoryUsage());
-}, 3000);
 
 const t = setInterval(() => {
   input++;
 
-  // const pRes = warden.request('test', {
-  //   url: `https://postman-echo.com/get?foo1=${Math.random().toFixed(2)}&foo2=bar2`,
-  //   headers: {},
-  //   method: "get",
-  // }, (err, response, body) => {
-  //   output++;
-  // });
-
-  request(`https://postman-echo.com/get?foo1=${Math.random().toFixed(2)}&foo2=bar2`, (err,response,done) => {
+  const pRes = warden.request('test', {
+    url: `https://postman-echo.com/get?foo1=${Math.random().toFixed(2)}&foo2=bar2`,
+    headers: {},
+    method: "get",
+  }, (err, response, body) => {
     output++;
   });
 
-  // if (!pRes) failedToPush++;
+  // request(`https://postman-echo.com/get?foo1=${Math.random().toFixed(2)}&foo2=bar2`, (err,response,done) => {
+  //   output++;
+  // });
+
+  if (!pRes) failedToPush++;
 }, 0);
 
 
 setTimeout(() => {
   console.log(`${output}/${failedToPush}/${input}`);
   clearInterval(t);
-  clearInterval(a);
 }, 10000);

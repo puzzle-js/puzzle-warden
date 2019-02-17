@@ -1,19 +1,20 @@
 import {RequestChunk, ResponseChunk, WardenStream} from "./warden-stream";
 import {TransformCallback} from "stream";
 import * as request from "request";
+import {StreamType} from "./stream-factory";
 
 class Network extends WardenStream {
   constructor() {
-    super('Network');
+    super(StreamType.NETWORK);
   }
 
-  onResponseStream(chunk: ResponseChunk, callback: TransformCallback): void {
+  onResponse(chunk: ResponseChunk, callback: TransformCallback): void {
     callback(undefined, chunk);
   }
 
-  onRequestStream(chunk: RequestChunk, callback: TransformCallback): void {
+  onRequest(chunk: RequestChunk, callback: TransformCallback): void {
     request[chunk.requestOptions.method](chunk.requestOptions.url, (error, response, data) => {
-      this.pushResponse({
+      this.respond({
         key: chunk.key,
         cb: chunk.cb,
         data,

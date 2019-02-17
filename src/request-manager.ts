@@ -7,9 +7,6 @@ import {CacheConfiguration} from "./cache-factory";
 import {WardenStream} from "./warden-stream";
 import Cookie from "cookie";
 import {Network} from "./network";
-import {Holder} from "./holder";
-import {Cache} from "./cache";
-import {MemoryCache} from "./memory-cache";
 
 interface StreamMap {
   [routeName: string]: {
@@ -36,7 +33,7 @@ interface RouteConfiguration {
 }
 
 class RequestManager {
-  streams: StreamMap = {};
+  private streams: StreamMap = {};
   private streamFactory: StreamFactory;
   private tokenizer: Tokenizer;
 
@@ -54,22 +51,17 @@ class RequestManager {
     const network = this.streamFactory.create<Network>(StreamType.NETWORK);
     const keyMaker = this.tokenizer.tokenize(name, routeConfiguration.identifier);
 
-    // Object.values(ConfigurableStream).forEach((streamType: string) => {
-    //   const configuration = routeConfiguration[streamType];
-    //   if (configuration) {
-    //     console.log()
-    //     const stream = this.streamFactory.create<WardenStream>(streamType, configuration);
-    //     streamLink = streamLink
-    //       .connect(stream);
-    //   }
-    // });
+    Object.values(ConfigurableStream).forEach((streamType: string) => {
+      const configuration = routeConfiguration[streamType];
+      if (configuration) {
+        const stream = this.streamFactory.create<WardenStream>(streamType, configuration);
+        streamLink = streamLink
+          .connect(stream);
+      }
+    });
 
-
-    stream
-      .connect(new Holder())
-      .connect(new Cache(new MemoryCache(), 2000))
+    streamLink
       .connect(network);
-
 
     this.streams[name] = {
       keyMaker,
@@ -78,8 +70,9 @@ class RequestManager {
   }
 
   handle(name: string, requestOptions: RequestOptions, cb: RequestCallback) {
+    if(!this.streams[name]) throw new Error(`Route configuration not provided for ${name}`);
     const request = Url.parse(requestOptions.url, true);
-    const cookies = Cookie.parse(requestOptions.headers.Cookie || requestOptions.headers.cookie || '');
+    const cookies = Cookie.parse(requestOptions.headers.cookie || requestOptions.headers.Cookie || '');
     const key = this.streams[name].keyMaker(
       request.path,
       cookies,
@@ -93,7 +86,6 @@ class RequestManager {
 }
 
 export {
-  StreamType,
   RequestOptions,
   RouteConfiguration,
   RequestManager

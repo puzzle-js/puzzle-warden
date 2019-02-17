@@ -17,7 +17,14 @@ interface ResponseChunk {
   cacheHit?: true;
 }
 
-abstract class WardenStream {
+interface WardenStreamer {
+  onRequest(chunk: RequestChunk, callback: TransformCallback): void;
+  onResponse(chunk: ResponseChunk, callback: TransformCallback): void;
+  respond(chunk: ResponseChunk): boolean;
+  request(chunk: RequestChunk): boolean;
+}
+
+abstract class WardenStream implements WardenStreamer {
   private readonly requestStream: Transform | Readable;
   private readonly responseStream: Transform;
   private readonly streamLinks: { previous: string, next: string } = {
@@ -35,8 +42,8 @@ abstract class WardenStream {
     this.name = name;
     this.debug = debug;
     this.head = head;
-    this.onRequestStream = this.onRequestStream.bind(this);
-    this.onResponseStream = this.onResponseStream.bind(this);
+    this.onRequest = this.onRequest.bind(this);
+    this.onResponse = this.onResponse.bind(this);
 
     const [requestStream, responseStream, requestStreamPassThrough, responseStreamPassThrough] = this.createStreams();
     this.requestStream = requestStream;
@@ -54,13 +61,13 @@ abstract class WardenStream {
     if (this.head) {
       requestStream = new Readable({
         objectMode: true,
-        read: this.onRequestStream as () => void
+        read: this.onRequest as () => void
       });
     } else {
-      requestStream = new ParallelTransform(10, {ordered: false}, this.onRequestStream);
+      requestStream = new ParallelTransform(10, {ordered: false}, this.onRequest);
     }
 
-    responseStream = new ParallelTransform(10, {ordered: false}, this.onResponseStream);
+    responseStream = new ParallelTransform(10, {ordered: false}, this.onResponse);
 
     if (this.debug) {
       requestStreamPassThrough = new PassThrough({objectMode: true});
@@ -100,17 +107,17 @@ abstract class WardenStream {
     return wardenStream;
   }
 
-  pushResponse(chunk: ResponseChunk): boolean {
+  respond(chunk: ResponseChunk): boolean {
     return this.responseStream.push(chunk);
   }
 
-  pushRequest(chunk: RequestChunk): boolean {
+  request(chunk: RequestChunk): boolean {
     return this.requestStream.push(chunk);
   }
 
-  abstract onRequestStream(chunk: RequestChunk, callback: TransformCallback): void;
+  abstract onRequest(chunk: RequestChunk, callback: TransformCallback): void;
 
-  abstract onResponseStream(chunk: ResponseChunk, callback: TransformCallback): void;
+  abstract onResponse(chunk: ResponseChunk, callback: TransformCallback): void;
 }
 
 export {
