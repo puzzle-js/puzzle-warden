@@ -6,6 +6,7 @@ interface HolderConfiguration {
 
 }
 
+
 class Holder extends WardenStream {
   private holdQueue: { [key: string]: ResponseChunk[] | null } = {};
 
@@ -15,30 +16,30 @@ class Holder extends WardenStream {
 
   onResponse(chunk: ResponseChunk, callback: TransformCallback): void {
     const holdQueue = this.holdQueue[chunk.key];
-    if (holdQueue && Array.isArray(holdQueue)) {
+
+    if (holdQueue) {
       holdQueue.forEach(holdChunk => {
         this.respond({
           ...holdChunk,
           data: chunk.data
         });
       });
+
       this.holdQueue[chunk.key] = null;
       callback(undefined, null);
+    } else {
+      callback(undefined, chunk);
     }
   }
 
   onRequest(chunk: RequestChunk, callback: TransformCallback): void {
     const holdQueue = this.holdQueue[chunk.key];
-    const holdChunk = {
-      key: chunk.key,
-      cb: chunk.cb,
-    };
 
-    if (holdQueue && Array.isArray(holdQueue)) {
-      holdQueue.push(holdChunk);
+    if (holdQueue) {
+      holdQueue.push(chunk);
       callback(undefined, null);
     } else {
-      this.holdQueue[chunk.key] = [holdChunk];
+      this.holdQueue[chunk.key] = [chunk];
       callback(undefined, chunk);
     }
   }

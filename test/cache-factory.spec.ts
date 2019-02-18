@@ -2,9 +2,9 @@ import "reflect-metadata";
 
 import {expect} from "chai";
 import sinon from "sinon";
-import {CACHE_PLUGIN, CacheFactory} from "../src/cache-factory";
+import {CACHE_PLUGIN, CacheFactory, CACHING_STRATEGY} from "../src/cache-factory";
 import {MemoryCache} from "../src/memory-cache";
-import {Cache} from "../src/cache";
+import {CacheThenNetwork} from "../src/cache-then-network";
 
 const sandbox = sinon.createSandbox();
 
@@ -47,7 +47,23 @@ describe("[cache-factory.ts]", () => {
     expect(plugin).to.be.instanceOf(MemoryCache);
   });
 
-  it("should create new cache instance based onn configuration", () => {
+  it("should create new cache instance based on configuration with custom strategy", () => {
+    // Arrange
+    const cacheFactory = new CacheFactory();
+    const cacheConfiguration = {
+      strategy: CACHING_STRATEGY.CacheThenNetwork
+    };
+    const pluginStub = sandbox.stub(cacheFactory, 'getPlugin');
+
+    // Act
+    const cache = cacheFactory.create(cacheConfiguration);
+
+    // Assert
+    expect(pluginStub.calledWithExactly(undefined)).to.eq(true);
+    expect(cache).to.be.instanceOf(CacheThenNetwork);
+  });
+
+  it("should create new cache instance based on configuration", () => {
     // Arrange
     const cacheFactory = new CacheFactory();
     const cacheConfiguration = {};
@@ -58,7 +74,7 @@ describe("[cache-factory.ts]", () => {
 
     // Assert
     expect(pluginStub.calledWithExactly(undefined)).to.eq(true);
-    expect(cache).to.be.instanceOf(Cache);
+    expect(cache).to.be.instanceOf(CacheThenNetwork);
   });
 
   it("should parse duration in string with ms", () => {
@@ -119,6 +135,6 @@ describe("[cache-factory.ts]", () => {
     // Assert
     expect(pluginStub.calledWithExactly(undefined)).to.eq(true);
     expect(msStub.calledWithExactly(undefined)).to.eq(true);
-    expect(cache).to.be.instanceOf(Cache);
+    expect(cache).to.be.instanceOf(CacheThenNetwork);
   });
 });

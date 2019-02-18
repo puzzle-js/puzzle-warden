@@ -2,9 +2,9 @@ import "reflect-metadata";
 
 import {expect} from "chai";
 import sinon, {SinonMock} from "sinon";
-import {Cache} from "../src/cache";
 import {MemoryCache} from "../src/memory-cache";
-import {Transform} from "stream";
+import {CacheThenNetwork} from "../src/cache-then-network";
+
 
 const sandbox = sinon.createSandbox();
 
@@ -24,9 +24,9 @@ describe("[cache.ts]", () => {
 
   it("should create new Warden Stream", () => {
     // Arrange
-    const cache = new Cache(memory, defaultCacheDuration);
+    const cache = new CacheThenNetwork(memory, defaultCacheDuration);
 
     // Assert
-    expect(cache).to.be.instanceOf(Cache);
+    expect(cache).to.be.instanceOf(CacheThenNetwork);
   });
 });

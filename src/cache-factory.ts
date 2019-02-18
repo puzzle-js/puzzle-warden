@@ -1,12 +1,25 @@
-import {CachePlugin, CACHING_STRATEGY} from "./cache";
 import {MemoryCache} from "./memory-cache";
-import {Cache} from "./cache";
 import ms from "ms";
+import {RequestChunk, ResponseChunk} from "./warden-stream";
+import {TransformCallback} from "stream";
+import {CacheThenNetwork} from "./cache-then-network";
+
+
+interface CachePlugin {
+  get<T>(key: string): any;
+
+  set(key: string, value: object | string): Promise<void> | void;
+}
 
 const enum CACHE_PLUGIN {
   Couchbase = 'couchbase',
   Redis = 'redis',
   Memory = 'memory'
+}
+
+enum CACHING_STRATEGY {
+  CacheThenNetwork,
+  NetWorkThenCache
 }
 
 interface CacheConfiguration {
@@ -15,15 +28,26 @@ interface CacheConfiguration {
   duration?: string | number;
 }
 
+export interface Cache {
+  onRequest(chunk: ResponseChunk, callback: TransformCallback): Promise<void>;
+
+  onRequest(chunk: RequestChunk, callback: TransformCallback): Promise<void>;
+}
+
 const defaultCachingDuration = 60000;
+
+const cachingStrategyImplementations = {
+  [CACHING_STRATEGY.CacheThenNetwork as number]: CacheThenNetwork
+} as { [key: number]: { new(plugin: CachePlugin, ms: number): Cache } };
 
 class CacheFactory {
   create(configuration: CacheConfiguration | true) {
-    if(configuration === true) configuration = {};
+    if (configuration === true) configuration = {};
     const plugin = this.getPlugin(configuration.plugin);
     const cacheDuration = this.parseMs(configuration.duration);
+    const strategy = this.getStrategy(configuration.strategy);
 
-    return new Cache(plugin, cacheDuration);
+    return new cachingStrategyImplementations[strategy](plugin, cacheDuration);
   }
 
   getPlugin(plugin?: CACHE_PLUGIN): CachePlugin {
@@ -47,9 +71,19 @@ class CacheFactory {
         throw new Error('Unknown type provided for cache duration');
     }
   }
+
+  getStrategy(strategy?: CACHING_STRATEGY) {
+    if (typeof strategy === 'undefined' || typeof CACHING_STRATEGY[strategy] === 'undefined') {
+      return CACHING_STRATEGY.CacheThenNetwork;
+    }
+
+    return strategy;
+  }
 }
 
 export {
+  CachePlugin,
+  CACHING_STRATEGY,
   CacheFactory,
   CacheConfiguration,
   CACHE_PLUGIN
