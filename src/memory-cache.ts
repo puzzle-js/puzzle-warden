@@ -1,4 +1,5 @@
-import {CachePlugin} from "./cache";
+import {CachePlugin} from "./cache-factory";
+
 
 class MemoryCache implements CachePlugin {
   cache: { [key: string]: object } = {};
