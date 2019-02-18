@@ -1,6 +1,6 @@
 import {PassThrough, Readable, Transform, TransformCallback} from "stream";
 import ParallelTransform from "parallel-transform";
-import {RequestCallback} from "request";
+import {Request, RequestCallback} from "request";
 import {RequestOptions} from "./request-manager";
 
 interface RequestChunk {
@@ -70,7 +70,6 @@ abstract class WardenStream implements WardenStreamer {
     responseStream = new ParallelTransform(10, {ordered: false}, this.onResponse);
 
     if (this.debug) {
-      console.log('DEBUUUUG');
       requestStreamPassThrough = new PassThrough({objectMode: true});
       requestStreamPassThrough.on('data', (chunk: RequestChunk) => {
         console.log(`${this.name} --> ${this.streamLinks.next}`, chunk);
