@@ -1,6 +1,6 @@
 import {MemoryCache} from "./memory-cache";
 import ms from "ms";
-import {RequestChunk, ResponseChunk} from "./warden-stream";
+import {RequestChunk, ResponseChunk, WardenStream} from "./warden-stream";
 import {TransformCallback} from "stream";
 import {CacheThenNetwork} from "./cache-then-network";
 
@@ -28,7 +28,7 @@ interface CacheConfiguration {
   duration?: string | number;
 }
 
-export interface Cache {
+export interface Cache extends WardenStream {
   onRequest(chunk: ResponseChunk, callback: TransformCallback): Promise<void>;
 
   onRequest(chunk: RequestChunk, callback: TransformCallback): Promise<void>;

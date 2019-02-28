@@ -55,13 +55,11 @@ class RequestManager {
       const configuration = routeConfiguration[streamType];
       if (configuration) {
         const stream = this.streamFactory.create<WardenStream>(streamType, configuration);
-        streamLink = streamLink
-          .connect(stream);
+        streamLink = streamLink.connect(stream);
       }
     });
 
-    streamLink
-      .connect(network);
+    streamLink.connect(network);
 
     this.streams[name] = {
       keyMaker,

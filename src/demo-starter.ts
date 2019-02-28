@@ -13,8 +13,8 @@ const warden = new Warden(requestManager);
 
 warden.register('test', {
   identifier: '{query.foo1}_{cookie.osman}',
-  cache: false,
-  holder: false
+  cache: true,
+  holder: true
 });
 
 let input = 0;

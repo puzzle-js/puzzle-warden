@@ -29,4 +29,6 @@ describe("[cache.ts]", () => {
     // Assert
     expect(cache).to.be.instanceOf(CacheThenNetwork);
   });
+
+
 });

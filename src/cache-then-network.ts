@@ -35,7 +35,6 @@ class CacheThenNetwork extends WardenStream {
         data: response,
         cacheHit: true
       });
-
       callback(undefined, null);
     } else {
       callback(undefined, chunk);
