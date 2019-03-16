@@ -19,8 +19,11 @@ interface ResponseChunk {
 
 interface WardenStreamer {
   onRequest(chunk: RequestChunk, callback: TransformCallback): void;
+
   onResponse(chunk: ResponseChunk, callback: TransformCallback): void;
+
   respond(chunk: ResponseChunk): boolean;
+
   request(chunk: RequestChunk): boolean;
 }
 

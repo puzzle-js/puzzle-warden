@@ -37,8 +37,8 @@ class StreamFactory {
         return this.cacheFactory.create(configuration as T) as unknown as U;
       case StreamType.HOLDER:
         return new Holder() as unknown as U;
-      case StreamType.CIRCUIT:
-        throw new Error('Not implemented');
+      // case StreamType.CIRCUIT:
+      //   throw new Error('Not implemented');
       case StreamType.NETWORK:
         return new Network(this.requestWrapper) as unknown as U;
       case StreamType.HEAD:
