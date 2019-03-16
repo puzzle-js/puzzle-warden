@@ -22,6 +22,7 @@ class StreamHead extends WardenStream {
   }
 
   onRequest(chunk: RequestChunk, callback: TransformCallback): void {
+    throw new Error('Stream head cant be piped');
   }
 
   start(key: string, requestOptions: RequestOptions, cb: RequestCallback){

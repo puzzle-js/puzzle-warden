@@ -1,21 +1,14 @@
-import request from "request";
-import * as https from "https";
+import request, {CoreOptions} from "request";
 
 class RequestWrapper {
   request: request.RequestAPI<request.Request, request.CoreOptions, request.RequiredUriUrl> | request.DefaultUriUrlRequestApi<request.Request, request.CoreOptions, request.OptionalUriUrl>;
 
-  constructor(
-    options?: request.CoreOptions
-  ) {
-    if (options) {
-      this.request = request.defaults(options);
-    }
-
+  constructor() {
     this.request = request;
   }
 
-  private() {
-
+  config(options: CoreOptions) {
+    this.request = request.defaults(options);
   }
 }
 
