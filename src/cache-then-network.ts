@@ -5,10 +5,10 @@ import {CachePlugin} from "./cache-factory";
 
 
 class CacheThenNetwork extends WardenStream {
-  private storage: CachePlugin;
-  private ms: number;
+  private readonly storage: CachePlugin;
+  private readonly ms?: number;
 
-  constructor(plugin: CachePlugin, ms: number) {
+  constructor(plugin: CachePlugin, ms?: number) {
     super(StreamType.CACHE);
 
     this.ms = ms;
@@ -17,10 +17,7 @@ class CacheThenNetwork extends WardenStream {
 
   async onResponse(chunk: ResponseChunk, callback: TransformCallback): Promise<void> {
     if (!chunk.cacheHit) {
-      await this.storage.set(chunk.key, {
-        data: chunk.data,
-        t: Date.now()
-      });
+      await this.storage.set(chunk.key, chunk.data, this.ms);
     }
 
     callback(undefined, chunk);

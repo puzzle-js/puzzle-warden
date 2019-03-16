@@ -60,7 +60,7 @@ describe("[tokenizer.ts]", () => {
     expect(key).to.eq('_name___special_?_a_c_/he_key');
   });
 
-  it("should create new tokenizer from key with interpolation", () => {
+  it("should create new tokenizer from key with interpolation 2", () => {
     // Arrange
     const tokenizer = new Tokenizer();
     const name = '_name_';
@@ -74,5 +74,21 @@ describe("[tokenizer.ts]", () => {
     // Assert
     expect(keyMaker).to.be.a('function');
     expect(key).to.eq('_name___special_c_{escaped}_a_c_/he_key');
+  });
+
+  it("should create new tokenizer from key with interpolation and custom fn", () => {
+    // Arrange
+    const tokenizer = new Tokenizer();
+    const name = '_name_';
+    const cacheKey = `_special_{cookie.test}_\\{escaped}_{headers.test}_{query.test}_{url}_key_{url.split('h')[1]}`;
+    const method = 'get';
+
+    // Act
+    const keyMaker = tokenizer.tokenize(name, cacheKey);
+    const key = keyMaker('/he',{test:'c'},{test:'a'},{test:'c'}, method);
+
+    // Assert
+    expect(keyMaker).to.be.a('function');
+    expect(key).to.eq('_name___special_c_{escaped}_a_c_/he_key_e');
   });
 });

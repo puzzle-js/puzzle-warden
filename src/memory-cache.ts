@@ -2,15 +2,32 @@ import {CachePlugin} from "./cache-factory";
 
 
 class MemoryCache implements CachePlugin {
-  cache: { [key: string]: any } = {};
+  cache: {
+    [key: string]: {
+      value: unknown;
+      expire: number | null;
+    }
+  } = {};
 
-  get(key: string): any {
-    return this.cache[key];
+  async get<T>(key: string): Promise<T | null> {
+    if (!this.cache[key]) return null;
+
+    if (this.cache[key].expire && this.cache[key].expire! < Date.now()) {
+      delete this.cache[key];
+      return null;
+    }
+
+    return this.cache[key].value as T;
   }
 
-  set(key: string, value: any ): void {
-    this.cache[key] = value;
+  async set(key: string, value: unknown, ms?: number): Promise<void> {
+    this.cache[key] = {
+      value,
+      expire: ms ? Date.now() + ms : null
+    };
   }
+
+  // todo Clear storage when expired with timer
 }
 
 export {

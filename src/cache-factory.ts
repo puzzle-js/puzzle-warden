@@ -4,11 +4,10 @@ import {RequestChunk, ResponseChunk, WardenStream} from "./warden-stream";
 import {TransformCallback} from "stream";
 import {CacheThenNetwork} from "./cache-then-network";
 
-
 interface CachePlugin {
-  get<T>(key: string): any;
+  get<T>(key: string): Promise<T | null>;
 
-  set(key: string, value: object | string): Promise<void> | void;
+  set(key: string, value: unknown, ms?: number): Promise<void>;
 }
 
 const enum CACHE_PLUGIN {

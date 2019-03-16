@@ -28,7 +28,7 @@ class StreamFactory {
   create<U, T = {}>(streamType: string, configuration?: T) {
     switch (streamType) {
       case StreamType.CACHE:
-        return this.cacheFactory.create(configuration as T);
+        return this.cacheFactory.create(configuration as T) as unknown as U;
       case StreamType.HOLDER:
         return new Holder() as unknown as U;
       case StreamType.CIRCUIT:
