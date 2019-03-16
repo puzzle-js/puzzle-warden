@@ -6,7 +6,6 @@ interface HolderConfiguration {
 
 }
 
-
 class Holder extends WardenStream {
   private holdQueue: { [key: string]: ResponseChunk[] | null } = {};
 

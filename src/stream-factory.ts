@@ -2,6 +2,7 @@ import {Network} from "./network";
 import {CacheFactory} from "./cache-factory";
 import {StreamHead} from "./stream-head";
 import {Holder} from "./holder";
+import {RequestWrapper} from "./request-wrapper";
 
 const enum StreamType {
   HOLDER = 'holder',
@@ -19,10 +20,15 @@ enum ConfigurableStream {
 
 
 class StreamFactory {
-  private cacheFactory: CacheFactory;
+  private readonly cacheFactory: CacheFactory;
+  private readonly requestWrapper: RequestWrapper;
 
-  constructor(cacheFactory: CacheFactory) {
+  constructor(
+    cacheFactory: CacheFactory,
+    requestWrapper: RequestWrapper
+  ) {
     this.cacheFactory = cacheFactory;
+    this.requestWrapper = requestWrapper;
   }
 
   create<U, T = {}>(streamType: string, configuration?: T) {
@@ -34,7 +40,7 @@ class StreamFactory {
       case StreamType.CIRCUIT:
         throw new Error('Not implemented');
       case StreamType.NETWORK:
-        return new Network() as unknown as U;
+        return new Network(this.requestWrapper) as unknown as U;
       case StreamType.HEAD:
         return new StreamHead() as unknown as U;
       default:

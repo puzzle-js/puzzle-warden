@@ -3,13 +3,16 @@ import {CacheFactory} from "./cache-factory";
 import {RequestManager} from "./request-manager";
 import {Tokenizer} from "./tokenizer";
 import {StreamFactory} from "./stream-factory";
+import {RequestWrapper} from "./request-wrapper";
 
 const cacheFactory = new CacheFactory();
 
 const tokenizer = new Tokenizer();
-const streamFactory = new StreamFactory(cacheFactory);
+const requestWrapper = new RequestWrapper();
+const streamFactory = new StreamFactory(cacheFactory,requestWrapper);
 const requestManager = new RequestManager(streamFactory, tokenizer);
 const warden = new Warden(requestManager);
+
 
 warden.register('test', {
   identifier: '{query.foo1}_{cookie.osman}',
