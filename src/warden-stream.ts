@@ -28,8 +28,8 @@ interface WardenStreamer {
 }
 
 abstract class WardenStream implements WardenStreamer {
-  private readonly requestStream: Transform | Readable;
-  private readonly responseStream: Transform;
+  readonly requestStream: Transform | Readable;
+  readonly responseStream: Transform;
   private readonly streamLinks: { previous: string, next: string } = {
     previous: 'leftOutStream',
     next: 'rightOutStream'
@@ -37,8 +37,8 @@ abstract class WardenStream implements WardenStreamer {
   private readonly name: string;
   private readonly head: boolean;
   private readonly debug: boolean;
-  private readonly requestStreamPassThrough: PassThrough | undefined;
-  private readonly responseStreamPassThrough: PassThrough | undefined;
+  readonly requestStreamPassThrough: PassThrough | undefined;
+  readonly responseStreamPassThrough: PassThrough | undefined;
 
 
   protected constructor(name: string, head = false, debug = process.env.WARDEN_LOGGER === 'true') {
