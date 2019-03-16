@@ -1,21 +1,24 @@
 import "reflect-metadata";
 
 import {expect} from "chai";
-import sinon, {SinonMock} from "sinon";
+import sinon, {LegacySandbox, SinonMock} from "sinon";
 import {RequestManager, RequestOptions, RouteConfiguration} from "../src/request-manager";
 import {CacheFactory} from "../src/cache-factory";
 import {StreamFactory, StreamType} from "../src/stream-factory";
 import {Tokenizer} from "../src/tokenizer";
 import faker from "faker";
+import {RequestWrapper} from "../src/request-wrapper";
 
 const sandbox = sinon.createSandbox();
 
 const cacheFactory = new CacheFactory();
-const streamFactory = new StreamFactory(cacheFactory);
+const requestWrapper = new RequestWrapper();
+const streamFactory = new StreamFactory(cacheFactory, requestWrapper);
 const tokenizer = new Tokenizer();
 
 
 let streamFactoryMock: SinonMock;
+let requestWrapperMock: SinonMock;
 let tokenizerMock: SinonMock;
 let requestManager: RequestManager;
 
@@ -23,6 +26,7 @@ describe("[request-manager]", () => {
   beforeEach(() => {
     streamFactoryMock = sandbox.mock(streamFactory);
     tokenizerMock = sandbox.mock(tokenizer);
+    requestWrapperMock = sandbox.mock(requestWrapper);
 
     requestManager = new RequestManager(streamFactory, tokenizer);
   });
