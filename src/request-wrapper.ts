@@ -2,10 +2,10 @@ import request from "request";
 import * as https from "https";
 
 class RequestWrapper {
-  public request: request.RequestAPI<request.Request, request.CoreOptions, request.RequiredUriUrl> | request.DefaultUriUrlRequestApi<request.Request, request.CoreOptions, request.OptionalUriUrl>;
+  request: request.RequestAPI<request.Request, request.CoreOptions, request.RequiredUriUrl> | request.DefaultUriUrlRequestApi<request.Request, request.CoreOptions, request.OptionalUriUrl>;
 
   constructor(
-    options?: request.Options
+    options?: request.CoreOptions
   ) {
     if (options) {
       this.request = request.defaults(options);

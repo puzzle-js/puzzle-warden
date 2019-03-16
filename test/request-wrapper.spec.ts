@@ -23,4 +23,14 @@ describe("[request-wrapper.ts]", () => {
     // Assert
     expect(requestWrapper).to.be.instanceOf(RequestWrapper);
   });
+
+  it("should support custom request configuration", () => {
+    // Arrange
+    const requestWrapper = new RequestWrapper({
+      timeout: 3000
+    });
+
+    // Assert
+    expect(requestWrapper).to.be.instanceOf(RequestWrapper);
+  });
 });
