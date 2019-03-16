@@ -48,9 +48,8 @@ workflows:
         requires:
         - test
         filters:
-          tags:
-            only:
-            - master
+          branches:
+            only: master
     - deploy:
         requires:
         - hold
