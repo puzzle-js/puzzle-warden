@@ -12,13 +12,10 @@ class WardenWrappedRequest {
   static requestManager: RequestManager;
 
   constructor(configuration: WardenRappedCoreOptions) {
-    if(configuration.name){
-      (WardenWrappedRequest.requestManager.handle as any)(configuration.name, {
-        url: configuration.url,
-        headers: configuration.headers,
-        method: configuration.method,
-      }, configuration.callback);
-    }else{
+    if (configuration.name) {
+      const requestOptions = {...configuration, name: null};
+      (WardenWrappedRequest.requestManager.handle as any)(configuration.name, requestOptions, configuration.callback);
+    } else {
       return new tRequest(configuration);
     }
   }

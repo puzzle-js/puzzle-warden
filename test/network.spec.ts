@@ -64,7 +64,7 @@ describe("[network.ts]", () => {
     network.onRequest(chunk, spy);
 
     // Assert
-    expect(requestStub.calledWithExactly(chunk.requestOptions.url, sinon.match.any)).to.eq(true);
+    expect(requestStub.calledWithExactly(chunk.requestOptions, sinon.match.any)).to.eq(true);
     expect(spy.calledWithExactly(undefined, null)).to.eq(true);
     expect(responseStub.calledWith({
       key: chunk.key,

@@ -5,6 +5,8 @@ import {Tokenizer} from "./tokenizer";
 import {StreamFactory} from "./stream-factory";
 import {RequestWrapper} from "./request-wrapper";
 
+const request = require('request');
+
 const cacheFactory = new CacheFactory();
 
 const tokenizer = new Tokenizer();
@@ -19,8 +21,6 @@ warden.register('test', {
   cache: true,
   holder: true
 });
-
-
 
 
 let input = 0;
@@ -38,26 +38,28 @@ setTimeout(() => {
 const newRequest = () => {
   input++;
 
-  const pRes = warden.request('test', {
-    url: `https://postman-echo.com/get?foo1=${Math.random().toFixed(2)}&foo2=bar2`,
-    headers: {
-      cookie: `osman=${Math.random().toFixed(1)}`
-    },
-    method: "get",
-  }, (err, response, body) => {
-    output++;
-  });
-
-  // request({
-  //   name: 'test',
+  // const pRes = warden.request('test', {
   //   url: `https://postman-echo.com/get?foo1=${Math.random().toFixed(2)}&foo2=bar2`,
   //   headers: {
   //     cookie: `osman=${Math.random().toFixed(1)}`
   //   },
   //   method: "get",
-  // }, (err: any, res: any, data: any) => {
+  // }, (err, response, body) => {
   //   output++;
   // });
+
+  request({
+    name: 'test',
+    url: `https://postman-echo.com/get?foo1=${Math.random().toFixed(2)}&foo2=bar2`,
+    headers: {
+      cookie: `osman=${Math.random().toFixed(1)}`
+    },
+    gzip: true,
+    json: true,
+    method: "get",
+  }, (err: any, res: any, data: any) => {
+    output++;
+  });
 
   // request(`https://postman-echo.com/get?foo1=${Math.random().toFixed(2)}&foo2=bar2`, (err,response,done) => {
   //   output++;
@@ -70,4 +72,4 @@ const newRequest = () => {
 
 
 
-newRequest();
+// newRequest();

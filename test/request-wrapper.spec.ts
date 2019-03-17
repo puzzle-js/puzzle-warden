@@ -40,4 +40,18 @@ describe("[request-wrapper.ts]", () => {
     expect(spy.calledWithExactly(config)).to.eq(true);
     expect(requestWrapper).to.be.instanceOf(RequestWrapper);
   });
+
+  it("should call internal requestManager if name exists in connfiguration", () => {
+    // Arrange
+    // const configuration = {
+    //   name: faker.random.word(),
+    //   url: faker.internet.url(),
+    //   method:
+    // }
+
+    // Act
+
+    // Assert
+
+  });
 });
