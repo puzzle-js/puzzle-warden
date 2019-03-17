@@ -12,6 +12,8 @@ class Warden {
   ) {
     this.requestManager = requestManager;
     this.requestWrapper = requestWrapper;
+
+    this.requestWrapper.wrap(requestManager);
   }
 
   register(name: string, routeConfiguration: RouteConfiguration) {

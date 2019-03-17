@@ -64,7 +64,8 @@ abstract class WardenStream implements WardenStreamer {
     if (this.head) {
       requestStream = new Readable({
         objectMode: true,
-        read: this.onRequest as () => void
+        read() {
+        }
       });
     } else {
       requestStream = new ParallelTransform(10, {ordered: false}, this.onRequest);

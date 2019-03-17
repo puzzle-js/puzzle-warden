@@ -9,9 +9,9 @@ const cacheFactory = new CacheFactory();
 
 const tokenizer = new Tokenizer();
 const requestWrapper = new RequestWrapper();
-const streamFactory = new StreamFactory(cacheFactory,requestWrapper);
+const streamFactory = new StreamFactory(cacheFactory, requestWrapper);
 const requestManager = new RequestManager(streamFactory, tokenizer);
-const warden = new Warden(requestManager);
+const warden = new Warden(requestManager, requestWrapper);
 
 
 warden.register('test', {
@@ -19,6 +19,9 @@ warden.register('test', {
   cache: true,
   holder: true
 });
+
+
+
 
 let input = 0;
 let output = 0;
@@ -45,14 +48,26 @@ const newRequest = () => {
     output++;
   });
 
+  // request({
+  //   name: 'test',
+  //   url: `https://postman-echo.com/get?foo1=${Math.random().toFixed(2)}&foo2=bar2`,
+  //   headers: {
+  //     cookie: `osman=${Math.random().toFixed(1)}`
+  //   },
+  //   method: "get",
+  // }, (err: any, res: any, data: any) => {
+  //   output++;
+  // });
+
   // request(`https://postman-echo.com/get?foo1=${Math.random().toFixed(2)}&foo2=bar2`, (err,response,done) => {
   //   output++;
   // });
 
-  if (!pRes) failedToPush++;
+  // if (!pRes) failedToPush++;
   if (!stop) setImmediate(newRequest, 0);
-
 };
+
+
 
 
 newRequest();
