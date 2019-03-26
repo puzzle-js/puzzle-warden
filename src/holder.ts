@@ -24,7 +24,7 @@ class Holder extends WardenStream {
         });
       });
 
-      this.holdQueue[chunk.key] = null;
+      delete this.holdQueue[chunk.key];
       callback(undefined, null);
     } else {
       callback(undefined, chunk);

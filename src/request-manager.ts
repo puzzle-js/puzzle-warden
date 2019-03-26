@@ -68,7 +68,7 @@ class RequestManager {
   }
 
   handle(name: string, requestOptions: RequestOptions, cb: RequestCallback) {
-    if(!this.streams[name]) throw new Error(`Route configuration not provided for ${name}`);
+    if (!this.streams[name]) throw new Error(`Route configuration not provided for ${name}`);
     const request = Url.parse(requestOptions.url, true);
     const cookies = Cookie.parse(requestOptions.headers.cookie || requestOptions.headers.Cookie || '');
     const key = this.streams[name].keyMaker(
@@ -80,6 +80,10 @@ class RequestManager {
     );
 
     return this.streams[name].stream.start(key, requestOptions, cb);
+  }
+
+  isRouteRegistered(name: string): boolean {
+    return !!this.streams[name];
   }
 }
 

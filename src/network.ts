@@ -4,6 +4,7 @@ import * as request from "request";
 import {StreamType} from "./stream-factory";
 import {RequestWrapper} from "./request-wrapper";
 
+let i = 0;
 class Network extends WardenStream {
   private requestWrapper: RequestWrapper;
 
@@ -20,7 +21,6 @@ class Network extends WardenStream {
   }
 
   onRequest(chunk: RequestChunk, callback: TransformCallback): void {
-    console.log(chunk.requestOptions, 'sendRequest');
     this.requestWrapper.request[chunk.requestOptions.method](chunk.requestOptions, (error, response, data) => {
       this.respond({
         key: chunk.key,

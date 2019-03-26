@@ -5,16 +5,25 @@ const tRequest = (request as any).Request;
 
 interface WardenRappedCoreOptions extends CoreOptions {
   name?: string;
-  url?: string;
+  url: string;
+  method: any;
+  headers: { [key: string]: string; };
+  callback: (err: Error, data: any) => void;
 }
 
 class WardenWrappedRequest {
   static requestManager: RequestManager;
 
   constructor(configuration: WardenRappedCoreOptions) {
-    if (configuration.name) {
-      const requestOptions = {...configuration, name: null};
-      (WardenWrappedRequest.requestManager.handle as any)(configuration.name, requestOptions, configuration.callback);
+    if (configuration.name && WardenWrappedRequest.requestManager.isRouteRegistered(configuration.name)) {
+      const requestOptions = Object.assign({headers: {}}, configuration);
+      delete requestOptions.callback;
+      delete requestOptions.name;
+      WardenWrappedRequest.requestManager.handle(
+        configuration.name,
+        requestOptions,
+        configuration.callback
+      );
     } else {
       return new tRequest(configuration);
     }
@@ -34,7 +43,7 @@ class RequestWrapper {
 
   wrap(requestManager: RequestManager) {
     WardenWrappedRequest.requestManager = requestManager;
-    if (!(request as any).Request.warden) {
+    if (!(request as any).Request.requestManager) {
       (request as any).Request = WardenWrappedRequest;
     }
   }
