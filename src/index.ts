@@ -12,4 +12,4 @@ const streamFactory = new StreamFactory(cacheFactory, requestWrapper);
 const requestManager = new RequestManager(streamFactory, tokenizer);
 const warden = new Warden(requestManager, requestWrapper);
 
-module.exports = warden;
+export default warden;

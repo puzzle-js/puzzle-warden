@@ -6,3 +6,4 @@ test/
 jest.config.js
 warden_architecture.svg
 tslint.json
+.idea
