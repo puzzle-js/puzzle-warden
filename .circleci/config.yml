@@ -29,8 +29,8 @@ jobs:
     - attach_workspace:
         at: ~/repo
     - run:
-    name: List workspace Files
-    command: ls
+        name: List Workspace
+        command: ls
     - run:
         name: Authenticate with registry
         command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
