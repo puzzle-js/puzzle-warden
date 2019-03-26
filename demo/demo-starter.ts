@@ -18,7 +18,7 @@ const warden = new Warden(requestManager, requestWrapper);
 
 warden.register('test', {
   identifier: 'ty_{query.test}',
-  cache: false,
+  cache: true,
   holder: true
 });
 
@@ -40,7 +40,7 @@ let responseCount = 0;
 const newRequest = () => {
   //console.log(`Count: ${input}, Error: ${errorCount}, Success: ${responseCount}`);
   input++;
-
+  //
   // const pRes = warden.request('test', {
   //   url: `https://postman-echo.com/get?foo1=${Math.random().toFixed(2)}&foo2=bar2`,
   //   headers: {
@@ -56,6 +56,7 @@ const newRequest = () => {
     url: `https://postman-echo.com?test=${Math.random().toFixed(2)}`,
     gzip: true,
     json: true,
+    timeout: 1000,
     strictSSL: false,
     // cookie: {},
     method: "get",
@@ -65,6 +66,7 @@ const newRequest = () => {
     } else {
       errorCount++;
     }
+
     console.log(`Count: ${input}, Error: ${errorCount}, Success: ${responseCount}`);
     output++;
   });

@@ -5,7 +5,6 @@ import sinon, {SinonMock} from "sinon";
 import {MemoryCache} from "../src/memory-cache";
 import {CacheThenNetwork} from "../src/cache-then-network";
 import faker from "faker";
-import {RequestChunk} from "../src/warden-stream";
 
 
 const sandbox = sinon.createSandbox();
@@ -54,12 +53,15 @@ describe("[cache.ts]", () => {
     // Arrange
     const ms = undefined;
     const cache = new CacheThenNetwork(memory, ms);
-    const chunk: any = {
-      key: faker.random.word()
-    };
-    const data = faker.random.word();
-    memoryMock.expects('get').withExactArgs(chunk.key).returns(data);
     const spy = sandbox.stub();
+    const chunk: any = {
+      key: faker.random.word(),
+      cb: spy
+    };
+    const response = {
+      body: faker.random.word()
+    };
+    memoryMock.expects('get').withExactArgs(chunk.key).returns(response);
     const responseStub = sandbox.stub(cache, 'respond');
 
     // Act
@@ -68,19 +70,22 @@ describe("[cache.ts]", () => {
     // Assert
     expect(spy.calledWithExactly(undefined, null)).to.eq(true);
     expect(responseStub.calledWith({
-      ...chunk,
-      data,
+      key: chunk.key,
+      cb: chunk.cb,
+      response: response as any,
       cacheHit: true
     })).to.eq(true);
   });
 
-  it("should return incoming response caching without if cache hit flag true", async () => {
+  it("should return incoming response without caching if cache hit flag true", async () => {
     // Arrange
     const ms = undefined;
     const cache = new CacheThenNetwork(memory, ms);
     const chunk: any = {
       key: faker.random.word(),
-      data: faker.random.word(),
+      response: {
+        body: faker.random.word()
+      },
       cacheHit: true
     };
     memoryMock.expects('set').never();
@@ -93,16 +98,18 @@ describe("[cache.ts]", () => {
     expect(spy.calledWithExactly(undefined, chunk)).to.eq(true);
   });
 
-  it("should incoming response with caching", async () => {
+  it("should handle incoming response with caching", async () => {
     // Arrange
     const ms = faker.random.number();
     const cache = new CacheThenNetwork(memory, ms);
     const chunk: any = {
       key: faker.random.word(),
-      data: faker.random.word(),
+      response: {
+        body: faker.random.word()
+      },
       cacheHit: false
     };
-    memoryMock.expects('set').withExactArgs(chunk.key, chunk.data, ms).resolves();
+    memoryMock.expects('set').withExactArgs(chunk.key, chunk.response, ms).resolves();
     const spy = sandbox.stub();
 
     // Act

@@ -25,6 +25,7 @@ class WardenWrappedRequest {
         configuration.callback
       );
     } else {
+      // todo somehow sometimes we fail to stub this and so tests are hang
       return new tRequest(configuration);
     }
   }

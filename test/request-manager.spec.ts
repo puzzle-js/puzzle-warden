@@ -1,7 +1,7 @@
 import "reflect-metadata";
 
 import {expect} from "chai";
-import sinon, {LegacySandbox, SinonMock} from "sinon";
+import sinon, {SinonMock} from "sinon";
 import {RequestManager, RequestOptions, RouteConfiguration} from "../src/request-manager";
 import {CacheFactory} from "../src/cache-factory";
 import {StreamFactory, StreamType} from "../src/stream-factory";

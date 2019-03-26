@@ -45,14 +45,14 @@ describe("[stream-head.ts]", () => {
     }));
   });
 
-  it("should call request callbback when received response", () => {
+  it("should call request callback when received response", () => {
     // Arrange
     const cb = sandbox.stub();
     const error = null;
-    const data = faker.random.word();
+    const response = {body: faker.random.word()};
     const chunk = {
       cb,
-      data,
+      response,
       error
     } as any;
     const streamCb = sandbox.stub();
@@ -61,7 +61,26 @@ describe("[stream-head.ts]", () => {
     streamHead.onResponse(chunk, streamCb);
 
     // Assert
-    expect(cb.calledWithExactly(error, chunk, data)).to.eq(true);
+    expect(cb.calledWithExactly(error, response, response.body)).to.eq(true);
+  });
+
+  it("should handle undefined response", () => {
+    // Arrange
+    const cb = sandbox.stub();
+    const error = faker.random.word();
+    const response = undefined;
+    const chunk = {
+      cb,
+      response,
+      error
+    } as any;
+    const streamCb = sandbox.stub();
+
+    // Act
+    streamHead.onResponse(chunk, streamCb);
+
+    // Assert
+    expect(cb.calledWithExactly(error, undefined, undefined)).to.eq(true);
   });
 
   it("should throw error when it is a pipe target", () => {

@@ -76,14 +76,15 @@ describe("[holder.ts]", () => {
   it("should return all the holding requests when response received", () => {
     // Arrange
     const key = faker.random.word();
+    const spy = sandbox.stub();
     const responseChunk = {
       key,
-      data: faker.random.word()
-    } as ResponseChunk;
+      response: {},
+    } as any;
     const requestChunk = {
-      key
-    } as RequestChunk;
-    const spy = sandbox.stub();
+      key,
+      cb: sandbox.stub()
+    } as any;
     const requestSpy = sandbox.stub();
     const respondSpy = sandbox.stub(holder, 'respond');
 
@@ -93,7 +94,12 @@ describe("[holder.ts]", () => {
     holder.onResponse(responseChunk, spy);
 
     // Assert
-    expect(respondSpy.calledWith(responseChunk)).to.eq(true);
+    expect(respondSpy.calledWith({
+      key: responseChunk.key,
+      response: responseChunk.response,
+      cb: requestChunk.cb,
+      error: undefined
+    })).to.eq(true);
     expect(spy.calledOnce).to.eq(true);
     expect(spy.calledWithExactly(undefined, null)).to.eq(true);
   });

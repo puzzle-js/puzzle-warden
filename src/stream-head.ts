@@ -12,10 +12,8 @@ class StreamHead extends WardenStream {
   onResponse(chunk: ResponseChunk, callback: TransformCallback): void {
     chunk.cb(
       chunk.error,
-      {
-        ...chunk,
-      } as any,
-      chunk.data
+      chunk.response as any,
+      chunk.response ? chunk.response.body : undefined
     );
 
     callback(undefined, null);
@@ -25,11 +23,11 @@ class StreamHead extends WardenStream {
     throw new Error('Stream head cant be piped');
   }
 
-  start(key: string, requestOptions: RequestOptions, cb: RequestCallback){
+  start(key: string, requestOptions: RequestOptions, cb: RequestCallback) {
     return this.request({
       key,
       requestOptions,
-      cb
+      cb: cb as unknown as RequestCallback
     });
   }
 }

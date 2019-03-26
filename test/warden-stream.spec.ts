@@ -195,7 +195,7 @@ describe("[warden-stream.ts]", () => {
       }
     }
 
-    const stub = sandbox.spy(console, 'log');
+    const stub = sandbox.stub(console, 'log');
     const stream = new Stream();
 
     // Act
