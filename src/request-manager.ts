@@ -8,11 +8,13 @@ import {WardenStream} from "./warden-stream";
 import Cookie from "cookie";
 import {Network} from "./network";
 
+type KeyStreamPair = {
+  keyMaker: KeyMaker;
+  stream: StreamHead;
+};
+
 interface StreamMap {
-  [routeName: string]: {
-    keyMaker: KeyMaker;
-    stream: StreamHead;
-  };
+  [routeName: string]: KeyStreamPair[];
 }
 
 interface RequestOptions {
@@ -61,17 +63,17 @@ class RequestManager {
 
     streamLink.connect(network);
 
-    this.streams[name] = {
+    this.addStream(name, {
       keyMaker,
       stream
-    };
+    });
   }
 
   handle(name: string, requestOptions: RequestOptions, cb: RequestCallback) {
     if (!this.streams[name]) throw new Error(`Route configuration not provided for ${name}`);
     const request = Url.parse(requestOptions.url, true);
     const cookies = Cookie.parse(requestOptions.headers.cookie || requestOptions.headers.Cookie || '');
-    const key = this.streams[name].keyMaker(
+    const key = this.streams[name][0].keyMaker(
       request.path,
       cookies,
       requestOptions.headers,
@@ -79,11 +81,15 @@ class RequestManager {
       requestOptions.method
     );
 
-    return this.streams[name].stream.start(key, requestOptions, cb);
+    return this.streams[name][0].stream.start(key, requestOptions, cb);
   }
 
   isRouteRegistered(name: string): boolean {
     return !!this.streams[name];
+  }
+
+  private addStream(name: string, keyStreamPair: KeyStreamPair) {
+    (this.streams[name] = this.streams[name] || []).unshift(keyStreamPair);
   }
 }
 
