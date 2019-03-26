@@ -22,10 +22,7 @@ jobs:
     - run: yarn test
     - persist_to_workspace:
         root: ~/repo
-        paths:
-          - dist
-          - package.json
-          - .npmignore
+        paths: .
   deploy:
     <<: *defaults
     steps:
