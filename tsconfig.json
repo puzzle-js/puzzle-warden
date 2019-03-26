@@ -1,9 +1,21 @@
 {
   "compilerOptions": {
     "outDir": "dist",
-    "target": "es5",
+    "target": "es6",
     "module": "commonjs",
     "strict": true,
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "declaration": true,
+    "sourceMap": true,
+    "noEmitOnError": true,
+    "lib": [
+      "es2017",
+      "dom"
+    ]
+  },
+  "exclude": [
+    "./test/**"
+  ]
 }

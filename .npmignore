@@ -1,2 +1,8 @@
-lib/
+demo/
+.circleci/
+coverage/
+src/
 test/
+jest.config.js
+warden_architecture.svg
+tslint.json
