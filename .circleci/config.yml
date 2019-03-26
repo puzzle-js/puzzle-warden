@@ -50,9 +50,16 @@ workflows:
           filters:
             tags:
               only: /^v.*/
-      - deploy:
+      - hold:
+          type: approval
           requires:
             - test
+          filters:
+            branches:
+              only: master
+      - deploy:
+          requires:
+            - hold
           filters:
             branches:
               only: master
