@@ -2,6 +2,7 @@ import {RequestChunk, ResponseChunk, WardenStream} from "./warden-stream";
 import {TransformCallback} from "stream";
 import {StreamType} from "./stream-factory";
 import {CachePlugin} from "./cache-factory";
+import request from "request";
 
 
 class CacheThenNetwork extends WardenStream {
@@ -16,20 +17,21 @@ class CacheThenNetwork extends WardenStream {
   }
 
   async onResponse(chunk: ResponseChunk, callback: TransformCallback): Promise<void> {
-    if (!chunk.cacheHit) {
-      await this.storage.set(chunk.key, chunk.data, this.ms);
+    if (!chunk.cacheHit && !chunk.error && chunk.response) {
+      await this.storage.set(chunk.key, chunk.response, this.ms);
     }
 
     callback(undefined, chunk);
   }
 
   async onRequest(chunk: RequestChunk, callback: TransformCallback): Promise<void> {
-    const response = await this.storage.get(chunk.key);
+    const cachedData = await this.storage.get(chunk.key) as request.Response;
 
-    if (response) {
+    if (cachedData) {
       this.respond({
-        ...chunk,
-        data: response,
+        key: chunk.key,
+        cb: chunk.cb,
+        response: cachedData,
         cacheHit: true
       });
       callback(undefined, null);

@@ -1,7 +1,8 @@
 import {PassThrough, Readable, Transform, TransformCallback} from "stream";
 import ParallelTransform from "parallel-transform";
-import {Request, RequestCallback} from "request";
+import {RequestCallback} from "request";
 import {RequestOptions} from "./request-manager";
+import request from "request";
 
 interface RequestChunk {
   key: string;
@@ -12,7 +13,7 @@ interface RequestChunk {
 interface ResponseChunk {
   cb: RequestCallback;
   key: string;
-  data?: any;
+  response?: request.Response;
   error?: any;
   cacheHit?: true;
 }
@@ -64,7 +65,8 @@ abstract class WardenStream implements WardenStreamer {
     if (this.head) {
       requestStream = new Readable({
         objectMode: true,
-        read: this.onRequest as () => void
+        read() {
+        }
       });
     } else {
       requestStream = new ParallelTransform(10, {ordered: false}, this.onRequest);

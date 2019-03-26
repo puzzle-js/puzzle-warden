@@ -1,7 +1,7 @@
 import "reflect-metadata";
 
 import {expect} from "chai";
-import sinon, {LegacySandbox, SinonMock} from "sinon";
+import sinon, {SinonMock} from "sinon";
 import {RequestManager, RequestOptions, RouteConfiguration} from "../src/request-manager";
 import {CacheFactory} from "../src/cache-factory";
 import {StreamFactory, StreamType} from "../src/stream-factory";
@@ -164,5 +164,31 @@ describe("[request-manager]", () => {
 
     // Assert
     expect(test).to.throw();
+  });
+
+  it("should return if route already registered", () => {
+    // Arrange
+    const name = faker.random.word();
+    const routeConfiguration = {
+      identifier: faker.random.word()
+    } as RouteConfiguration;
+    const headStream = {
+      connect: sandbox.stub().returnsArg(0)
+    };
+    const networkStream = {
+      connect: sandbox.stub().returnsArg(0)
+    };
+    const keyMaker = sandbox.stub();
+    streamFactoryMock.expects('create').withExactArgs(StreamType.HEAD).returns(headStream);
+    streamFactoryMock.expects('create').withExactArgs(StreamType.NETWORK).returns(networkStream);
+    tokenizerMock.expects('tokenize').withExactArgs(name, routeConfiguration.identifier).returns(keyMaker);
+
+    // Act
+    requestManager.register(name, routeConfiguration);
+    const isRegistered = requestManager.isRouteRegistered(name);
+
+    // Assert
+    expect(headStream.connect.calledWithExactly(networkStream)).to.eq(true);
+    expect(isRegistered).to.eq(true);
   });
 });
