@@ -1,7 +1,6 @@
 version: 2
 
 defaults: &defaults
-  working_directory: ~/repo
   docker:
   - image: circleci/node:10
 
@@ -21,15 +20,17 @@ jobs:
         key: v1-dependencies-{{ checksum "package.json" }}
     - run: yarn test
     - persist_to_workspace:
-        root: ~/repo
+        root: .
         paths:
-         - .
+         - package.json
+         - yarn.lock
+         - .npmignore
          - dist
   deploy:
     <<: *defaults
     steps:
     - attach_workspace:
-        at: ~/repo
+        at: .
     - run:
         name: List Workspace
         command: ls
