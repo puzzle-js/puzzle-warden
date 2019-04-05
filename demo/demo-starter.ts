@@ -17,12 +17,17 @@ const warden = new Warden(requestManager, requestWrapper);
 
 
 warden.register('test', {
-  identifier: 'ty_{query.test}',
+  identifier: 'ty_{query.foo2}_{cookie.osman}',
   cache: true,
   holder: true
 });
 
-
+import https from "https";
+const agent = new https.Agent({
+  keepAlive: true,
+  keepAliveMsecs: 1000,
+  maxSockets: 50
+});
 let input = 0;
 let output = 0;
 let failedToPush = 0;
@@ -35,30 +40,45 @@ let stop = false;
 // }, 30000);
 let errorCount = 0;
 let responseCount = 0;
-
-
+const startTime = Date.now();
+const requestCount = 6000;
 const newRequest = () => {
-  //console.log(`Count: ${input}, Error: ${errorCount}, Success: ${responseCount}`);
   input++;
   //
-  // const pRes = warden.request('test', {
-  //   url: `https://postman-echo.com/get?foo1=${Math.random().toFixed(2)}&foo2=bar2`,
+  // warden.request('test', {
+  //   url: `https://postman-echo.com/get?foo1=${Math.random().toFixed(2)}&foo2=${Math.random().toFixed(2)}`,
   //   headers: {
   //     cookie: `osman=${Math.random().toFixed(1)}`
   //   },
+  //   gzip: true,
+  //   json: true,
   //   method: "get",
-  // }, (err, response, body) => {
+  //   agent,
+  //   strictSSL: false,
+  //   timeout: 1000
+  // }, (err, response, data) => {
+  //   if (!err && data) {
+  //     responseCount++;
+  //   } else {
+  //     errorCount++;
+  //   }
   //   output++;
+  //
+  //   if(output >= requestCount){
+  //     console.log(Date.now() - startTime);
+  //   }
   // });
-
+  //
   request({
-    name: 'test',
-    url: `https://postman-echo.com?test=${Math.random().toFixed(2)}`,
+    url: `https://postman-echo.com/get?foo1=${Math.random().toFixed(2)}&foo2=${Math.random().toFixed(2)}`,
     gzip: true,
     json: true,
     timeout: 1000,
+    headers: {
+      cookie: `osman=${Math.random().toFixed(1)}`
+    },
+    agent,
     strictSSL: false,
-    // cookie: {},
     method: "get",
   }, (err: any, res: any, data: any) => {
     if (!err && data) {
@@ -66,18 +86,14 @@ const newRequest = () => {
     } else {
       errorCount++;
     }
-
-    console.log(`Count: ${input}, Error: ${errorCount}, Success: ${responseCount}`);
     output++;
+
+    if(output >= requestCount){
+      console.log(Date.now() - startTime);
+    }
   });
-
-  // request(`https://postman-echo.com/get?foo1=${Math.random().toFixed(2)}&foo2=bar2`, (err,response,done) => {
-  //   output++;
-  // });
-
-  // if (!pRes) failedToPush++;
-  if (input <= 30000) setImmediate(newRequest, 0);
+  if (input <= requestCount) newRequest();
 };
 
-
 newRequest();
+setTimeout(() => {}, 100000);

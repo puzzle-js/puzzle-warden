@@ -7,6 +7,7 @@ import {CacheConfiguration} from "./cache-factory";
 import {WardenStream} from "./warden-stream";
 import Cookie from "cookie";
 import {Network} from "./network";
+import * as request from "request";
 
 type KeyStreamPair = {
   keyMaker: KeyMaker;
@@ -17,10 +18,10 @@ interface StreamMap {
   [routeName: string]: KeyStreamPair[];
 }
 
-interface RequestOptions {
+interface RequestOptions extends request.CoreOptions {
   url: string;
   method: 'get' | 'post';
-  headers: {
+  headers?: {
     [key: string]: string,
   };
   body?: object;
@@ -72,11 +73,12 @@ class RequestManager {
   handle(name: string, requestOptions: RequestOptions, cb: RequestCallback) {
     if (!this.streams[name]) throw new Error(`Route configuration not provided for ${name}`);
     const request = Url.parse(requestOptions.url, true);
-    const cookies = Cookie.parse(requestOptions.headers.cookie || requestOptions.headers.Cookie || '');
+    const headers = requestOptions.headers || {};
+    const cookies = Cookie.parse(headers.cookie || headers.Cookie || '');
     const key = this.streams[name][0].keyMaker(
       request.path,
       cookies,
-      requestOptions.headers,
+      headers,
       request.query,
       requestOptions.method
     );

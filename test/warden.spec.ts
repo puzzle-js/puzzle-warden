@@ -76,4 +76,17 @@ describe("[warden.ts]", () => {
     // Act
     warden.requestConfig(config);
   });
+
+  it("should return if route is registered", () => {
+    // Arrange
+    const name = faker.random.word();
+    const warden = new Warden(requestManager, requestWrapper);
+    requestManagerMock.expects('isRouteRegistered').withArgs(name).returns(false);
+
+    // Act
+    const status = warden.isRouteRegistered(name);
+
+    // Assert
+    expect(status).to.eq(false);
+  });
 });

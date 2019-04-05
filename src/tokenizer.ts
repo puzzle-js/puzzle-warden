@@ -5,7 +5,7 @@ type KeyMaker = (
   cookies: { [key: string]: string },
   headers: { [key: string]: string },
   query: { [key: string]: string },
-  method: 'post' | 'get',
+  method: string,
 ) => string;
 
 
@@ -18,7 +18,7 @@ class Tokenizer {
     const cacheKey = reverseString(interpolationsAdded);
     const cacheName = name.replace(/\W/g, "");
 
-    const fnContent = `${cacheName}_tokenizer(url,cookie,headers,query,method){return \`${cacheName}_${cacheKey}\`}`;
+    const fnContent = `${cacheName}_tokenizer(url,cookie={},headers={},query={},method){return \`${cacheName}_${cacheKey}\`}`;
     const fn = new Function(`return function ${fnContent}`);
 
     return fn();

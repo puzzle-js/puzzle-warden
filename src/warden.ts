@@ -27,6 +27,10 @@ class Warden {
   requestConfig(options: CoreOptions) {
     this.requestWrapper.config(options);
   }
+
+  isRouteRegistered(name: string) {
+    return this.requestManager.isRouteRegistered(name);
+  }
 }
 
 export {

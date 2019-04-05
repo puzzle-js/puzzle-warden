@@ -156,6 +156,39 @@ describe("[request-manager]", () => {
     expect(headStream.start.calledWithExactly(key, requestOptions, stub)).to.eq(true);
   });
 
+
+  it("should handle request without custom headers", () => {
+// Arrange
+    const name = faker.random.word();
+    const requestOptions: RequestOptions = {
+      url: faker.internet.url(),
+      method: 'get'
+    };
+    const routeConfiguration = {
+      identifier: faker.random.word()
+    } as RouteConfiguration;
+    const headStream = {
+      connect: sandbox.stub().returnsArg(0),
+      start: sandbox.stub()
+    };
+    const networkStream = {
+      connect: sandbox.stub().returnsArg(0)
+    };
+    const key = faker.random.word();
+    const keyMaker = sandbox.stub().returns(key);
+    streamFactoryMock.expects('create').withExactArgs(StreamType.HEAD).returns(headStream);
+    streamFactoryMock.expects('create').withExactArgs(StreamType.NETWORK).returns(networkStream);
+    tokenizerMock.expects('tokenize').withExactArgs(name, routeConfiguration.identifier).returns(keyMaker);
+    const stub = sandbox.stub();
+
+    // Act
+    requestManager.register(name, routeConfiguration);
+    requestManager.handle(name, requestOptions, stub);
+
+    // Assert
+    expect(headStream.start.calledWith(key, requestOptions, stub)).to.eq(true);
+  });
+
   it("should throw error if not registered route tries to handle", () => {
     // Act
     const test = () => {
