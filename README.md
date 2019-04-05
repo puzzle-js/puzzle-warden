@@ -3,6 +3,8 @@
 
 Warden is an outgoing request optimizer for creating fast and scalable applications. Warden is being used in [PuzzleJs](https://github.com/puzzle-js/puzzle-js) framework for gateway communication.
 
+[![CircleCI](https://circleci.com/gh/puzzle-js/puzzle-warden/tree/master.svg?style=svg)](https://circleci.com/gh/puzzle-js/puzzle-warden/tree/master) ![npm](https://img.shields.io/npm/dt/puzzle-warden.svg) ![npm](https://img.shields.io/npm/v/puzzle-warden.svg) ![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/puzzle-js/puzzle-warden.svg)
+
 ## Features
 - 📥  **Smart Caching** Caches requests by converting HTTP requests to smart key strings. ✅
 - 🚧  **Request Holder** Stopping same request to be sent multiple times. ✅
