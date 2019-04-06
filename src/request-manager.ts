@@ -70,6 +70,10 @@ class RequestManager {
     });
   }
 
+  unregister(name: string) {
+    delete this.streams[name];
+  }
+
   handle(name: string, requestOptions: RequestOptions, cb: RequestCallback) {
     if (!this.streams[name]) throw new Error(`Route configuration not provided for ${name}`);
     const request = Url.parse(requestOptions.url, true);
