@@ -181,7 +181,7 @@ describe("[warden-stream.ts]", () => {
     expect(returningStream).to.eq(stream2);
   });
 
-  it("should log calls when debug mod is enabbled", () => {
+  it("should log calls when debug mod is enabled", () => {
     // Arrange
     class Stream extends WardenStream {
       constructor() {
@@ -199,8 +199,8 @@ describe("[warden-stream.ts]", () => {
     const stream = new Stream();
 
     // Act
-    stream.requestStreamPassThrough!.write({} as any);
-    stream.responseStreamPassThrough!.write({} as any);
+    stream.requestStreamPassThrough!.write({requestOptions: {}} as any);
+    stream.responseStreamPassThrough!.write({requestOptions: {}} as any);
 
     // Assert
     expect(stub.calledTwice).to.eq(true);
