@@ -6,7 +6,7 @@ import request from "request";
 
 interface RequestChunk {
   key: string;
-  requestOptions?: RequestOptions;
+  requestOptions: RequestOptions;
   cb: RequestCallback;
 }
 
