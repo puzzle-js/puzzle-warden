@@ -77,12 +77,20 @@ abstract class WardenStream implements WardenStreamer {
     if (this.debug) {
       requestStreamPassThrough = new PassThrough({objectMode: true});
       requestStreamPassThrough.on('data', (chunk: RequestChunk) => {
-        console.log(`${this.name} --> ${this.streamLinks.next}`, chunk);
+        console.log(`${this.name} --> ${this.streamLinks.next}`, {
+          key: chunk.key,
+          url: chunk.requestOptions.url,
+          headers: chunk.requestOptions.headers,
+        });
       });
 
       responseStreamPassThrough = new PassThrough({objectMode: true});
       responseStreamPassThrough.on('data', (chunk: RequestChunk) => {
-        console.log(`${this.streamLinks.previous} <-- ${this.name}`, chunk);
+        console.log(`${this.streamLinks.previous} <-- ${this.name}`, {
+          key: chunk.key,
+          url: chunk.requestOptions.url,
+          headers: chunk.requestOptions.headers,
+        });
       });
     }
 
