@@ -31,6 +31,10 @@ class Warden {
   isRouteRegistered(name: string) {
     return this.requestManager.isRouteRegistered(name);
   }
+
+  unregisterRoute(name: string) {
+    this.requestManager.unregister(name);
+  }
 }
 
 export {
