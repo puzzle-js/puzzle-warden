@@ -17,8 +17,8 @@ const enum CACHE_PLUGIN {
 }
 
 enum CACHING_STRATEGY {
-  CacheThenNetwork,
-  NetWorkThenCache
+  CacheThenNetwork="CacheThenNetwork",
+  NetWorkThenCache="NetWorkThenCache"
 }
 
 interface CacheConfiguration {
@@ -36,8 +36,8 @@ export interface Cache extends WardenStream {
 const defaultCachingDuration = 60000;
 
 const cachingStrategyImplementations = {
-  [CACHING_STRATEGY.CacheThenNetwork as number]: CacheThenNetwork
-} as { [key: number]: { new(plugin: CachePlugin, ms: number): Cache } };
+  [CACHING_STRATEGY.CacheThenNetwork]: CacheThenNetwork
+} as { [key: string]: { new(plugin: CachePlugin, ms: number): Cache } };
 
 class CacheFactory {
   create(configuration: CacheConfiguration | true) {
@@ -76,7 +76,7 @@ class CacheFactory {
       return CACHING_STRATEGY.CacheThenNetwork;
     }
 
-    return strategy;
+    return CACHING_STRATEGY[strategy];
   }
 }
 
