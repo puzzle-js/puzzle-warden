@@ -1,18 +1,24 @@
 import {CachePlugin} from "./cache-factory";
 
+type CacheEntry = {
+  value: unknown;
+  expire: number | null;
+};
 
 class MemoryCache implements CachePlugin {
+  constructor() {
+    this.invalidate = this.invalidate.bind(this);
+    setInterval(this.invalidate, 60000);
+  }
+
   cache: {
-    [key: string]: {
-      value: unknown;
-      expire: number | null;
-    }
+    [key: string]: CacheEntry
   } = {};
 
   async get<T>(key: string): Promise<T | null> {
     if (!this.cache[key]) return null;
 
-    if (this.cache[key].expire && this.cache[key].expire! < Date.now()) {
+    if (this.isExpired(this.cache[key])) {
       delete this.cache[key];
       return null;
     }
@@ -27,7 +33,17 @@ class MemoryCache implements CachePlugin {
     };
   }
 
-  // todo Clear storage when expired with timer
+  invalidate() {
+    for (const key in this.cache) {
+      if (this.isExpired(this.cache[key])) {
+        delete this.cache[key];
+      }
+    }
+  }
+
+  private isExpired(cacheEntry: CacheEntry) {
+    return cacheEntry.expire && cacheEntry.expire < Date.now();
+  }
 }
 
 export {
