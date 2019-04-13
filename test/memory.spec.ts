@@ -65,4 +65,34 @@ describe("[memory.ts]", () => {
     // Assert
     expect(cachedValue).to.eq(null);
   });
+
+  it("should invalidate cache and remove entries", async () => {
+    // Arrange
+    const key = faker.random.word();
+    const value = faker.random.word();
+    const memoryCache = new MemoryCache();
+    const expire = -20; //Auto expire
+
+    // Act
+    await memoryCache.set(key, value, expire);
+    memoryCache.invalidate();
+
+    // Assert
+    expect(Object.keys(memoryCache.cache).length).to.eq(0);
+  });
+
+  it("should invalidate without removing valid entries", async () => {
+    // Arrange
+    const key = faker.random.word();
+    const value = faker.random.word();
+    const memoryCache = new MemoryCache();
+    const expire = Date.now();
+
+    // Act
+    await memoryCache.set(key, value, expire);
+    memoryCache.invalidate();
+
+    // Assert
+    expect(Object.keys(memoryCache.cache).length).to.eq(1);
+  });
 });

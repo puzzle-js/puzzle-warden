@@ -1,5 +1,4 @@
 # Warden
-`Under Development`
 
 Warden is an outgoing request optimizer for creating fast and scalable applications. Warden is being used in [PuzzleJs](https://github.com/puzzle-js/puzzle-js) framework for gateway communication.
 

@@ -224,4 +224,30 @@ describe("[request-manager]", () => {
     expect(headStream.connect.calledWithExactly(networkStream)).to.eq(true);
     expect(isRegistered).to.eq(true);
   });
+
+  it("should remove if route already registered", () => {
+    // Arrange
+    const name = faker.random.word();
+    const routeConfiguration = {
+      identifier: faker.random.word()
+    } as RouteConfiguration;
+    const headStream = {
+      connect: sandbox.stub().returnsArg(0)
+    };
+    const networkStream = {
+      connect: sandbox.stub().returnsArg(0)
+    };
+    const keyMaker = sandbox.stub();
+    streamFactoryMock.expects('create').withExactArgs(StreamType.HEAD).returns(headStream);
+    streamFactoryMock.expects('create').withExactArgs(StreamType.NETWORK).returns(networkStream);
+    tokenizerMock.expects('tokenize').withExactArgs(name, routeConfiguration.identifier).returns(keyMaker);
+
+    // Act
+    requestManager.register(name, routeConfiguration);
+    requestManager.unregister(name);
+    const isRegistered = requestManager.isRouteRegistered(name);
+
+    // Assert
+    expect(isRegistered).to.eq(false);
+  });
 });

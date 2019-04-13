@@ -89,4 +89,14 @@ describe("[warden.ts]", () => {
     // Assert
     expect(status).to.eq(false);
   });
+
+  it("should unregister route", () => {
+    // Arrange
+    const name = faker.random.word();
+    const warden = new Warden(requestManager, requestWrapper);
+    requestManagerMock.expects('unregister').withArgs(name);
+
+    // Act
+    warden.unregisterRoute(name);
+  });
 });
