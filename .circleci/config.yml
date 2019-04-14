@@ -1,11 +1,11 @@
-version: 2
-
-orbs:
-  codecov: codecov/codecov@1.0.4
+version: 2.1
 
 defaults: &defaults
   docker:
     - image: circleci/node:10
+
+orbs:
+  codecov: codecov/codecov@1.0.4
 
 jobs:
   test:
@@ -25,7 +25,7 @@ jobs:
       - store_artifacts:
           path: coverage
       - codecov/upload:
-          file: coverage
+          file: coverage/*.json
           token: $CODECOV_TOKEN
       - run: yarn build
       - persist_to_workspace:
