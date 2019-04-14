@@ -7,13 +7,13 @@ Warden is an outgoing request optimizer for creating fast and scalable applicati
 ## Features
 - 📥  **Smart Caching** Caches requests by converting HTTP requests to smart key strings. ✅
 - 🚧  **Request Holder** Stopping same request to be sent multiple times. ✅
-- 🔌  **Support** Warden can be used with anything but it has out of the box support for [request](https://github.com/request/request). ✅
+- 🔌  **Support** Warden can be used with anything but it supports [request](https://github.com/request/request) out of the box. ✅
 - 😎  **Easy Implementation** Warden can be easily implemented with a few lines of codes. ✅
 - 🔁  **Request Retry** Requests will automatically be re-attempted on recoverable errors. 📝
-- 📇  **Schema Parser** Uses provided schema for parsing json faster. 📝
+- 📇  **Schema Parser** Warden uses a schema which can be provided by you for parsing JSON faster. 📝
 - 🚥  **API Queue** Throttles API calls to protect target service. 📝
 - 👻  **Request Shadowing** Copies a fraction of traffic to a new deployment for observation. 📝
-- 🚉  **Reverse Proxy** It can be deployable as an external application which can serve as reverse proxy. 📝
+- 🚉  **Reverse Proxy** It can be deployable as an external application which can serve as a reverse proxy. 📝
 - 📛  **Circuit Breaker** Immediately refuses new requests to provide time for the API to become healthy. 📝
 
 ![Warden Achitecture](./warden_architecture.svg)
@@ -24,6 +24,7 @@ Warden is an outgoing request optimizer for creating fast and scalable applicati
 - [Identifier](#identifier)
 - [Registering Route](#registering-route)
 - [Cache](#cache)
+- [Holder](#holder)
 
 ### Installing
 
@@ -85,14 +86,14 @@ ___
 ### Identifier
 
 Warden uses identifiers to convert HTTP requests to unique keys. Using these keys it is able to implement cache, holder and other stuff.
-Lets assume we want to send a GET request to `https://postman-echo.com/get?foo=value&bar=anothervalue`. And we want to cache responses based on query string `foo`.
-We should use identifier `{query.foo}`. There are 5 types of identifier variables.
+Let's assume we want to send a GET request to `https://postman-echo.com/get?foo=value&bar=anothervalue`. And we want to cache responses based on query string `foo`.
+We should use the identifier `{query.foo}`. There are 5 types of identifier variables.
 
 - `{url}` Url of the request
 - `{cookie}` Cookie variable. You can use `{cookie.foo}` to make request unique by foo cookie value.
 - `{headers}` Header variable. You can use `{headers.Authorization}` to make request unique by Authorization header
 - `{query}` Query string variables. You can use `{query.foo}` to make request unique by query name.
-- `{method}` HTTP method. GET, POST etc.
+- `{method}` HTTP method. GET, POST, etc.
 
 You can also use javascript to create custom identifiers.
 
@@ -100,8 +101,8 @@ You can also use javascript to create custom identifiers.
 
 Identifiers can be chained like `{query.foo}_{cookie.bar}`.
 
-Identifiers gets converted to keys for each request. Lets assume we have an identifier like `{query.foo}_{method}`
-We use this identifier for GET request to `/path?foo=bar`. Then the unique key of this request will be `bar_GET`.
+Identifiers get converted to keys for each request. Let's assume we have an identifier like `{query.foo}_{method}`
+We use this identifier for a GET request to `/path?foo=bar`. Then the unique key of this request will be `bar_GET`.
 
 ### Registering Route
 
@@ -127,7 +128,7 @@ warden.register('test', {
 });
 ```
 
-Or you can customize cache configuration by passing object.
+Or you can customize cache configuration by passing an object.
 
 ```js
 warden.register('test', {
@@ -145,14 +146,14 @@ Default values and properties
 
 | Property | Required | Default Value | Definition |
 | :---         | :---: | ---: | :--- |
-| plugin       | ❌ | memory    | Where cached data will be stored. Please see [Cache Plugins](#cache-plugins) for more information. Currently only `memory` available. |
+| plugin       | ❌ | memory    | Where cached data will be stored. Please see [Cache Plugins](#cache-plugins) for more information. Currently, only `memory` available. |
 | strategy     | ❌ | CacheThenNetwork | Controls when and how things will be cached. Please see [Caching Strategy](#caching-strategy) for more information. |
 | duration     | ❌ |    1m   | Caching Duration. You can use `number` for ms. Or you can use `1m` `1h` `1d` etc. Please see [ms](https://github.com/zeit/ms) for full list|
 
 
 #### Cache Plugins
 
-Cache plugins controls where cache will be stored. These are available plugins:
+Cache plugins control where cache will be stored. These are available plugins:
 
 - __Memory__ - ✅
 - Couchbase - 📝 Todo
@@ -160,9 +161,13 @@ Cache plugins controls where cache will be stored. These are available plugins:
 
 #### Caching Strategy
 
-Caching strategies defines how things will be cached and when cached responses will be used. Currently only available caching strategy is [CacheThenNetwork](#cachethennetwork)
+Caching strategies defines how things will be cached and when cached responses will be used. Currently, the only available caching strategy is [CacheThenNetwork](#cachethennetwork)
 
 ##### CacheThenNetwork
 
-Simple old school caching. Asks cache plugin if it has valid cached response. If yes, returns the cached value as response. If no, passes the request to next handler. When it receives response, it caches and returns the value as response.
+Simple old school caching. Asks cache plugin if it has a valid cached response. If yes, returns the cached value as the response. If no, passes the request to the next handler. When it receives the response, it caches and returns the value as a response.
 
+### Holder
+
+Holder prevents same HTTP requests to be sent at the same time. 
+Let's assume we have an identifier for a request: `{query.foo}`. We send a HTTP request `/product?foo=bar`. While waiting for the response, warden received another HTTP request to the same address which means both HTTP requests are converted to the same key. Then Warden stops the second request. After receiving the response from the first request, Warden returns both requests with the same response by sending only one HTTP request. 
