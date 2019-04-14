@@ -38,7 +38,7 @@ npm i puzzle-warden --save
 
 ### Quick Guide
 
-1.  Register Route
+#### 1.  Register Route
 ```js
 const warden = require('puzzle-warden');
 warden.register('test', {
@@ -48,9 +48,9 @@ warden.register('test', {
 });
 ```
 
-2. Send Request
+#### 2. Send Request
 
-#### Using Warden
+##### Using Warden
 ```js
 warden.request('test', {
   url: `https://postman-echo.com/get?foo=value`,
@@ -65,7 +65,7 @@ warden.request('test', {
 });
 ```
 
-#### Using [Request](https://github.com/request/request) Module
+##### Using [Request](https://github.com/request/request) Module
 ```js
 request({
   name: 'test',
