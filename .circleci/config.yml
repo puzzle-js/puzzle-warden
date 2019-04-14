@@ -34,6 +34,9 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
+            - README.md
+            - CHANGELOG.md
+            - LICENSE
             - package.json
             - yarn.lock
             - .npmignore

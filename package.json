@@ -1,6 +1,6 @@
 {
   "name": "puzzle-warden",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
@@ -10,6 +10,11 @@
     "test:watch": "jest --coverage --watch",
     "lint": "tslint -c tslint.json 'src/**/*.ts'"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/puzzle-js/puzzle-warden.git"
+  },
+  "homepage": "https://puzzle-js.github.io/puzzle-warden/",
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/cookie": "^0.3.2",
