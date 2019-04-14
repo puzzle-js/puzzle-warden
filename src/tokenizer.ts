@@ -2,7 +2,7 @@ import {reverseString} from "./helpers";
 
 type KeyMaker = (
   url: string,
-  cookies: { [key: string]: string },
+  cookie: { [key: string]: string },
   headers: { [key: string]: string },
   query: { [key: string]: string },
   method: string,
