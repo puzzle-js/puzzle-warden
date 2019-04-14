@@ -1,6 +1,6 @@
 <p align="center"><img width="400" alt="Warden" src="./logo.png"></p>
 
-Warden is an outgoing request optimizer for creating fast and scalable applications. Warden is being used in [PuzzleJs](https://github.com/puzzle-js/puzzle-js) framework for gateway communication.
+Warden is an outgoing request optimizer for creating fast and scalable applications. 
 
 [![CircleCI](https://circleci.com/gh/puzzle-js/puzzle-warden/tree/master.svg?style=svg)](https://circleci.com/gh/puzzle-js/puzzle-warden/tree/master) ![npm](https://img.shields.io/npm/dt/puzzle-warden.svg) ![npm](https://img.shields.io/npm/v/puzzle-warden.svg) ![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/puzzle-js/puzzle-warden.svg)
 
@@ -25,6 +25,7 @@ Warden is an outgoing request optimizer for creating fast and scalable applicati
 - [Registering Route](#registering-route)
 - [Cache](#cache)
 - [Holder](#holder)
+- [Api](#api)
 
 ### Installing
 
@@ -156,8 +157,8 @@ Default values and properties
 Cache plugins control where cache will be stored. These are available plugins:
 
 - __Memory__ - ✅
-- Couchbase - 📝 Todo
-- Redis - 📝 Todo
+- Couchbase - 📝 [Todo](https://github.com/puzzle-js/puzzle-warden/projects/1#card-20220024)
+- Redis - 📝 [Todo](https://github.com/puzzle-js/puzzle-warden/projects/1#card-20220030)
 
 #### Caching Strategy
 
@@ -171,3 +172,52 @@ Simple old school caching. Asks cache plugin if it has a valid cached response. 
 
 Holder prevents same HTTP requests to be sent at the same time. 
 Let's assume we have an identifier for a request: `{query.foo}`. We send a HTTP request `/product?foo=bar`. While waiting for the response, warden received another HTTP request to the same address which means both HTTP requests are converted to the same key. Then Warden stops the second request. After receiving the response from the first request, Warden returns both requests with the same response by sending only one HTTP request. 
+
+### Api
+
+#### warden.register()
+
+Check [Registering Route](#registering-route) section for better information and usage details
+
+```js
+warden.register('routeName', routeConfiguration);
+```
+
+#### warden.request()
+
+Sends a HTTP request using warden (internally uses [request](https://github.com/request/request))
+```js
+warden.request('test', {
+  url: `https://postman-echo.com/get?foo=value`,
+  method: 'get'
+}, (err, response, data) => {
+  console.log(data);
+});
+```
+
+Any valid property for request module can be used.
+
+#### warden.requestConfig()
+
+Works exactly like [request defaults](https://github.com/request/request#requestdefaultsoptions). It can be used for settings default values for requests.
+
+```js
+warden.requestConfig({
+  headers: {'x-token': 'my-token'}
+});
+```
+Sets `x-token` header with value `my-token` for all HTTP requests
+
+#### warden.isRouteRegistered()
+
+Checks whether route is registered.
+```js
+warden.isRouteRegistered('route'); // true | false
+```
+
+#### warden.unregisterRoute()
+
+Unregisters route
+```js
+warden.unregisterRoute('route');
+```
