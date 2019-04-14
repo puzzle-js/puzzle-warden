@@ -2,7 +2,7 @@
 
 Warden is an outgoing request optimizer for creating fast and scalable applications. 
 
-[![CircleCI](https://circleci.com/gh/puzzle-js/puzzle-warden/tree/master.svg?style=svg)](https://circleci.com/gh/puzzle-js/puzzle-warden/tree/master) ![npm](https://img.shields.io/npm/dt/puzzle-warden.svg) ![npm](https://img.shields.io/npm/v/puzzle-warden.svg) ![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/puzzle-js/puzzle-warden.svg)[![codecov](https://codecov.io/gh/puzzle-js/puzzle-warden/branch/master/graph/badge.svg)](https://codecov.io/gh/puzzle-js/puzzle-warden)
+[![CircleCI](https://circleci.com/gh/puzzle-js/puzzle-warden/tree/master.svg?style=svg)](https://circleci.com/gh/puzzle-js/puzzle-warden/tree/master) ![npm](https://img.shields.io/npm/dt/puzzle-warden.svg) ![npm](https://img.shields.io/npm/v/puzzle-warden.svg) ![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/puzzle-js/puzzle-warden.svg) [![codecov](https://codecov.io/gh/puzzle-js/puzzle-warden/branch/master/graph/badge.svg)](https://codecov.io/gh/puzzle-js/puzzle-warden)
 
 ## Features
 - 📥  **Smart Caching** Caches requests by converting HTTP requests to smart key strings. ✅
