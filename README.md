@@ -19,11 +19,11 @@ Warden is an outgoing request optimizer for creating fast and scalable applicati
 ![Warden Achitecture](./warden_architecture.svg)
 
 ## Getting started
-- [Installing](#Installing)
-- [Quick Guide](#QuickGuide)
-- [Identifier](#Identifier)
-- [Registering Route](#RegisteringRoute)
-- [Cache](#Cache)
+- [Installing](#installing)
+- [Quick Guide](#quick-guide)
+- [Identifier](#identifier)
+- [Registering Route](#registering-route)
+- [Cache](#cache)
 
 ### Installing
 
@@ -38,7 +38,7 @@ npm i puzzle-warden --save
 
 ### Quick Guide
 
-#### Registering Route
+1.  Register Route
 ```js
 const warden = require('puzzle-warden');
 warden.register('test', {
@@ -48,7 +48,9 @@ warden.register('test', {
 });
 ```
 
-#### Native Request
+2. Send Request
+
+#### Using Warden
 ```js
 warden.request('test', {
   url: `https://postman-echo.com/get?foo=value`,
