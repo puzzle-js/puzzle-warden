@@ -1,5 +1,8 @@
 version: 2
 
+orbs:
+  codecov: codecov/codecov@1.0.4
+
 defaults: &defaults
   docker:
     - image: circleci/node:10
@@ -19,6 +22,11 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
       - run: yarn test
+      - store_artifacts:
+          path: coverage
+      - codecov/upload:
+          file: coverage
+          token: $CODECOV_TOKEN
       - run: yarn build
       - persist_to_workspace:
           root: .
