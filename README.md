@@ -42,7 +42,7 @@ npm i puzzle-warden --save
 ```js
 const warden = require('puzzle-warden');
 warden.register('test', {
-  identifier: 'ty_{query.foo}_{cookie.bar}',
+  identifier: '{query.foo}_{cookie.bar}',
   cache: true,
   holder: true
 });
@@ -116,4 +116,53 @@ warden.register('test', {
 ```
 
 ### Cache
+
+You can simply enable cache with default values using.
+
+```js
+warden.register('test', {
+  identifier: 'ty_{query.foo}_{cookie.bar}',
+  cache: true,
+  holder: true
+});
+```
+
+Or you can customize cache configuration by passing object.
+
+```js
+warden.register('test', {
+  identifier: 'ty_{query.foo}_{cookie.bar}',
+  cache: {
+    plugin: 'memory',
+    strategy: 'CacheThenNetwork',
+    duration: '2m'
+  },
+  holder: true
+});
+```
+
+Default values and properties
+
+| Property | Required | Default Value | Definition |
+| :---         | :---: | ---: | :--- |
+| plugin       | ❌ | memory    | Where cached data will be stored. Please see [Cache Plugins](#cache-plugins) for more information. Currently only `memory` available. |
+| strategy     | ❌ | CacheThenNetwork | Controls when and how things will be cached. Please see [Caching Strategy](#caching-strategy) for more information. |
+| duration     | ❌ |    1m   | Caching Duration. You can use `number` for ms. Or you can use `1m` `1h` `1d` etc. Please see [ms](https://github.com/zeit/ms) for full list|
+
+
+#### Cache Plugins
+
+Cache plugins controls where cache will be stored. These are available plugins:
+
+- __Memory__ - ✅
+- Couchbase - 📝 Todo
+- Redis - 📝 Todo
+
+#### Caching Strategy
+
+Caching strategies defines how things will be cached and when cached responses will be used. Currently only available caching strategy is [CacheThenNetwork](#cachethennetwork)
+
+##### CacheThenNetwork
+
+Simple old school caching. Asks cache plugin if it has valid cached response. If yes, returns the cached value as response. If no, passes the request to next handler. When it receives response, it caches and returns the value as response.
 
