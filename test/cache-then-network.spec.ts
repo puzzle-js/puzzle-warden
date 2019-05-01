@@ -30,7 +30,7 @@ describe("[cache.ts]", () => {
     expect(cache).to.be.instanceOf(CacheThenNetwork);
   });
 
-  it("should pass the request  to the next chain if cache is invalid", async () => {
+  it("should pass the request to the next chain if cache is invalid", async () => {
     // Arrange
     const ms = undefined;
     const cache = new CacheThenNetwork(memory, ms);
@@ -110,6 +110,29 @@ describe("[cache.ts]", () => {
       cacheHit: false
     };
     memoryMock.expects('set').withExactArgs(chunk.key, chunk.response, ms).resolves();
+    const spy = sandbox.stub();
+
+    // Act
+    await cache.onResponse(chunk, spy);
+
+    // Assert
+    expect(spy.calledWithExactly(undefined, chunk)).to.eq(true);
+  });
+
+  it("should handle incoming response without caching because of set-cookie", async () => {
+    // Arrange
+    const ms = faker.random.number();
+    const cache = new CacheThenNetwork(memory, ms);
+    const chunk: any = {
+      key: faker.random.word(),
+      response: {
+        body: faker.random.word(),
+        headers: {
+          'set-cookie': 'foo=bar'
+        }
+      },
+      cacheHit: false
+    };
     const spy = sandbox.stub();
 
     // Act
