@@ -6,7 +6,8 @@ Warden is an outgoing request optimizer for creating fast and scalable applicati
 ![npm](https://img.shields.io/npm/dt/puzzle-warden.svg) 
 ![npm](https://img.shields.io/npm/v/puzzle-warden.svg) 
 [![Known Vulnerabilities](https://snyk.io/test/github/puzzle-js/puzzle-warden/badge.svg)](https://snyk.io/test/github/puzzle-js/puzzle-warden) 
-[![codecov](https://codecov.io/gh/puzzle-js/puzzle-warden/branch/master/graph/badge.svg)](https://codecov.io/gh/puzzle-js/puzzle-warden) 
+[![codecov](https://codecov.io/gh/puzzle-js/puzzle-warden/branch/master/graph/badge.svg)](https://codecov.io/gh/puzzle-js/puzzle-warden)
+[![Codacy](https://api.codacy.com/project/badge/Grade/e806d72373414fd9818ab2a403f1b36d)](https://www.codacy.com/app/Acanguven/puzzle-warden?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=puzzle-js/puzzle-warden&amp;utm_campaign=Badge_Grade) 
 
 ## Features
 - 📥  **Smart Caching** Caches requests by converting HTTP requests to smart key strings. ✅
