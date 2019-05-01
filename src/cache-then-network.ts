@@ -18,8 +18,8 @@ class CacheThenNetwork extends WardenStream {
 
   async onResponse(chunk: ResponseChunk, callback: TransformCallback): Promise<void> {
     if (!chunk.cacheHit && !chunk.error && chunk.response) {
-      if(chunk.response && chunk.response.headers["set-cookie"]){
-        console.error('Detected dangerous response with set-cookie header, not caching', chunk.key);
+      if(chunk.response.headers["set-cookie"]){
+        console.warn('Detected dangerous response with set-cookie header, not caching', chunk.key);
       }else{
         await this.storage.set(chunk.key, chunk.response, this.ms);
       }

@@ -5,7 +5,7 @@
   "types": "dist/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "test": "jest --coverage",
+    "test": "jest --coverage --silent",
     "build": "rm -rf dist && ./node_modules/.bin/tsc",
     "test:watch": "jest --coverage --watch",
     "lint": "tslint -c tslint.json 'src/**/*.ts'"

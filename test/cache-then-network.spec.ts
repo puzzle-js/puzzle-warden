@@ -105,7 +105,8 @@ describe("[cache.ts]", () => {
     const chunk: any = {
       key: faker.random.word(),
       response: {
-        body: faker.random.word()
+        body: faker.random.word(),
+        headers: {}
       },
       cacheHit: false
     };
