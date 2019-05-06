@@ -74,7 +74,8 @@ describe("[network.ts]", () => {
       key: chunk.key,
       cb: chunk.cb,
       response: response as unknown as request.Response,
-      error: null
+      error: null as any,
+      requestOptions: chunk.requestOptions as any
     })).to.eq(true);
   });
 

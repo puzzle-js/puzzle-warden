@@ -74,7 +74,7 @@ describe("[cache.ts]", () => {
       cb: chunk.cb,
       response: response as any,
       cacheHit: true
-    })).to.eq(true);
+    } as any)).to.eq(true);
   });
 
   it("should return incoming response without caching if cache hit flag true", async () => {

@@ -3,6 +3,7 @@ import {CacheFactory} from "./cache-factory";
 import {StreamHead} from "./stream-head";
 import {Holder} from "./holder";
 import {RequestWrapper} from "./request-wrapper";
+import {Retry} from "./retry";
 
 const enum StreamType {
   HOLDER = 'holder',
@@ -10,12 +11,14 @@ const enum StreamType {
   NETWORK = 'network',
   QUEUE = 'queue',
   CIRCUIT = 'circuit',
-  HEAD = 'head'
+  HEAD = 'head',
+  RETRY = 'retry'
 }
 
 enum ConfigurableStream {
   HOLDER = StreamType.HOLDER,
-  CACHE = StreamType.CACHE
+  CACHE = StreamType.CACHE,
+  RETRY = StreamType.RETRY
 }
 
 
@@ -41,6 +44,8 @@ class StreamFactory {
       //   throw new Error('Not implemented');
       case StreamType.NETWORK:
         return new Network(this.requestWrapper) as unknown as U;
+      case StreamType.RETRY:
+        return new Retry(3) as unknown as U;
       case StreamType.HEAD:
         return new StreamHead() as unknown as U;
       default:

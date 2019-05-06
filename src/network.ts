@@ -21,8 +21,7 @@ class Network extends WardenStream {
   onRequest(chunk: RequestChunk, callback: TransformCallback): void {
     this.requestWrapper.request[chunk.requestOptions.method](chunk.requestOptions, (error, response) => {
       this.respond({
-        key: chunk.key,
-        cb: chunk.cb,
+        ...chunk,
         response,
         error
       });

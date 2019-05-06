@@ -4,18 +4,18 @@ import {RequestCallback} from "request";
 import {RequestOptions} from "./request-manager";
 import request from "request";
 
+
 interface RequestChunk {
   key: string;
   requestOptions: RequestOptions;
   cb: RequestCallback;
 }
 
-interface ResponseChunk {
-  cb: RequestCallback;
-  key: string;
+interface ResponseChunk extends RequestChunk{
   response?: request.Response;
-  error?: any;
-  cacheHit?: true;
+  error?: {
+    name: string
+  };
 }
 
 interface WardenStreamer {
@@ -112,11 +112,11 @@ abstract class WardenStream implements WardenStreamer {
     return wardenStream;
   }
 
-  respond(chunk: ResponseChunk): boolean {
+  respond<T extends ResponseChunk>(chunk: T): boolean {
     return this.responseStream.push(chunk);
   }
 
-  request(chunk: RequestChunk): boolean {
+  request<T extends RequestChunk>(chunk: T): boolean {
     return this.requestStream.push(chunk);
   }
 

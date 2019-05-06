@@ -10,16 +10,16 @@ Warden is an outgoing request optimizer for creating fast and scalable applicati
 [![Codacy](https://api.codacy.com/project/badge/Grade/e806d72373414fd9818ab2a403f1b36d)](https://www.codacy.com/app/Acanguven/puzzle-warden?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=puzzle-js/puzzle-warden&amp;utm_campaign=Badge_Grade) 
 
 ## Features
-- 📥  **Smart Caching** Caches requests by converting HTTP requests to smart key strings. ✅
-- 🚧  **Request Holder** Stopping same request to be sent multiple times. ✅
-- 🔌  **Support** Warden can be used with anything but it supports [request](https://github.com/request/request) out of the box. ✅
-- 😎  **Easy Implementation** Warden can be easily implemented with a few lines of codes. ✅
-- 🔁  **Request Retry** Requests will automatically be re-attempted on recoverable errors. 📝
-- 📇  **Schema Parser** Warden uses a schema which can be provided by you for parsing JSON faster. 📝
-- 🚥  **API Queue** Throttles API calls to protect target service. 📝
-- 👻  **Request Shadowing** Copies a fraction of traffic to a new deployment for observation. 📝
-- 🚉  **Reverse Proxy** It can be deployable as an external application which can serve as a reverse proxy. 📝
-- 📛  **Circuit Breaker** Immediately refuses new requests to provide time for the API to become healthy. 📝
+- 📥 **Smart Caching** Caches requests by converting HTTP requests to smart key strings. ✅
+- 🚧 **Request Holder** Stopping same request to be sent multiple times. ✅
+- 🔌 **Support** Warden can be used with anything but it supports [request](https://github.com/request/request) out of the box. ✅
+- 😎 **Easy Implementation** Warden can be easily implemented with a few lines of codes. ✅
+- 🔁 **Request Retry** Requests will automatically be re-attempted on recoverable errors. 📝
+- 📇 **Schema Parser** Warden uses a schema which can be provided by you for parsing JSON faster. 📝
+- 🚥 **API Queue** Throttles API calls to protect target service. 📝
+- 👻 **Request Shadowing** Copies a fraction of traffic to a new deployment for observation. 📝
+- 🚉 **Reverse Proxy** It can be deployable as an external application which can serve as a reverse proxy. 📝
+- 📛 **Circuit Breaker** Immediately refuses new requests to provide time for the API to become healthy. 📝
 
 ![Warden Achitecture](./warden_architecture.svg)
 
@@ -35,11 +35,11 @@ Warden is an outgoing request optimizer for creating fast and scalable applicati
 ### Installing
 
 Yarn
-```
+```bash
 yarn add puzzle-warden
 ```
 Npm
-```
+```bash
 npm i puzzle-warden --save
 ```
 
