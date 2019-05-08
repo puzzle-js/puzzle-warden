@@ -2,7 +2,7 @@ import "reflect-metadata";
 
 import {expect} from "chai";
 import sinon, {SinonMock} from "sinon";
-import {RequestManager, RequestOptions, RouteConfiguration} from "../src/request-manager";
+import {DEFAULT_IDENTIFIER, RequestManager, RequestOptions, RouteConfiguration} from "../src/request-manager";
 import {CacheFactory} from "../src/cache-factory";
 import {StreamFactory, StreamType} from "../src/stream-factory";
 import {Tokenizer} from "../src/tokenizer";
@@ -56,9 +56,40 @@ describe("[request-manager]", () => {
       connect: sandbox.stub().returnsArg(0)
     };
     const keyMaker = sandbox.stub();
-    streamFactoryMock.expects('create').withExactArgs(StreamType.HEAD).returns(headStream);
-    streamFactoryMock.expects('create').withExactArgs(StreamType.NETWORK).returns(networkStream);
+    streamFactoryMock.expects('createHead').withExactArgs().returns(headStream);
+    streamFactoryMock.expects('createNetwork').withExactArgs().returns(networkStream);
     tokenizerMock.expects('tokenize').withExactArgs(name, routeConfiguration.identifier).returns(keyMaker);
+
+    // Act
+    requestManager.register(name, routeConfiguration);
+
+    // Assert
+    expect(headStream.connect.calledWithExactly(networkStream)).to.eq(true);
+  });
+
+  it("should register new route without any identifier", () => {
+    // Arrange
+    const name = faker.random.word();
+    const routeConfiguration = {} as RouteConfiguration;
+    const headStream = {
+      connect: sandbox.stub().returnsArg(0)
+    };
+    const networkStream = {
+      connect: sandbox.stub().returnsArg(0)
+    };
+    const keyMaker = sandbox.stub();
+    streamFactoryMock
+      .expects('createHead')
+      .withExactArgs()
+      .returns(headStream);
+    streamFactoryMock
+      .expects('createNetwork')
+      .withExactArgs()
+      .returns(networkStream);
+    tokenizerMock
+      .expects('tokenize')
+      .withExactArgs(name, undefined)
+      .returns(keyMaker);
 
     // Act
     requestManager.register(name, routeConfiguration);
@@ -82,8 +113,8 @@ describe("[request-manager]", () => {
       connect: sandbox.stub().returnsArg(0)
     };
     const keyMaker = sandbox.stub();
-    streamFactoryMock.expects('create').withExactArgs(StreamType.HEAD).returns(headStream);
-    streamFactoryMock.expects('create').withExactArgs(StreamType.NETWORK).returns(networkStream);
+    streamFactoryMock.expects('createHead').withExactArgs().returns(headStream);
+    streamFactoryMock.expects('createNetwork').withExactArgs().returns(networkStream);
     tokenizerMock.expects('tokenize').withExactArgs(name, routeConfiguration.identifier).returns(keyMaker);
 
     // Act
@@ -110,8 +141,8 @@ describe("[request-manager]", () => {
       connect: sandbox.stub().returnsArg(0)
     };
     const keyMaker = sandbox.stub();
-    streamFactoryMock.expects('create').withExactArgs(StreamType.HEAD).returns(headStream);
-    streamFactoryMock.expects('create').withExactArgs(StreamType.NETWORK).returns(networkStream);
+    streamFactoryMock.expects('createHead').withExactArgs().returns(headStream);
+    streamFactoryMock.expects('createNetwork').withExactArgs().returns(networkStream);
     streamFactoryMock.expects('create').withExactArgs(StreamType.CACHE, routeConfiguration.cache).returns(cacheStream);
     tokenizerMock.expects('tokenize').withExactArgs(name, routeConfiguration.identifier).returns(keyMaker);
 
@@ -143,8 +174,8 @@ describe("[request-manager]", () => {
     };
     const key = faker.random.word();
     const keyMaker = sandbox.stub().returns(key);
-    streamFactoryMock.expects('create').withExactArgs(StreamType.HEAD).returns(headStream);
-    streamFactoryMock.expects('create').withExactArgs(StreamType.NETWORK).returns(networkStream);
+    streamFactoryMock.expects('createHead').withExactArgs().returns(headStream);
+    streamFactoryMock.expects('createNetwork').withExactArgs().returns(networkStream);
     tokenizerMock.expects('tokenize').withExactArgs(name, routeConfiguration.identifier).returns(keyMaker);
     const stub = sandbox.stub();
 
@@ -176,8 +207,8 @@ describe("[request-manager]", () => {
     };
     const key = faker.random.word();
     const keyMaker = sandbox.stub().returns(key);
-    streamFactoryMock.expects('create').withExactArgs(StreamType.HEAD).returns(headStream);
-    streamFactoryMock.expects('create').withExactArgs(StreamType.NETWORK).returns(networkStream);
+    streamFactoryMock.expects('createHead').withExactArgs().returns(headStream);
+    streamFactoryMock.expects('createNetwork').withExactArgs().returns(networkStream);
     tokenizerMock.expects('tokenize').withExactArgs(name, routeConfiguration.identifier).returns(keyMaker);
     const stub = sandbox.stub();
 
@@ -212,8 +243,8 @@ describe("[request-manager]", () => {
       connect: sandbox.stub().returnsArg(0)
     };
     const keyMaker = sandbox.stub();
-    streamFactoryMock.expects('create').withExactArgs(StreamType.HEAD).returns(headStream);
-    streamFactoryMock.expects('create').withExactArgs(StreamType.NETWORK).returns(networkStream);
+    streamFactoryMock.expects('createHead').withExactArgs().returns(headStream);
+    streamFactoryMock.expects('createNetwork').withExactArgs().returns(networkStream);
     tokenizerMock.expects('tokenize').withExactArgs(name, routeConfiguration.identifier).returns(keyMaker);
 
     // Act
@@ -238,8 +269,8 @@ describe("[request-manager]", () => {
       connect: sandbox.stub().returnsArg(0)
     };
     const keyMaker = sandbox.stub();
-    streamFactoryMock.expects('create').withExactArgs(StreamType.HEAD).returns(headStream);
-    streamFactoryMock.expects('create').withExactArgs(StreamType.NETWORK).returns(networkStream);
+    streamFactoryMock.expects('createHead').withExactArgs().returns(headStream);
+    streamFactoryMock.expects('createNetwork').withExactArgs().returns(networkStream);
     tokenizerMock.expects('tokenize').withExactArgs(name, routeConfiguration.identifier).returns(keyMaker);
 
     // Act

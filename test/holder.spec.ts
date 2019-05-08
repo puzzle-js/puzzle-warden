@@ -80,10 +80,13 @@ describe("[holder.ts]", () => {
     const responseChunk = {
       key,
       response: {},
+      requestOptions: {},
+      error: undefined
     } as any;
     const requestChunk = {
       key,
-      cb: sandbox.stub()
+      cb: sandbox.stub(),
+      requestOptions: {}
     } as any;
     const requestSpy = sandbox.stub();
     const respondSpy = sandbox.stub(holder, 'respond');
@@ -98,7 +101,8 @@ describe("[holder.ts]", () => {
       key: responseChunk.key,
       response: responseChunk.response,
       cb: requestChunk.cb,
-      error: undefined
+      error: undefined,
+      requestOptions: responseChunk.requestOptions
     })).to.eq(true);
     expect(spy.calledOnce).to.eq(true);
     expect(spy.calledWithExactly(undefined, null)).to.eq(true);

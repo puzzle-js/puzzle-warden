@@ -10,16 +10,16 @@ Warden is an outgoing request optimizer for creating fast and scalable applicati
 [![Codacy](https://api.codacy.com/project/badge/Grade/e806d72373414fd9818ab2a403f1b36d)](https://www.codacy.com/app/Acanguven/puzzle-warden?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=puzzle-js/puzzle-warden&amp;utm_campaign=Badge_Grade) 
 
 ## Features
-- 📥  **Smart Caching** Caches requests by converting HTTP requests to smart key strings. ✅
-- 🚧  **Request Holder** Stopping same request to be sent multiple times. ✅
-- 🔌  **Support** Warden can be used with anything but it supports [request](https://github.com/request/request) out of the box. ✅
-- 😎  **Easy Implementation** Warden can be easily implemented with a few lines of codes. ✅
-- 🔁  **Request Retry** Requests will automatically be re-attempted on recoverable errors. 📝
-- 📇  **Schema Parser** Warden uses a schema which can be provided by you for parsing JSON faster. 📝
-- 🚥  **API Queue** Throttles API calls to protect target service. 📝
-- 👻  **Request Shadowing** Copies a fraction of traffic to a new deployment for observation. 📝
-- 🚉  **Reverse Proxy** It can be deployable as an external application which can serve as a reverse proxy. 📝
-- 📛  **Circuit Breaker** Immediately refuses new requests to provide time for the API to become healthy. 📝
+- 📥 **Smart Caching** Caches requests by converting HTTP requests to smart key strings. ✅
+- 🚧 **Request Holder** Stopping same request to be sent multiple times. ✅
+- 🔌 **Support** Warden can be used with anything but it supports [request](https://github.com/request/request) out of the box. ✅
+- 😎 **Easy Implementation** Warden can be easily implemented with a few lines of codes. ✅
+- 🔁 **Request Retry** Requests will automatically be re-attempted on recoverable errors. ✅
+- 📇 **Schema Parser** Warden uses a schema which can be provided by you for parsing JSON faster. 📝
+- 🚥 **API Queue** Throttles API calls to protect target service. 📝
+- 👻 **Request Shadowing** Copies a fraction of traffic to a new deployment for observation. 📝
+- 🚉 **Reverse Proxy** It can be deployable as an external application which can serve as a reverse proxy. 📝
+- 📛 **Circuit Breaker** Immediately refuses new requests to provide time for the API to become healthy. 📝
 
 ![Warden Achitecture](./warden_architecture.svg)
 
@@ -29,17 +29,18 @@ Warden is an outgoing request optimizer for creating fast and scalable applicati
 - [Identifier](#identifier)
 - [Registering Route](#registering-route)
 - [Cache](#cache)
+- [Retry](#retry)
 - [Holder](#holder)
 - [Api](#api)
 
 ### Installing
 
 Yarn
-```
+```bash
 yarn add puzzle-warden
 ```
 Npm
-```
+```bash
 npm i puzzle-warden --save
 ```
 
@@ -122,6 +123,8 @@ warden.register('test', {
 });
 ```
 
+`identifier` is an optional field. If an identifier is not provided warden will be use generic identifier which is `${name}_${url}_${JSON.stringify({cookie, headers, query})}_${method}`.
+
 ### Cache
 
 You can simply enable cache with default values using.
@@ -176,7 +179,36 @@ Simple old school caching. Asks cache plugin if it has a valid cached response. 
 ### Holder
 
 Holder prevents same HTTP requests to be sent at the same time. 
-Let's assume we have an identifier for a request: `{query.foo}`. We send a HTTP request `/product?foo=bar`. While waiting for the response, warden received another HTTP request to the same address which means both HTTP requests are converted to the same key. Then Warden stops the second request. After receiving the response from the first request, Warden returns both requests with the same response by sending only one HTTP request. 
+Let's assume we have an identifier for a request: `{query.foo}`. We send a HTTP request `/product?foo=bar`. While waiting for the response, warden received another HTTP request to the same address which means both HTTP requests are converted to the same key. Then Warden stops the second request. After receiving the response from the first request, Warden returns both requests with the same response by sending only one HTTP request.
+
+### Retry
+
+When the connection fails with one of ECONNRESET, ENOTFOUND, ESOCKETTIMEDOUT, ETIMEDOUT, ECONNREFUSED, EHOSTUNREACH, EPIPE, EAI_AGAIN or when an HTTP 5xx or 429 error occurrs, the request will automatically be re-attempted as these are often recoverable errors and will go away on retry.
+
+```js
+warden.register('routeName', {
+  retry: {
+    delay: 100,
+    count: 1,
+    logger: (retryCount) => {
+      console.log(retryCount);
+    }
+  }
+}); 
+
+warden.register('routeName', {
+  retry: true // default settings
+}); 
+```
+
+Default values and properties
+
+| Property | Required | Default Value | Definition |
+| :---         | :---: | ---: | :--- |
+| delay       | ❌ | 100    | Warden will wait for 100ms before retry |
+| count     | ❌ | 1 | It will try for 1 time by default |
+| logger     | ❌ |    1m   | Logger will be called on each retry with retry count|
+
 
 ### Api
 

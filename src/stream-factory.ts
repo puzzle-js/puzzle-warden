@@ -3,6 +3,7 @@ import {CacheFactory} from "./cache-factory";
 import {StreamHead} from "./stream-head";
 import {Holder} from "./holder";
 import {RequestWrapper} from "./request-wrapper";
+import {Retry} from "./retry";
 
 const enum StreamType {
   HOLDER = 'holder',
@@ -10,12 +11,14 @@ const enum StreamType {
   NETWORK = 'network',
   QUEUE = 'queue',
   CIRCUIT = 'circuit',
-  HEAD = 'head'
+  HEAD = 'head',
+  RETRY = 'retry'
 }
 
 enum ConfigurableStream {
   HOLDER = StreamType.HOLDER,
-  CACHE = StreamType.CACHE
+  CACHE = StreamType.CACHE,
+  RETRY = StreamType.RETRY
 }
 
 
@@ -31,7 +34,7 @@ class StreamFactory {
     this.requestWrapper = requestWrapper;
   }
 
-  create<U, T = {}>(streamType: string, configuration?: T) {
+  create<U, T = {}>(streamType: string, configuration: T) {
     switch (streamType) {
       case StreamType.CACHE:
         return this.cacheFactory.create(configuration as T) as unknown as U;
@@ -39,13 +42,19 @@ class StreamFactory {
         return new Holder() as unknown as U;
       // case StreamType.CIRCUIT:
       //   throw new Error('Not implemented');
-      case StreamType.NETWORK:
-        return new Network(this.requestWrapper) as unknown as U;
-      case StreamType.HEAD:
-        return new StreamHead() as unknown as U;
+      case StreamType.RETRY:
+        return Retry.create(configuration) as unknown as U;
       default:
         throw new Error('Unknown stream type');
     }
+  }
+
+  createNetwork() {
+    return new Network(this.requestWrapper);
+  }
+
+  createHead() {
+    return new StreamHead();
   }
 }
 

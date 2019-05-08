@@ -50,11 +50,10 @@ class CacheFactory {
   }
 
   getPlugin(plugin?: CACHE_PLUGIN): CachePlugin {
-    switch (plugin) {
-      case CACHE_PLUGIN.Memory:
-        return new MemoryCache();
-      default:
-        return new MemoryCache();
+    if (plugin === CACHE_PLUGIN.Memory) {
+      return new MemoryCache();
+    } else {
+      return new MemoryCache();
     }
   }
 

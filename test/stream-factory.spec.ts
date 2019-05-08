@@ -6,9 +6,10 @@ import {StreamFactory, StreamType} from "../src/stream-factory";
 import {Cache, CacheFactory} from "../src/cache-factory";
 import {RequestWrapper} from "../src/request-wrapper";
 import {Holder} from "../src/holder";
+import faker from "faker";
 import {StreamHead} from "../src/stream-head";
 import {Network} from "../src/network";
-import faker from "faker";
+import {Retry} from "../src/retry";
 
 const sandbox = sinon.createSandbox();
 
@@ -43,9 +44,10 @@ describe("[stream-factory.ts]", () => {
 
   it("should return new cache instance", () => {
     // Act
+    const configuration = {};
     const cacheResponse = {};
     cacheFactoryMock.expects('create').returns(cacheResponse);
-    const cache = streamFactory.create<Cache>(StreamType.CACHE);
+    const cache = streamFactory.create<Cache>(StreamType.CACHE, configuration);
 
     // Assert
     expect(cache).to.eq(cacheResponse);
@@ -53,33 +55,44 @@ describe("[stream-factory.ts]", () => {
 
   it("should return new Holder instance", () => {
     // Act
-    const holder = streamFactory.create<Holder>(StreamType.HOLDER);
+    const configuration = {};
+    const holder = streamFactory.create<Holder>(StreamType.HOLDER, configuration);
 
     // Assert
     expect(holder).to.be.instanceOf(Holder);
   });
 
-  it("should return new StreamHead type", () => {
+  it("should return new Retry instance", () => {
     // Act
-    const head = streamFactory.create<StreamHead>(StreamType.HEAD);
+    const configuration = {};
+    const retry = streamFactory.create<Retry>(StreamType.RETRY, configuration);
+
+    // Assert
+    expect(retry).to.be.instanceOf(Retry);
+  });
+
+  it("should return new Head instance", () => {
+    // Act
+    const head = streamFactory.createHead();
 
     // Assert
     expect(head).to.be.instanceOf(StreamHead);
   });
 
-  it("should return new Network", () => {
+  it("should return new Network instance", () => {
     // Act
-    const network = streamFactory.create<Network>(StreamType.NETWORK);
+    const network = streamFactory.createNetwork();
 
     // Assert
     expect(network).to.be.instanceOf(Network);
   });
 
 
-  it("should throw error when request stream type is unkonwn", () => {
+  it("should throw error when request stream type is unknown", () => {
     // Arrange
+    const configuration = {};
     const test = () => {
-      streamFactory.create(faker.random.word());
+      streamFactory.create(faker.random.word(), configuration);
     };
 
     // Assert

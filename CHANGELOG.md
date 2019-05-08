@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0] - 2019-05-08
+### Added
+- Retry plugin for retrying failed responses
+- Added generic identifiers
+### Changed
+- Identifiers are not required anymore
+
 ## [1.3.0] - 2019-05-02
 ### Added
 - Security for set-cookie header to prevent dangerous response caching with credentials.
