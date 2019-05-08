@@ -10,7 +10,11 @@ type KeyMaker = (
 
 
 class Tokenizer {
-  tokenize(name: string, identifier: string): KeyMaker {
+  tokenize(name: string, identifier?: string): KeyMaker {
+    return identifier ? this.generateCustomIdentifier(name, identifier) : this.createGenericIdentifier(name);
+  }
+
+  private generateCustomIdentifier(name: string, identifier: string) {
     const reversedIdentifier = reverseString(identifier);
     const interpolationsAdded = reversedIdentifier
       .replace(/{(?!\\)/g, `{$`)
@@ -22,6 +26,12 @@ class Tokenizer {
     const fn = new Function(`return function ${fnContent}`);
 
     return fn();
+  }
+
+  private createGenericIdentifier(name: string): KeyMaker {
+    return (url, cookie, headers, query, method) => {
+      return `${name}_${url}_${JSON.stringify({cookie, headers, query})}_${method}`;
+    };
   }
 }
 

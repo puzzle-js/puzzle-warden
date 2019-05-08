@@ -1,13 +1,14 @@
 import {StreamHead} from "./stream-head";
 import {KeyMaker, Tokenizer} from "./tokenizer";
+import * as request from "request";
 import {RequestCallback} from "request";
 import Url from "fast-url-parser";
-import {ConfigurableStream, StreamFactory, StreamType} from "./stream-factory";
+import {ConfigurableStream, StreamFactory} from "./stream-factory";
 import {CacheConfiguration} from "./cache-factory";
 import {WardenStream} from "./warden-stream";
 import Cookie from "cookie";
-import {Network} from "./network";
-import * as request from "request";
+import {RetryInputConfiguration} from "./retry";
+import http from "http";
 
 type KeyStreamPair = {
   keyMaker: KeyMaker;
@@ -17,6 +18,8 @@ type KeyStreamPair = {
 interface StreamMap {
   [routeName: string]: KeyStreamPair[];
 }
+
+const DEFAULT_IDENTIFIER = `u_{Date.now()}`;
 
 interface RequestOptions extends request.CoreOptions {
   url: string;
@@ -30,9 +33,10 @@ interface RequestOptions extends request.CoreOptions {
 interface RouteConfiguration {
   [key: string]: any;
 
-  identifier: string;
+  identifier?: string;
   cache?: CacheConfiguration | boolean;
   holder?: boolean;
+  retry?: RetryInputConfiguration | boolean | number;
 }
 
 class RequestManager {
@@ -49,9 +53,9 @@ class RequestManager {
   }
 
   register(name: string, routeConfiguration: RouteConfiguration) {
-    const stream = this.streamFactory.create<StreamHead>(StreamType.HEAD);
+    const stream = this.streamFactory.createHead();
     let streamLink: WardenStream = stream;
-    const network = this.streamFactory.create<Network>(StreamType.NETWORK);
+    const network = this.streamFactory.createNetwork();
     const keyMaker = this.tokenizer.tokenize(name, routeConfiguration.identifier);
 
     Object.values(ConfigurableStream).forEach((streamType: string) => {
@@ -100,6 +104,7 @@ class RequestManager {
 }
 
 export {
+  DEFAULT_IDENTIFIER,
   RequestOptions,
   RouteConfiguration,
   RequestManager

@@ -91,4 +91,19 @@ describe("[tokenizer.ts]", () => {
     expect(keyMaker).to.be.a('function');
     expect(key).to.eq('_name___special_c_{escaped}_a_c_/he_key_e');
   });
+
+  it('should create generic identifier', () => {
+    // Arrange
+    const tokenizer = new Tokenizer();
+    const name = '_name_';
+    const method = 'get';
+
+    // Act
+    const keyMaker = tokenizer.tokenize(name);
+    const key = keyMaker('/he',{test:'c'},{test:'a'},{test:'c'}, method);
+
+    // Assert
+    expect(keyMaker).to.be.a('function');
+    expect(key).to.eq('_name__/he_{"cookie":{"test":"c"},"headers":{"test":"a"},"query":{"test":"c"}}_get');
+  });
 });

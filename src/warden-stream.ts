@@ -14,7 +14,7 @@ interface RequestChunk {
 interface ResponseChunk extends RequestChunk{
   response?: request.Response;
   error?: {
-    name: string
+    code: string
   };
 }
 

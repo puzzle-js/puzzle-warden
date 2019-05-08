@@ -34,7 +34,7 @@ class StreamFactory {
     this.requestWrapper = requestWrapper;
   }
 
-  create<U, T = {}>(streamType: string, configuration?: T) {
+  create<U, T = {}>(streamType: string, configuration: T) {
     switch (streamType) {
       case StreamType.CACHE:
         return this.cacheFactory.create(configuration as T) as unknown as U;
@@ -42,15 +42,19 @@ class StreamFactory {
         return new Holder() as unknown as U;
       // case StreamType.CIRCUIT:
       //   throw new Error('Not implemented');
-      case StreamType.NETWORK:
-        return new Network(this.requestWrapper) as unknown as U;
       case StreamType.RETRY:
-        return new Retry(3) as unknown as U;
-      case StreamType.HEAD:
-        return new StreamHead() as unknown as U;
+        return Retry.create(configuration) as unknown as U;
       default:
         throw new Error('Unknown stream type');
     }
+  }
+
+  createNetwork() {
+    return new Network(this.requestWrapper);
+  }
+
+  createHead() {
+    return new StreamHead();
   }
 }
 
