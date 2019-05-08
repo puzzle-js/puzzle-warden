@@ -183,7 +183,7 @@ Let's assume we have an identifier for a request: `{query.foo}`. We send a HTTP 
 
 ### Retry
 
-When the connection fails with one of ECONNRESET, ENOTFOUND, ESOCKETTIMEDOUT, ETIMEDOUT, ECONNREFUSED, EHOSTUNREACH, EPIPE, EAI_AGAIN or when an HTTP 5xx or 429 error occurrs, the request will automatically be re-attempted as these are often recoverable errors and will go away on retry.
+When the connection fails with one of `ECONNRESET`, `ENOTFOUND`, `ESOCKETTIMEDOUT`, `ETIMEDOUT`, `ECONNREFUSED`, `EHOSTUNREACH`, `EPIPE`, `EAI_AGAIN` or when an HTTP 5xx or 429 error occurrs, the request will automatically be re-attempted as these are often recoverable errors and will go away on retry.
 
 ```js
 warden.register('routeName', {
@@ -207,7 +207,7 @@ Default values and properties
 | :---         | :---: | ---: | :--- |
 | delay       | ❌ | 100    | Warden will wait for 100ms before retry |
 | count     | ❌ | 1 | It will try for 1 time by default |
-| logger     | ❌ |    1m   | Logger will be called on each retry with retry count|
+| logger     | ❌ |       | Logger will be called on each retry with retry count|
 
 
 ### Api
