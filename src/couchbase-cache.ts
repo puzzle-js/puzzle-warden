@@ -51,7 +51,7 @@ class CouchbaseCache implements CachePlugin {
   set(key: string, value: unknown, ms?: number): Promise<void> {
     return new Promise(resolve => {
       this.bucket.insert(key, value, {
-        expiry: ms
+        expiry: ms ? Math.floor(ms / 1000) : undefined
       }, _ => {
         resolve();
       });
