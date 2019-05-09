@@ -2,9 +2,10 @@ import "reflect-metadata";
 
 import {expect} from "chai";
 import sinon from "sinon";
-import {CACHE_PLUGIN, CacheFactory, CACHING_STRATEGY} from "../src/cache-factory";
+import {CacheFactory, CACHING_STRATEGY} from "../src/cache-factory";
 import {MemoryCache} from "../src/memory-cache";
 import {CacheThenNetwork} from "../src/cache-then-network";
+import * as faker from "faker";
 
 const sandbox = sinon.createSandbox();
 
@@ -25,15 +26,57 @@ describe("[cache-factory.ts]", () => {
     expect(cacheFactory).to.be.instanceOf(CacheFactory);
   });
 
-  it("should return plugin instance for cache plugin enum", () => {
+  it("should return plugin instance for memory", () => {
     // Arrange
     const cacheFactory = new CacheFactory();
 
     // Act
-    const plugin = cacheFactory.getPlugin(CACHE_PLUGIN.Memory);
+    const plugin = cacheFactory.getPlugin('memory');
 
     // Assert
     expect(plugin).to.be.instanceOf(MemoryCache);
+  });
+
+  it("should return memory plugin for unknown plugin", () => {
+    // Arrange
+    const cacheFactory = new CacheFactory();
+
+    // Act
+    const plugin = cacheFactory.getPlugin('foo');
+
+    // Assert
+    expect(plugin).to.be.instanceOf(MemoryCache);
+  });
+
+  it("should return custom plugin as new Instance", () => {
+    // Arrange
+    const pluginName = faker.random.word();
+    class Plugin{}
+    const cacheFactory = new CacheFactory();
+
+    // Act
+    cacheFactory.register(pluginName, Plugin as any);
+    const plugin = cacheFactory.getPlugin(pluginName);
+
+    // Assert
+    expect(plugin).to.be.instanceOf(Plugin);
+  });
+
+  it("should return custom plugin as singleton", () => {
+    // Arrange
+    const pluginName = faker.random.word();
+    const pluginInstance = {
+      get: () => '',
+      set: () => ''
+    };
+    const cacheFactory = new CacheFactory();
+
+    // Act
+    cacheFactory.register(pluginName, pluginInstance as any);
+    const plugin = cacheFactory.getPlugin(pluginName);
+
+    // Assert
+    expect(plugin).to.eq(pluginInstance);
   });
 
   it("should return default plugin as memory plugin", () => {
@@ -46,6 +89,18 @@ describe("[cache-factory.ts]", () => {
     // Assert
     expect(plugin).to.be.instanceOf(MemoryCache);
   });
+
+  it("should return a Couchbase plugin", () => {
+    // Arrange
+    const cacheFactory = new CacheFactory();
+
+    // Act
+    const plugin = cacheFactory.getPlugin();
+
+    // Assert
+    expect(plugin).to.be.instanceOf(MemoryCache);
+  });
+
 
   it("should create new cache instance based on configuration with custom strategy", () => {
     // Arrange

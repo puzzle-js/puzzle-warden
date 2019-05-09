@@ -1,17 +1,21 @@
 import {RequestManager, RequestOptions, RouteConfiguration} from "./request-manager";
-import {RequestCallback, CoreOptions} from "request";
+import {CoreOptions, RequestCallback} from "request";
 import {RequestWrapper} from "./request-wrapper";
+import {CacheFactory, CachePlugin} from "./cache-factory";
 
 class Warden {
   private requestManager: RequestManager;
   private requestWrapper: RequestWrapper;
+  private cacheFactory: CacheFactory;
 
   constructor(
     requestManager: RequestManager,
-    requestWrapper: RequestWrapper
+    requestWrapper: RequestWrapper,
+    cacheFactory: CacheFactory
   ) {
     this.requestManager = requestManager;
     this.requestWrapper = requestWrapper;
+    this.cacheFactory = cacheFactory;
 
     this.requestWrapper.wrap(requestManager);
   }
@@ -57,6 +61,14 @@ class Warden {
    */
   unregisterRoute(name: string) {
     this.requestManager.unregister(name);
+  }
+
+  /**
+   * @param name
+   * @param plugin
+   */
+  registerCachePlugin(name: string, plugin: CachePlugin | (new() => CachePlugin)) {
+    this.cacheFactory.register(name, plugin);
   }
 }
 
