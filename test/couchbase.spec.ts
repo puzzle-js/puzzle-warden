@@ -15,10 +15,10 @@ const createBucket = (connects = true) => ({
     throw new Error('Mocked method call');
   },
   get: (key: string, cb: any) => {
-    throw new Error('Mocked method call')
+    throw new Error('Mocked method call');
   },
   insert: (key: string, value: any, options: any, cb: any) => {
-    throw new Error('Mocked method call')
+    throw new Error('Mocked method call');
   },
   operationTimeout: 0
 });
@@ -189,7 +189,7 @@ describe('[couchbase.ts]', () => {
 
     // Assert
     expect(getSpy.calledWith(key, data, {
-      expiry: ttl
+      expiry: Math.floor(ttl / 1000)
     }, sinon.match.func)).to.eq(true);
   });
 
@@ -208,6 +208,6 @@ describe('[couchbase.ts]', () => {
     await couchbase.connect();
 
     // Assert
-   expect(bucket.operationTimeout).to.eq(timeout);
+    expect(bucket.operationTimeout).to.eq(timeout);
   });
 });
