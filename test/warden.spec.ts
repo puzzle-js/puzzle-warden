@@ -21,11 +21,13 @@ const requestManager = new RequestManager(streamFactory, tokenizer);
 
 let requestWrapperMock: SinonMock;
 let requestManagerMock: SinonMock;
+let cacheFactoryMock: SinonMock;
 
 describe("[warden.ts]", () => {
   beforeEach(() => {
     requestWrapperMock = sandbox.mock(requestWrapper);
     requestManagerMock = sandbox.mock(requestManager);
+    cacheFactoryMock = sandbox.mock(cacheFactory);
   });
 
   afterEach(() => {
@@ -34,7 +36,7 @@ describe("[warden.ts]", () => {
 
   it("should create new Warden instance", () => {
     // Arrange
-    const warden = new Warden(requestManager, requestWrapper);
+    const warden = new Warden(requestManager, requestWrapper, cacheFactory);
 
     // Assert
     expect(warden).to.be.instanceOf(Warden);
@@ -45,7 +47,7 @@ describe("[warden.ts]", () => {
     const routeName = faker.random.word();
     const requestOptions = {} as RequestOptions;
     const callback = sandbox.stub();
-    const warden = new Warden(requestManager, requestWrapper);
+    const warden = new Warden(requestManager, requestWrapper, cacheFactory);
     requestManagerMock
       .expects('handle')
       .withExactArgs(routeName, requestOptions, callback);
@@ -58,7 +60,7 @@ describe("[warden.ts]", () => {
     // Arrange
     const routeName = faker.random.word();
     const routeOptions = {} as RouteConfiguration;
-    const warden = new Warden(requestManager, requestWrapper);
+    const warden = new Warden(requestManager, requestWrapper, cacheFactory);
     requestManagerMock
       .expects('register')
       .withExactArgs(routeName, routeOptions);
@@ -70,7 +72,7 @@ describe("[warden.ts]", () => {
   it("should call configuration of request wrapper for request options", () => {
     // Arrange
     const config = {};
-    const warden = new Warden(requestManager, requestWrapper);
+    const warden = new Warden(requestManager, requestWrapper, cacheFactory);
     requestWrapperMock.expects('config').withExactArgs(config);
 
     // Act
@@ -80,7 +82,7 @@ describe("[warden.ts]", () => {
   it("should return if route is registered", () => {
     // Arrange
     const name = faker.random.word();
-    const warden = new Warden(requestManager, requestWrapper);
+    const warden = new Warden(requestManager, requestWrapper, cacheFactory);
     requestManagerMock.expects('isRouteRegistered').withArgs(name).returns(false);
 
     // Act
@@ -93,10 +95,21 @@ describe("[warden.ts]", () => {
   it("should unregister route", () => {
     // Arrange
     const name = faker.random.word();
-    const warden = new Warden(requestManager, requestWrapper);
+    const warden = new Warden(requestManager, requestWrapper, cacheFactory);
     requestManagerMock.expects('unregister').withArgs(name);
 
     // Act
     warden.unregisterRoute(name);
+  });
+
+  it("should register plugin", () => {
+    // Arrange
+    const name = faker.random.word();
+    const plugin = {} as any;
+    const warden = new Warden(requestManager, requestWrapper, cacheFactory);
+    cacheFactoryMock.expects('register').withArgs(name, plugin);
+
+    // Act
+    warden.registerCachePlugin(name, plugin);
   });
 });

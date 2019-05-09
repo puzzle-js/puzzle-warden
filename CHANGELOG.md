@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.5.0] - 2019-05-09
+### Added
+- Couchbase plugin
+- Plugin interface to create custom cache plugins
+
 ## [1.4.0] - 2019-05-08
 ### Added
 - Retry plugin for retrying failed responses

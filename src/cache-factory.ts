@@ -10,19 +10,13 @@ interface CachePlugin {
   set(key: string, value: unknown, ms?: number): Promise<void>;
 }
 
-const enum CACHE_PLUGIN {
-  Couchbase = 'couchbase',
-  Redis = 'redis',
-  Memory = 'memory'
-}
-
 enum CACHING_STRATEGY {
-  CacheThenNetwork="CacheThenNetwork",
-  NetWorkThenCache="NetWorkThenCache"
+  CacheThenNetwork = "CacheThenNetwork",
+  NetWorkThenCache = "NetWorkThenCache"
 }
 
 interface CacheConfiguration {
-  plugin?: CACHE_PLUGIN;
+  plugin?: string;
   strategy?: CACHING_STRATEGY;
   duration?: string | number;
 }
@@ -40,6 +34,12 @@ const cachingStrategyImplementations = {
 } as { [key: string]: { new(plugin: CachePlugin, ms: number): Cache } };
 
 class CacheFactory {
+  private plugins: { [key: string]: (new () => CachePlugin) | CachePlugin } = {};
+
+  constructor() {
+    this.plugins['memory'] = MemoryCache;
+  }
+
   create(configuration: CacheConfiguration | true) {
     if (configuration === true) configuration = {};
     const plugin = this.getPlugin(configuration.plugin);
@@ -49,11 +49,12 @@ class CacheFactory {
     return new cachingStrategyImplementations[strategy](plugin, cacheDuration);
   }
 
-  getPlugin(plugin?: CACHE_PLUGIN): CachePlugin {
-    if (plugin === CACHE_PLUGIN.Memory) {
-      return new MemoryCache();
+  getPlugin(plugin = 'memory'): CachePlugin {
+    const cachePlugin = (this.plugins[plugin] || this.plugins['memory']) as any;
+    if (typeof cachePlugin.get === 'function') {
+      return cachePlugin;
     } else {
-      return new MemoryCache();
+      return new cachePlugin();
     }
   }
 
@@ -77,12 +78,15 @@ class CacheFactory {
 
     return CACHING_STRATEGY[strategy];
   }
+
+  register(name: string, plugin: CachePlugin | (new() => CachePlugin)) {
+    this.plugins[name] = plugin;
+  }
 }
 
 export {
   CachePlugin,
   CACHING_STRATEGY,
   CacheFactory,
-  CacheConfiguration,
-  CACHE_PLUGIN
+  CacheConfiguration
 };
