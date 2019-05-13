@@ -84,7 +84,7 @@ class RequestManager {
     const headers = requestOptions.headers || {};
     const cookies = Cookie.parse(headers.cookie || headers.Cookie || '');
     const key = this.streams[name][0].keyMaker(
-      request.path,
+      request.pathname,
       cookies,
       headers,
       request.query,
