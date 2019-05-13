@@ -43,7 +43,7 @@ class CouchbaseCache implements CachePlugin {
   get<T>(key: string): Promise<T | null> {
     return new Promise(resolve => {
       this.bucket.get(key, (err, data) => {
-        resolve(data || null);
+        resolve(data && data.value ? data.value : null);
       });
     });
   }
