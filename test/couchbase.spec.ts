@@ -89,7 +89,9 @@ describe('[couchbase.ts]', () => {
     const data = faker.random.word();
     sandbox.stub(Cluster.prototype, 'openBucket').returns(bucket as any);
     const getSpy = sandbox.stub(bucket, 'get')
-      .callsArgWith(1, null, data);
+      .callsArgWith(1, null, {
+        value: data
+      });
 
     // Act
     await couchbase.connect();
