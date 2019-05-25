@@ -4,7 +4,7 @@ import * as request from "request";
 
 class StreamHead extends Streamer {
   constructor() {
-    super('Head');
+    super('head');
   }
 
   onResponse(chunk: ResponseChunk, next: NextHandler): void {

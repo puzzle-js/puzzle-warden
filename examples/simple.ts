@@ -5,7 +5,7 @@ warden.debug = true;
 
 // Returns optional request instance
 const route = warden.register('holder', {
-  holder: false,
+  holder: true,
   identifier: '{query.foo}'
 });
 
@@ -13,7 +13,8 @@ const route = warden.register('holder', {
 route({
   url: 'https://postman-echo.com/get?foo=1&bar=1',
   gzip: true,
-  method: 'get'
+  method: 'get',
+  json: true
 }, (err, res, body) => {
   console.log(body);
 });
@@ -22,7 +23,8 @@ route({
 warden.request('holder', {
   url: 'https://postman-echo.com/get?foo=1&bar=2',
   gzip: true,
-  method: 'get'
+  method: 'get',
+  json: true
 }, (err, res, body) => {
   console.log(body);
 });
@@ -32,7 +34,8 @@ request({
   name: 'holder',
   url: 'https://postman-echo.com/get?foo=1&bar=3',
   gzip: true,
-  method: 'get'
+  method: 'get',
+  json: true
 } as any, (err: any, res: any, body: any) => {
   console.log(body);
 });
