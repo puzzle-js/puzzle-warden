@@ -83,14 +83,4 @@ describe("[stream-head.ts]", () => {
     // Assert
     expect(cb.calledWithExactly(error, undefined, undefined)).to.eq(true);
   });
-
-  it("should throw error when it is a pipe target", () => {
-    // Arrange
-    const test = () => {
-      (streamHead as any).onRequest();
-    };
-
-    // Assert
-    expect(test).to.throw();
-  });
 });

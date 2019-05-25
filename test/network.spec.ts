@@ -45,13 +45,13 @@ describe("[network.ts]", () => {
       body: faker.random.word()
     };
     const parsedData = {};
-    const responseStub = sandbox.stub(network, 'respond');
+    const responseStub = sandbox.stub(network as any, 'respond');
     const requestStub = sandbox
       .stub(requestWrapper.request, 'get')
       .callsArgWith(1, null, response, parsedData) as any;
 
     // Act
-    network.onRequest(chunk, spy);
+    network.onRequest(chunk);
 
     // Assert
     expect(requestStub.calledWithExactly(chunk.requestOptions, sinon.match.any)).to.eq(true);

@@ -33,13 +33,14 @@ describe("[cache.ts]", () => {
   it("should pass the request to the next chain if cache is invalid", async () => {
     // Arrange
     const ms = undefined;
-    const cache = new CacheThenNetwork(memory, ms);
+    const cacheCookies = false;
+    const cache = new CacheThenNetwork(memory, cacheCookies, ms);
     const chunk: any = {
       key: faker.random.word()
     };
     memoryMock.expects('get').withExactArgs(chunk.key).returns(null);
     const spy = sandbox.stub();
-    const responseStub = sandbox.stub(cache, 'respond');
+    const responseStub = sandbox.stub(cache as any, 'respond');
 
     // Act
     await cache.onRequest(chunk, spy);
@@ -52,7 +53,8 @@ describe("[cache.ts]", () => {
   it("should respond from cache if cache is valid", async () => {
     // Arrange
     const ms = undefined;
-    const cache = new CacheThenNetwork(memory, ms);
+    const cacheCookies = false;
+    const cache = new CacheThenNetwork(memory, cacheCookies, ms);
     const spy = sandbox.stub();
     const chunk: any = {
       key: faker.random.word(),
@@ -62,7 +64,7 @@ describe("[cache.ts]", () => {
       body: faker.random.word()
     };
     memoryMock.expects('get').withExactArgs(chunk.key).returns(response);
-    const responseStub = sandbox.stub(cache, 'respond');
+    const responseStub = sandbox.stub(cache as any, 'respond');
 
     // Act
     await cache.onRequest(chunk, spy);
@@ -80,7 +82,8 @@ describe("[cache.ts]", () => {
   it("should return incoming response without caching if cache hit flag true", async () => {
     // Arrange
     const ms = undefined;
-    const cache = new CacheThenNetwork(memory, ms);
+    const cacheCookies = false;
+    const cache = new CacheThenNetwork(memory, cacheCookies, ms);
     const chunk: any = {
       key: faker.random.word(),
       response: {
@@ -101,16 +104,22 @@ describe("[cache.ts]", () => {
   it("should handle incoming response with caching", async () => {
     // Arrange
     const ms = faker.random.number();
-    const cache = new CacheThenNetwork(memory, ms);
+    const cacheCookies = false;
+    const cache = new CacheThenNetwork(memory, cacheCookies, ms);
     const chunk: any = {
       key: faker.random.word(),
       response: {
         body: faker.random.word(),
-        headers: {}
+        headers: {},
+        statusCode: 200
       },
       cacheHit: false
     };
-    memoryMock.expects('set').withExactArgs(chunk.key, chunk.response, ms).resolves();
+    memoryMock.expects('set').withExactArgs(chunk.key, {
+      headers: chunk.response.headers,
+      body: chunk.response.body,
+      statusCode: chunk.response.statusCode
+    }, ms).resolves();
     const spy = sandbox.stub();
 
     // Act
@@ -123,7 +132,8 @@ describe("[cache.ts]", () => {
   it("should handle incoming response without caching because of set-cookie", async () => {
     // Arrange
     const ms = faker.random.number();
-    const cache = new CacheThenNetwork(memory, ms);
+    const cacheCookies = false;
+    const cache = new CacheThenNetwork(memory, cacheCookies, ms);
     const chunk: any = {
       key: faker.random.word(),
       response: {
@@ -134,6 +144,36 @@ describe("[cache.ts]", () => {
       },
       cacheHit: false
     };
+    const spy = sandbox.stub();
+
+    // Act
+    await cache.onResponse(chunk, spy);
+
+    // Assert
+    expect(spy.calledWithExactly(chunk)).to.eq(true);
+  });
+
+  it("should cache incoming response with set-cookie using dangerous config", async () => {
+    // Arrange
+    const ms = faker.random.number();
+    const cacheCookies = true;
+    const cache = new CacheThenNetwork(memory, cacheCookies, ms);
+    const chunk: any = {
+      key: faker.random.word(),
+      response: {
+        body: faker.random.word(),
+        headers: {
+          'set-cookie': 'foo=bar'
+        },
+        statusCode: 200
+      },
+      cacheHit: false
+    };
+    memoryMock.expects('set').withExactArgs(chunk.key, {
+      headers: chunk.response.headers,
+      body: chunk.response.body,
+      statusCode: chunk.response.statusCode
+    }, ms).resolves();
     const spy = sandbox.stub();
 
     // Act

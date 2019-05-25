@@ -184,7 +184,7 @@ describe("[request-manager]", () => {
     requestManager.handle(name, requestOptions, stub);
 
     // Assert
-    expect(headStream.start.calledWithExactly(key, requestOptions, stub)).to.eq(true);
+    expect(headStream.start.calledWithExactly(key, sinon.match.number, requestOptions, stub)).to.eq(true);
   });
 
 
@@ -217,7 +217,7 @@ describe("[request-manager]", () => {
     requestManager.handle(name, requestOptions, stub);
 
     // Assert
-    expect(headStream.start.calledWith(key, requestOptions, stub)).to.eq(true);
+    expect(headStream.start.calledWith(key, sinon.match.number, requestOptions, stub)).to.eq(true);
   });
 
   it("should throw error if not registered route tries to handle", () => {

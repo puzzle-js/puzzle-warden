@@ -3,7 +3,7 @@ import "reflect-metadata";
 import {expect} from "chai";
 import sinon, {SinonMock} from "sinon";
 import {StreamFactory, StreamType} from "../src/stream-factory";
-import {Cache, CacheFactory} from "../src/cache-factory";
+import {CacheFactory} from "../src/cache-factory";
 import {RequestWrapper} from "../src/request-wrapper";
 import {Holder} from "../src/holder";
 import faker from "faker";

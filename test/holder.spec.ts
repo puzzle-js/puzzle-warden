@@ -79,16 +79,18 @@ describe("[holder.ts]", () => {
     const responseChunk = {
       key,
       response: {},
+      id: faker.random.number(),
       requestOptions: {},
       error: undefined
     } as any;
     const requestChunk = {
       key,
       cb: sandbox.stub(),
+      id: faker.random.number(),
       requestOptions: {}
     } as any;
     const requestSpy = sandbox.stub();
-    const respondSpy = sandbox.stub(holder, 'respond');
+    const respondSpy = sandbox.stub(holder as any, 'respond');
 
     // Act
     holder.onRequest(requestChunk, requestSpy);
@@ -99,6 +101,7 @@ describe("[holder.ts]", () => {
     expect(respondSpy.calledWith({
       key: responseChunk.key,
       response: responseChunk.response,
+      id: requestChunk.id,
       cb: requestChunk.cb,
       error: undefined,
       requestOptions: responseChunk.requestOptions

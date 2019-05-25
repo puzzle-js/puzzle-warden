@@ -2,6 +2,7 @@ import * as sinon from "sinon";
 import {SinonStub} from "sinon";
 import {expect} from "chai";
 import {Retry, RetryConfiguration} from "../src/retry";
+import faker = require("faker");
 
 const sandbox = sinon.createSandbox();
 let retryStream: Retry;
@@ -130,7 +131,7 @@ describe('[retry.ts]', () => {
       count: 1,
       delay: 0
     });
-    const request = sandbox.stub(retry, 'request');
+    const request = sandbox.stub(retry as any, 'request');
 
     // Act
     await retry.onResponse(chunk, spy);
@@ -143,6 +144,7 @@ describe('[retry.ts]', () => {
   it('should retry incoming failed response if status code is 429 (too many requests)', async () => {
     // Arrange
     const chunk = {
+      id: faker.random.number(),
       retryCount: 0,
       response: {
         statusCode: 429
@@ -162,6 +164,7 @@ describe('[retry.ts]', () => {
     expect(request.calledWith({
       retryCount: 1,
       cb: chunk.cb,
+      id: chunk.id,
       key: chunk.key,
       requestOptions: chunk.requestOptions
     })).to.eq(true);
@@ -172,6 +175,7 @@ describe('[retry.ts]', () => {
     // Arrange
     const chunk = {
       retryCount: 0,
+      id: faker.random.number(),
       response: {
         statusCode: 500
       }
@@ -190,6 +194,7 @@ describe('[retry.ts]', () => {
     expect(request.calledWith({
       retryCount: 1,
       cb: chunk.cb,
+      id: chunk.id,
       key: chunk.key,
       requestOptions: chunk.requestOptions
     })).to.eq(true);
@@ -202,7 +207,8 @@ describe('[retry.ts]', () => {
       error: {
         code: 'ECONNRESET'
       },
-      retryCount: 0
+      retryCount: 0,
+      id: faker.random.number()
     } as any;
     const spy = sandbox.stub();
     const retry = new Retry({
@@ -218,6 +224,7 @@ describe('[retry.ts]', () => {
     expect(request.calledWith({
       retryCount: 1,
       cb: chunk.cb,
+      id: chunk.id,
       key: chunk.key,
       requestOptions: chunk.requestOptions
     })).to.eq(true);
@@ -230,7 +237,8 @@ describe('[retry.ts]', () => {
       error: {
         code: 'ECONNRESET'
       },
-      retryCount: 0
+      retryCount: 0,
+      id: faker.random.number(),
     } as any;
     const spy = sandbox.stub();
     const logger = sandbox.stub();
@@ -248,6 +256,7 @@ describe('[retry.ts]', () => {
     expect(request.calledWith({
       retryCount: 1,
       cb: chunk.cb,
+      id: chunk.id,
       key: chunk.key,
       requestOptions: chunk.requestOptions
     })).to.eq(true);
@@ -261,7 +270,8 @@ describe('[retry.ts]', () => {
       error: {
         code: 'ECONNRESET'
       },
-      retryCount: 0
+      retryCount: 0,
+      id: faker.random.number()
     } as any;
     const spy = sandbox.stub();
     const retry = new Retry({
@@ -278,6 +288,7 @@ describe('[retry.ts]', () => {
     expect(request.calledWith({
       retryCount: 1,
       cb: chunk.cb,
+      id: chunk.id,
       key: chunk.key,
       requestOptions: chunk.requestOptions
     })).to.eq(true);
