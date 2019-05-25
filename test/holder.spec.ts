@@ -1,7 +1,7 @@
 import "reflect-metadata";
 
 import {expect} from "chai";
-import sinon, {SinonMock} from "sinon";
+import sinon from "sinon";
 import faker from "faker";
 import {Holder} from "../src/holder";
 import {RequestChunk, ResponseChunk} from "../src/streamer";
@@ -37,7 +37,7 @@ describe("[holder.ts]", () => {
     holder.onRequest(chunk, spy);
 
     // Assert
-    expect(spy.calledWithExactly(undefined, chunk)).to.eq(true);
+    expect(spy.calledWithExactly(chunk)).to.eq(true);
   });
 
   it("should not pass same key for the second time", () => {
@@ -52,9 +52,8 @@ describe("[holder.ts]", () => {
     holder.onRequest(chunk, spy);
 
     // Assert
-    expect(spy.firstCall.calledWithExactly(undefined, chunk)).to.eq(true);
-    expect(spy.secondCall.calledWithExactly(undefined, null)).to.eq(true);
-    expect(spy.calledTwice).to.eq(true);
+    expect(spy.firstCall.calledWithExactly(chunk)).to.eq(true);
+    expect(spy.calledOnce).to.eq(true);
   });
 
 
@@ -70,7 +69,7 @@ describe("[holder.ts]", () => {
 
     // Assert
     expect(spy.calledOnce).to.eq(true);
-    expect(spy.calledWithExactly(undefined, chunk)).to.eq(true);
+    expect(spy.calledWithExactly(chunk)).to.eq(true);
   });
 
   it("should return all the holding requests when response received", () => {
@@ -104,7 +103,6 @@ describe("[holder.ts]", () => {
       error: undefined,
       requestOptions: responseChunk.requestOptions
     })).to.eq(true);
-    expect(spy.calledOnce).to.eq(true);
-    expect(spy.calledWithExactly(undefined, null)).to.eq(true);
+    expect(spy.notCalled).to.eq(true);
   });
 });

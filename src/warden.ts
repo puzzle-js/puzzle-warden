@@ -26,7 +26,7 @@ class Warden {
    * @param routeConfiguration
    */
   register(name: string, routeConfiguration: RouteConfiguration) {
-    this.requestManager.register(name, routeConfiguration);
+    return this.requestManager.register(name, routeConfiguration);
   }
 
   /**

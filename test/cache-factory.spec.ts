@@ -51,7 +51,10 @@ describe("[cache-factory.ts]", () => {
   it("should return custom plugin as new Instance", () => {
     // Arrange
     const pluginName = faker.random.word();
-    class Plugin{}
+
+    class Plugin {
+    }
+
     const cacheFactory = new CacheFactory();
 
     // Act

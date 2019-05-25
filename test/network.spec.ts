@@ -29,20 +29,6 @@ describe("[network.ts]", () => {
     expect(network).to.be.instanceOf(Network);
   });
 
-  it("should pass incoming response to left handler", () => {
-    // Arrange
-    const chunk = {} as any;
-    const network = new Network(requestWrapper);
-    const spy = sandbox.stub();
-
-    // Act
-    network
-      .onResponse(chunk, spy);
-
-    // Assert
-    expect(spy.calledWithExactly(undefined, chunk));
-  });
-
   it("should send outgoing request to request wrapper", () => {
     // Arrange
     const spy = sandbox.stub();
@@ -69,7 +55,7 @@ describe("[network.ts]", () => {
 
     // Assert
     expect(requestStub.calledWithExactly(chunk.requestOptions, sinon.match.any)).to.eq(true);
-    expect(spy.calledWithExactly(undefined, null)).to.eq(true);
+    expect(spy.notCalled).to.eq(true);
     expect(responseStub.calledWith({
       key: chunk.key,
       cb: chunk.cb,

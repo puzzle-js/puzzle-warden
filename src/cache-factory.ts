@@ -21,17 +21,18 @@ interface CacheConfiguration {
   duration?: string | number;
 }
 
-export interface Cache extends Streamer {
-  onRequest(chunk: ResponseChunk, callback: TransformCallback): Promise<void>;
-
-  onRequest(chunk: RequestChunk, callback: TransformCallback): Promise<void>;
-}
 
 const defaultCachingDuration = 60000;
 
-const cachingStrategyImplementations = {
+type CacheStreamers = {
+  [key: string]: {
+    new(plugin: CachePlugin, ms: number): Streamer
+  };
+};
+
+const cachingStrategyImplementations: CacheStreamers = {
   [CACHING_STRATEGY.CacheThenNetwork]: CacheThenNetwork
-} as { [key: string]: { new(plugin: CachePlugin, ms: number): Cache } };
+};
 
 class CacheFactory {
   private plugins: { [key: string]: (new () => CachePlugin) | CachePlugin } = {};
@@ -50,8 +51,8 @@ class CacheFactory {
   }
 
   getPlugin(plugin = 'memory'): CachePlugin {
-    const cachePlugin = (this.plugins[plugin] || this.plugins['memory']) as any;
-    if (typeof cachePlugin.get === 'function') {
+    const cachePlugin = (this.plugins[plugin] || this.plugins['memory']) as ((new () => CachePlugin) | CachePlugin);
+    if ('get' in cachePlugin && 'set' in cachePlugin) {
       return cachePlugin;
     } else {
       return new cachePlugin();

@@ -1,8 +1,8 @@
 import "reflect-metadata";
 import {MemoryCache} from "../src/memory-cache";
-import faker = require("faker");
 import {expect} from "chai";
 import {stub} from "sinon";
+import faker = require("faker");
 
 describe("[memory.ts]", () => {
   it("should set a value without expire", async () => {

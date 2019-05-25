@@ -1,6 +1,7 @@
 import {NextHandler, ResponseChunk, Streamer} from "./streamer";
 import {RequestCallback} from "request";
 import {RequestOptions} from "./request-manager";
+import * as request from "request";
 
 
 class StreamHead extends Streamer {
@@ -11,7 +12,7 @@ class StreamHead extends Streamer {
   onResponse(chunk: ResponseChunk, next: NextHandler): void {
     chunk.cb(
       chunk.error,
-      chunk.response as any,
+      chunk.response as request.Response,
       chunk.response ? chunk.response.body : undefined
     );
   }

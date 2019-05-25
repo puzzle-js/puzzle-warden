@@ -18,11 +18,11 @@ interface StreamMap {
   [routeName: string]: KeyStreamPair[];
 }
 
-const DEFAULT_IDENTIFIER = `u_{Date.now()}`;
+type HTTP_METHOD = 'get' | 'post' | 'put' | 'del' | 'delete' | 'patch' | 'head' | 'options';
 
 interface RequestOptions extends request.CoreOptions {
   url: string;
-  method: 'get' | 'post';
+  method: HTTP_METHOD;
   headers?: {
     [key: string]: string,
   };
@@ -30,7 +30,7 @@ interface RequestOptions extends request.CoreOptions {
 }
 
 interface RouteConfiguration {
-  [key: string]: any;
+  [key: string]: object | string | number | boolean | undefined;
 
   identifier?: string;
   cache?: CacheConfiguration | boolean;
@@ -71,6 +71,8 @@ class RequestManager {
       keyMaker,
       stream
     });
+
+    return this.handle.bind(this, name) as (requestOptions: RequestOptions, cb: RequestCallback) => void;
   }
 
   unregister(name: string) {
@@ -103,7 +105,7 @@ class RequestManager {
 }
 
 export {
-  DEFAULT_IDENTIFIER,
+  HTTP_METHOD,
   RequestOptions,
   RouteConfiguration,
   RequestManager

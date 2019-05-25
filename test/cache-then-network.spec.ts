@@ -45,7 +45,7 @@ describe("[cache.ts]", () => {
     await cache.onRequest(chunk, spy);
 
     // Assert
-    expect(spy.calledWithExactly(undefined, chunk)).to.eq(true);
+    expect(spy.calledWithExactly(chunk)).to.eq(true);
     expect(responseStub.notCalled).to.eq(true);
   });
 
@@ -68,7 +68,7 @@ describe("[cache.ts]", () => {
     await cache.onRequest(chunk, spy);
 
     // Assert
-    expect(spy.calledWithExactly(undefined, null)).to.eq(true);
+    expect(spy.notCalled).to.eq(true);
     expect(responseStub.calledWith({
       key: chunk.key,
       cb: chunk.cb,
@@ -95,7 +95,7 @@ describe("[cache.ts]", () => {
     await cache.onResponse(chunk, spy);
 
     // Assert
-    expect(spy.calledWithExactly(undefined, chunk)).to.eq(true);
+    expect(spy.calledWithExactly(chunk)).to.eq(true);
   });
 
   it("should handle incoming response with caching", async () => {
@@ -117,7 +117,7 @@ describe("[cache.ts]", () => {
     await cache.onResponse(chunk, spy);
 
     // Assert
-    expect(spy.calledWithExactly(undefined, chunk)).to.eq(true);
+    expect(spy.calledWithExactly(chunk)).to.eq(true);
   });
 
   it("should handle incoming response without caching because of set-cookie", async () => {
@@ -140,6 +140,6 @@ describe("[cache.ts]", () => {
     await cache.onResponse(chunk, spy);
 
     // Assert
-    expect(spy.calledWithExactly(undefined, chunk)).to.eq(true);
+    expect(spy.calledWithExactly(chunk)).to.eq(true);
   });
 });

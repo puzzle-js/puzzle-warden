@@ -1,4 +1,4 @@
-import {NextHandler, RequestChunk, Streamer} from "./streamer";
+import {RequestChunk, Streamer} from "./streamer";
 import {StreamType} from "./stream-factory";
 import {RequestWrapper} from "./request-wrapper";
 
@@ -13,8 +13,8 @@ class Network extends Streamer {
     this.requestWrapper = requestWrapper;
   }
 
-  onRequest(chunk: RequestChunk, next: NextHandler): void {
-    this.requestWrapper.request[chunk.requestOptions.method](chunk.requestOptions, (error, response) => {
+  onRequest(chunk: RequestChunk): void {
+    (this.requestWrapper.request as any)[chunk.requestOptions.method](chunk.requestOptions, (error: any, response: any) => {
       this.respond({
         ...chunk,
         response,

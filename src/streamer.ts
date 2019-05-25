@@ -18,14 +18,16 @@ type NextHandler = (chunk: ResponseChunk | RequestChunk) => void;
 
 class Streamer {
   readonly name: string;
-  private nextStream!: Streamer;
-  private previousStream!: Streamer;
+  private nextStream?: Streamer;
+  private previousStream?: Streamer;
 
   constructor(name: string) {
     this.name = name;
 
     this._onRequest = this._onRequest.bind(this);
     this._onResponse = this._onResponse.bind(this);
+    // this.respond = this.respond.bind(this);
+    // this.request = this.request.bind(this);
   }
 
   connect(wardenStream: Streamer) {
@@ -35,27 +37,41 @@ class Streamer {
   }
 
   respond<T extends ResponseChunk>(chunk: T) {
-    this.previousStream._onResponse(chunk);
+    if (this.previousStream) {
+      this.previousStream._onResponse(chunk);
+    }
   }
 
   request<T extends RequestChunk>(chunk: T) {
-    this.nextStream._onRequest(chunk);
+    if (this.nextStream) {
+      this.nextStream._onRequest(chunk);
+    }
   }
 
   private _onRequest(chunk: RequestChunk) {
-    this.onRequest(chunk, this.nextStream._onRequest);
+    console.debug('Request', {
+      name: this.name,
+      key: chunk.key
+    });
+
+    this.onRequest(chunk, this.nextStream ? this.nextStream._onRequest : undefined);
   }
 
   private _onResponse(chunk: ResponseChunk) {
-    this.onRequest(chunk, this.previousStream._onResponse);
+    console.debug('Response', {
+      name: this.name,
+      key: chunk.key
+    });
+
+    this.onResponse(chunk, this.previousStream ? this.previousStream._onResponse : undefined);
   }
 
-  protected onRequest(chunk: RequestChunk, next: NextHandler) {
-    next(chunk);
+  protected onRequest(chunk: RequestChunk, next?: NextHandler) {
+    if (next) next(chunk);
   }
 
-  protected onResponse(chunk: ResponseChunk, next: NextHandler) {
-    next(chunk);
+  protected onResponse(chunk: ResponseChunk, next?: NextHandler) {
+    if (next) next(chunk);
   }
 }
 
