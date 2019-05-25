@@ -38,4 +38,4 @@ class StreamLogger {
 
 export {
   StreamLogger
-}
+};

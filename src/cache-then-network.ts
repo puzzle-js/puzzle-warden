@@ -17,10 +17,10 @@ class CacheThenNetwork extends Streamer {
   private readonly ms?: number;
   private readonly cacheWithCookie: boolean;
 
-  constructor(plugin: CachePlugin, cacheWithCookie: boolean = false, ms?: number) {
+  constructor(plugin: CachePlugin, cacheWithCookie = false, ms?: number) {
     super(StreamType.CACHE);
 
-    this.ms = ms;
+    this.ms = ms; 
     this.cacheWithCookie = cacheWithCookie;
     this.storage = plugin;
   }
