@@ -42,6 +42,7 @@ class RequestManager {
   private streams: StreamMap = {};
   private streamFactory: StreamFactory;
   private tokenizer: Tokenizer;
+  private requestId = 0;
 
   constructor(
     streamFactory: StreamFactory,
@@ -92,7 +93,7 @@ class RequestManager {
       requestOptions.method
     );
 
-    return this.streams[name][0].stream.start(key, requestOptions, cb);
+    return this.streams[name][0].stream.start(key, ++this.requestId, requestOptions, cb);
   }
 
   isRouteRegistered(name: string): boolean {

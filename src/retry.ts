@@ -85,6 +85,7 @@ class Retry extends Streamer {
       retryCount: chunk.retryCount + 1,
       cb: chunk.cb,
       key: chunk.key,
+      id: chunk.id,
       requestOptions: chunk.requestOptions
     });
   }

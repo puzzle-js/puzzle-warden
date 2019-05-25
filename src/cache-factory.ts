@@ -1,7 +1,6 @@
 import {MemoryCache} from "./memory-cache";
 import ms from "ms";
-import {RequestChunk, ResponseChunk, Streamer} from "./streamer";
-import {TransformCallback} from "stream";
+import {Streamer} from "./streamer";
 import {CacheThenNetwork} from "./cache-then-network";
 
 interface CachePlugin {
@@ -19,6 +18,7 @@ interface CacheConfiguration {
   plugin?: string;
   strategy?: CACHING_STRATEGY;
   duration?: string | number;
+  cacheWithCookie?: boolean;
 }
 
 
@@ -26,7 +26,7 @@ const defaultCachingDuration = 60000;
 
 type CacheStreamers = {
   [key: string]: {
-    new(plugin: CachePlugin, ms: number): Streamer
+    new(plugin: CachePlugin, cacheDangerous: boolean, ms: number): Streamer
   };
 };
 
@@ -46,8 +46,9 @@ class CacheFactory {
     const plugin = this.getPlugin(configuration.plugin);
     const cacheDuration = this.parseMs(configuration.duration);
     const strategy = this.getStrategy(configuration.strategy);
+    const cacheWithCookie = configuration.cacheWithCookie || false;
 
-    return new cachingStrategyImplementations[strategy](plugin, cacheDuration);
+    return new cachingStrategyImplementations[strategy](plugin, cacheWithCookie, cacheDuration);
   }
 
   getPlugin(plugin = 'memory'): CachePlugin {

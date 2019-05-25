@@ -1,7 +1,9 @@
 import request, {RequestCallback} from "request";
 import {RequestOptions} from "./request-manager";
+import {StreamLogger} from "./stream-logger";
 
 interface RequestChunk {
+  id: number;
   key: string;
   requestOptions: RequestOptions;
   cb: RequestCallback;
@@ -26,8 +28,6 @@ class Streamer {
 
     this._onRequest = this._onRequest.bind(this);
     this._onResponse = this._onResponse.bind(this);
-    // this.respond = this.respond.bind(this);
-    // this.request = this.request.bind(this);
   }
 
   connect(wardenStream: Streamer) {
@@ -36,34 +36,27 @@ class Streamer {
     return wardenStream;
   }
 
-  respond<T extends ResponseChunk>(chunk: T) {
+  start(key: string, id: number, requestOptions: RequestOptions, cb: RequestCallback) {
+    const chunk = {
+      id,
+      key,
+      requestOptions,
+      cb: cb as unknown as RequestCallback
+    };
+    this._onRequest(chunk);
+    return this.request(chunk);
+  }
+
+  protected respond<T extends ResponseChunk>(chunk: T) {
     if (this.previousStream) {
       this.previousStream._onResponse(chunk);
     }
   }
 
-  request<T extends RequestChunk>(chunk: T) {
+  protected request<T extends RequestChunk>(chunk: T) {
     if (this.nextStream) {
       this.nextStream._onRequest(chunk);
     }
-  }
-
-  private _onRequest(chunk: RequestChunk) {
-    console.debug('Request', {
-      name: this.name,
-      key: chunk.key
-    });
-
-    this.onRequest(chunk, this.nextStream ? this.nextStream._onRequest : undefined);
-  }
-
-  private _onResponse(chunk: ResponseChunk) {
-    console.debug('Response', {
-      name: this.name,
-      key: chunk.key
-    });
-
-    this.onResponse(chunk, this.previousStream ? this.previousStream._onResponse : undefined);
   }
 
   protected onRequest(chunk: RequestChunk, next?: NextHandler) {
@@ -72,6 +65,16 @@ class Streamer {
 
   protected onResponse(chunk: ResponseChunk, next?: NextHandler) {
     if (next) next(chunk);
+  }
+
+  private _onRequest(chunk: RequestChunk) {
+    // StreamLogger.onRequest(chunk, this, this.previousStream, this.nextStream);
+    this.onRequest(chunk, this.nextStream ? this.nextStream._onRequest : undefined);
+  }
+
+  private _onResponse(chunk: ResponseChunk) {
+    // StreamLogger.onResponse(chunk, this, this.previousStream, this.nextStream);
+    this.onResponse(chunk, this.previousStream ? this.previousStream._onResponse : undefined);
   }
 }
 

@@ -16,6 +16,7 @@ class Holder extends Streamer {
       holdQueue.forEach(holdChunk => {
         this.respond({
           ...chunk,
+          id: holdChunk.id,
           cb: holdChunk.cb,
         });
       });

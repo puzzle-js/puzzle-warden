@@ -29,13 +29,14 @@ describe("[stream-head.ts]", () => {
 
   it("should start stream", () => {
     // Arrange
+    const id = faker.random.number();
     const key = faker.random.word();
     const requestOptions = {} as any;
     const cb = sandbox.stub();
-    const requestStub = sandbox.stub(streamHead, 'request');
+    const requestStub = sandbox.stub(streamHead as any, 'request');
 
     // Act
-    streamHead.start(key, requestOptions, cb);
+    streamHead.start(key, id, requestOptions, cb);
 
     // Assert
     expect(requestStub.calledWithExactly({
