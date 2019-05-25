@@ -5,10 +5,9 @@ import {RequestCallback} from "request";
 import Url from "fast-url-parser";
 import {ConfigurableStream, StreamFactory} from "./stream-factory";
 import {CacheConfiguration} from "./cache-factory";
-import {WardenStream} from "./warden-stream";
+import {Streamer} from "./streamer";
 import Cookie from "cookie";
 import {RetryInputConfiguration} from "./retry";
-import http from "http";
 
 type KeyStreamPair = {
   keyMaker: KeyMaker;
@@ -54,14 +53,14 @@ class RequestManager {
 
   register(name: string, routeConfiguration: RouteConfiguration) {
     const stream = this.streamFactory.createHead();
-    let streamLink: WardenStream = stream;
+    let streamLink: Streamer = stream;
     const network = this.streamFactory.createNetwork();
     const keyMaker = this.tokenizer.tokenize(name, routeConfiguration.identifier);
 
     Object.values(ConfigurableStream).forEach((streamType: string) => {
       const configuration = routeConfiguration[streamType];
       if (configuration) {
-        const stream = this.streamFactory.create<WardenStream>(streamType, configuration);
+        const stream = this.streamFactory.create<Streamer>(streamType, configuration);
         streamLink = streamLink.connect(stream);
       }
     });

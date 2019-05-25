@@ -3,7 +3,7 @@ import "reflect-metadata";
 import {expect} from "chai";
 import sinon from "sinon";
 import faker from "faker";
-import {RequestChunk, ResponseChunk, WardenStream} from "../src/warden-stream";
+import {RequestChunk, ResponseChunk, Streamer} from "../src/streamer";
 import {PassThrough, TransformCallback, Readable} from "stream";
 import ParallelTransform from "parallel-transform";
 
@@ -23,7 +23,7 @@ describe("[warden-stream.ts]", () => {
     // Arrange
     const name = faker.random.word();
 
-    class Stream extends WardenStream {
+    class Stream extends Streamer {
       constructor() {
         super(name, false);
       };
@@ -40,14 +40,14 @@ describe("[warden-stream.ts]", () => {
 
     // Assert
     expect(stream.requestStream).to.be.instanceOf(ParallelTransform);
-    expect(stream).to.be.instanceOf(WardenStream);
+    expect(stream).to.be.instanceOf(Streamer);
   });
 
   it("should create new debug mode default and head", () => {
     // Arrange
     const name = faker.random.word();
 
-    class Stream extends WardenStream {
+    class Stream extends Streamer {
       constructor() {
         super(name, true);
       };
@@ -64,14 +64,14 @@ describe("[warden-stream.ts]", () => {
 
     // Assert
     expect(stream.requestStream).to.be.instanceOf(Readable);
-    expect(stream).to.be.instanceOf(WardenStream);
+    expect(stream).to.be.instanceOf(Streamer);
   });
 
   it("should push to response stream on response", () => {
     // Arrange
     const name = faker.random.word();
 
-    class Stream extends WardenStream {
+    class Stream extends Streamer {
       constructor() {
         super(name, true);
       };
@@ -98,7 +98,7 @@ describe("[warden-stream.ts]", () => {
     // Arrange
     const name = faker.random.word();
 
-    class Stream extends WardenStream {
+    class Stream extends Streamer {
       constructor() {
         super(name, true);
       };
@@ -125,7 +125,7 @@ describe("[warden-stream.ts]", () => {
     // Arrange
     const name = faker.random.word();
 
-    class Stream extends WardenStream {
+    class Stream extends Streamer {
       constructor() {
         super(name, true);
       };
@@ -154,7 +154,7 @@ describe("[warden-stream.ts]", () => {
 
   it("should connect a stream to other one and debug link", () => {
     // Arrange
-    class Stream extends WardenStream {
+    class Stream extends Streamer {
       constructor() {
         super(faker.random.word(), true, true);
       };
@@ -183,7 +183,7 @@ describe("[warden-stream.ts]", () => {
 
   it("should log calls when debug mod is enabled", () => {
     // Arrange
-    class Stream extends WardenStream {
+    class Stream extends Streamer {
       constructor() {
         super(faker.random.word(), true, true);
       };

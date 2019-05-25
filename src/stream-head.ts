@@ -1,26 +1,19 @@
-import {TransformCallback} from "stream";
-import {RequestChunk, ResponseChunk, WardenStream} from "./warden-stream";
+import {NextHandler, ResponseChunk, Streamer} from "./streamer";
 import {RequestCallback} from "request";
 import {RequestOptions} from "./request-manager";
 
 
-class StreamHead extends WardenStream {
+class StreamHead extends Streamer {
   constructor() {
-    super('Head', true);
+    super('Head');
   }
 
-  onResponse(chunk: ResponseChunk, callback: TransformCallback): void {
+  onResponse(chunk: ResponseChunk, next: NextHandler): void {
     chunk.cb(
       chunk.error,
       chunk.response as any,
       chunk.response ? chunk.response.body : undefined
     );
-
-    callback(undefined, null);
-  }
-
-  onRequest(chunk: RequestChunk, callback: TransformCallback): void {
-    throw new Error('Stream head cant be piped');
   }
 
   start(key: string, requestOptions: RequestOptions, cb: RequestCallback) {

@@ -4,7 +4,7 @@ import {expect} from "chai";
 import sinon, {SinonMock} from "sinon";
 import faker from "faker";
 import {Holder} from "../src/holder";
-import {RequestChunk, ResponseChunk} from "../src/warden-stream";
+import {RequestChunk, ResponseChunk} from "../src/streamer";
 
 const sandbox = sinon.createSandbox();
 let holder: Holder;

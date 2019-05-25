@@ -1,5 +1,4 @@
-import {RequestChunk, ResponseChunk, WardenStream} from "./warden-stream";
-import {TransformCallback} from "stream";
+import {NextHandler, RequestChunk, ResponseChunk, Streamer} from "./streamer";
 import {StreamType} from "./stream-factory";
 
 interface RetryDecoratedResponse extends ResponseChunk {
@@ -29,7 +28,7 @@ const DEFAULT_RETRY_CONFIGURATION = {
 
 const RETRYABLE_ERRORS = ['ECONNRESET', 'ENOTFOUND', 'ESOCKETTIMEDOUT', 'ETIMEDOUT', 'ECONNREFUSED', 'EHOSTUNREACH', 'EPIPE', 'EAI_AGAIN'];
 
-class Retry extends WardenStream {
+class Retry extends Streamer {
   private configuration: RetryConfiguration;
 
   constructor(configuration: RetryConfiguration) {
@@ -59,7 +58,7 @@ class Retry extends WardenStream {
     }
   }
 
-  async onResponse(chunk: RetryDecoratedResponse, callback: TransformCallback): Promise<void> {
+  async onResponse(chunk: RetryDecoratedResponse, next: NextHandler): Promise<void> {
     if (chunk.retryCount <= this.configuration.count && this.shouldRetry(chunk)) {
       if (this.configuration.delay > 0) {
         setTimeout(() => {
@@ -68,14 +67,13 @@ class Retry extends WardenStream {
       } else {
         this.retry(chunk);
       }
-      callback(undefined, null);
     } else {
-      callback(undefined, chunk);
+      next(chunk);
     }
   }
 
-  async onRequest(chunk: RetryDecoratedRequest, callback: TransformCallback): Promise<void> {
-    callback(null, {
+  async onRequest(chunk: RetryDecoratedRequest, next: NextHandler): Promise<void> {
+    next({
       ...chunk,
       retryCount: 0
     } as RequestChunk);

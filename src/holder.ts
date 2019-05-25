@@ -1,18 +1,16 @@
-import {RequestChunk, ResponseChunk, WardenStream} from "./warden-stream";
-import {TransformCallback} from "stream";
+import {NextHandler, RequestChunk, ResponseChunk, Streamer} from "./streamer";
 import {StreamType} from "./stream-factory";
 
 
-class Holder extends WardenStream {
+class Holder extends Streamer {
   private holdQueue: { [key: string]: RequestChunk[] | null } = {};
 
   constructor() {
     super(StreamType.HOLDER);
   }
 
-  onResponse(chunk: ResponseChunk, callback: TransformCallback): void {
+  onResponse(chunk: ResponseChunk, next: NextHandler) {
     const holdQueue = this.holdQueue[chunk.key];
-
 
     if (holdQueue) {
       holdQueue.forEach(holdChunk => {
@@ -23,21 +21,19 @@ class Holder extends WardenStream {
       });
 
       delete this.holdQueue[chunk.key];
-      callback(undefined, null);
     } else {
-      callback(undefined, chunk);
+      next(chunk);
     }
   }
 
-  onRequest(chunk: RequestChunk, callback: TransformCallback): void {
+  onRequest(chunk: RequestChunk, next: NextHandler) {
     const holdQueue = this.holdQueue[chunk.key];
 
     if (holdQueue) {
       holdQueue.push(chunk);
-      callback(undefined, null);
     } else {
       this.holdQueue[chunk.key] = [chunk];
-      callback(undefined, chunk);
+      next(chunk);
     }
   }
 }
