@@ -49,7 +49,7 @@ npm i puzzle-warden --save
 #### 1.  Register Route
 ```js
 const warden = require('puzzle-warden');
-warden.register('test', {
+const routeRegistration = warden.register('test', {
   identifier: '{query.foo}_{cookie.bar}',
   cache: true,
   holder: true
@@ -57,6 +57,21 @@ warden.register('test', {
 ```
 
 #### 2. Send Request
+
+##### Using Route Registration
+```js
+routeRegistration({
+  url: `https://postman-echo.com/get?foo=value`,
+  headers: {
+    cookie: `bar=value`
+  },
+  method: 'get',
+  gzip: true,
+  json: true
+}, (err, response, data) => {
+  console.log(data);
+});
+```
 
 ##### Using Warden
 ```js
@@ -158,6 +173,7 @@ Default values and properties
 | plugin       | ❌ | memory    | Where cached data will be stored. Please see [Cache Plugins](#cache-plugins) for more information. Currently, only `memory` available. |
 | strategy     | ❌ | CacheThenNetwork | Controls when and how things will be cached. Please see [Caching Strategy](#caching-strategy) for more information. |
 | duration     | ❌ |    1m   | Caching Duration. You can use `number` for ms. Or you can use `1m` `1h` `1d` etc. Please see [ms](https://github.com/zeit/ms) for full list|
+| cacheWithCookie     | ❌ |    false   | Warden never caches responses including set-cookie header. To enable this pass this property as `true` |
 
 
 #### Cache Plugins
@@ -165,7 +181,7 @@ Default values and properties
 Cache plugins control where cache will be stored. These are available plugins:
 
 - __Memory__ - ✅
-- Couchbase - 📝 [Todo](https://github.com/puzzle-js/puzzle-warden/projects/1#card-20220024)
+- Couchbase - ✅
 - Redis - 📝 [Todo](https://github.com/puzzle-js/puzzle-warden/projects/1#card-20220030)
 
 #### Caching Strategy

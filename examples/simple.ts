@@ -1,6 +1,8 @@
 import {warden} from "../src";
 import request from "request";
 
+warden.debug = true;
+
 // Returns optional request instance
 const route = warden.register('holder', {
   holder: false,

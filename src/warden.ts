@@ -4,6 +4,7 @@ import {RequestWrapper} from "./request-wrapper";
 import {CacheFactory, CachePlugin} from "./cache-factory";
 
 class Warden {
+  static debug = false;
   private requestManager: RequestManager;
   private requestWrapper: RequestWrapper;
   private cacheFactory: CacheFactory;
@@ -18,6 +19,14 @@ class Warden {
     this.cacheFactory = cacheFactory;
 
     this.requestWrapper.wrap(requestManager);
+  }
+
+  get debug(): boolean {
+    return Warden.debug;
+  }
+
+  set debug(enabled: boolean) {
+    Warden.debug = enabled;
   }
 
   /**

@@ -1,6 +1,7 @@
 import request, {RequestCallback} from "request";
 import {RequestOptions} from "./request-manager";
 import {StreamLogger} from "./stream-logger";
+import {Warden} from "./warden";
 
 interface RequestChunk {
   id: number;
@@ -44,7 +45,6 @@ class Streamer {
       cb: cb as unknown as RequestCallback
     };
     this._onRequest(chunk);
-    return this.request(chunk);
   }
 
   protected respond<T extends ResponseChunk>(chunk: T) {
@@ -68,12 +68,12 @@ class Streamer {
   }
 
   private _onRequest(chunk: RequestChunk) {
-    // StreamLogger.onRequest(chunk, this, this.previousStream, this.nextStream);
+    if(Warden.debug) StreamLogger.onRequest(chunk, this, this.previousStream, this.nextStream);
     this.onRequest(chunk, this.nextStream ? this.nextStream._onRequest : undefined);
   }
 
   private _onResponse(chunk: ResponseChunk) {
-    // StreamLogger.onResponse(chunk, this, this.previousStream, this.nextStream);
+    if(Warden.debug) StreamLogger.onResponse(chunk, this, this.previousStream, this.nextStream);
     this.onResponse(chunk, this.previousStream ? this.previousStream._onResponse : undefined);
   }
 }
