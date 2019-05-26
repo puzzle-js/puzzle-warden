@@ -1,6 +1,6 @@
 # Benchmark Results
 
-You will find comparison results for warden with [request](https://github.com/request/request). Used [nock](https://github.com/nock/nock) to simulate HTTP server and [custom test runner](/benchmarks/benchmarker.ts) to measure results. You can run same tests by yourself
+You will find comparison results for warden with [request](https://github.com/request/request). Used [nock](https://github.com/nock/nock) to simulate HTTP server and [custom test runner](./benchmarks/benchmarker.ts) to measure results. You can run same tests by yourself
 
 ```bash
 TS_NODE_FILES=true node -r ts-node/register  benchmarks/holder.ts
@@ -38,11 +38,11 @@ All modules are disabled on warden.
 ]
 ```
 
-Warden almost puts 0.24% overhead on request module. Almost nothing.
+Warden puts 0.24% overhead on request module. Almost nothing.
 
 
 ## Holder
-Only holder module enabled. Running on 500 parallel requests with 1/100 chance of same request. This means only 5 same concurrent requests
+Only holder module enabled. Running on 500 parallel requests with 1/100 chance of same request. This means only 5 same concurrent requests.
 
 ```js
 [

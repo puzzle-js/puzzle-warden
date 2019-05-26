@@ -32,8 +32,8 @@ Warden is an outgoing request optimizer for creating fast and scalable applicati
 - [Cache](#cache)
 - [Retry](#retry)
 - [Holder](#holder)
-- [Api](#api)
 - [Schema](#schema)
+- [Api](#api)
 
 ### Installing
 
@@ -51,7 +51,7 @@ npm i puzzle-warden --save
 #### 1.  Register Route
 ```js
 const warden = require('puzzle-warden');
-const routeRegistration = warden.register('test', {
+warden.register('test', {
   identifier: '{query.foo}_{cookie.bar}',
   cache: true,
   holder: true
@@ -62,6 +62,12 @@ const routeRegistration = warden.register('test', {
 
 ##### Using Route Registration
 ```js
+const routeRegistration = warden.register('test', {
+  identifier: '{query.foo}_{cookie.bar}',
+  cache: true,
+  holder: true
+});
+
 routeRegistration({
   url: `https://postman-echo.com/get?foo=value`,
   headers: {
@@ -134,7 +140,7 @@ You can simply register a route providing an identifier and module configuration
 
 ```js
 warden.register('test', {
-  identifier: 'ty_{query.foo}_{cookie.bar}',
+  identifier: '{query.foo}_{cookie.bar}',
   cache: true,
   holder: true
 });
@@ -148,7 +154,7 @@ You can simply enable cache with default values using.
 
 ```js
 warden.register('test', {
-  identifier: 'ty_{query.foo}_{cookie.bar}',
+  identifier: '{query.foo}_{cookie.bar}',
   cache: true,
   holder: true
 });
@@ -158,7 +164,7 @@ Or you can customize cache configuration by passing an object.
 
 ```js
 warden.register('test', {
-  identifier: 'ty_{query.foo}_{cookie.bar}',
+  identifier: '{query.foo}_{cookie.bar}',
   cache: {
     plugin: 'memory',
     strategy: 'CacheThenNetwork',
@@ -198,6 +204,43 @@ Simple old school caching. Asks cache plugin if it has a valid cached response. 
 
 Holder prevents same HTTP requests to be sent at the same time. 
 Let's assume we have an identifier for a request: `{query.foo}`. We send a HTTP request `/product?foo=bar`. While waiting for the response, warden received another HTTP request to the same address which means both HTTP requests are converted to the same key. Then Warden stops the second request. After receiving the response from the first request, Warden returns both requests with the same response by sending only one HTTP request.
+
+### Schema
+
+Warden uses custom object -> string transformation to improve performance. Schema will only affect `POST` requests with json body.
+
+```js
+warden.register('test', {
+  identifier: '{query.foo}',
+  schema: {
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string'
+      },
+      age: {
+        type: 'number'
+      }
+    }
+  }
+});
+
+warden.request('test', {
+  url: 'https://github.com/puzzle-js/puzzle-warden?foo=bar',
+  method: 'post',
+  json: true,
+  body: {
+    name: 'Test',
+    age: 23
+  }
+}, (err, response, data) => {
+  console.log(data);
+})
+```
+
+To enable Schema module, you need to give schema option when registering route. This schema options must be compatible with [jsonschema](http://json-schema.org/)
+
+You should use `json: true` property. 
 
 ### Retry
 
