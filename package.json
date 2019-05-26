@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "chalk": "^2.4.2",
-    "cookie": "^0.3.1",
+    "cookie": "^0.4.0",
     "couchbase": "^2.6.4",
     "fast-json-stringify": "^1.15.2",
     "fast-url-parser": "^1.1.3",
