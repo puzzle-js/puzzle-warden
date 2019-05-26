@@ -191,6 +191,7 @@ Cache plugins control where cache will be stored. These are available plugins:
 
 - __Memory__ - ✅
 - Couchbase - ✅
+- [Custom Plugin Support](#warden.registerCachePlugin()) - ✅ 
 - Redis - 📝 [Todo](https://github.com/puzzle-js/puzzle-warden/projects/1#card-20220030)
 
 #### Caching Strategy
@@ -319,4 +320,18 @@ warden.isRouteRegistered('route'); // true | false
 Unregisters route
 ```js
 warden.unregisterRoute('route');
+```
+
+#### warden.registerCachePlugin()
+
+Unregisters route
+```js
+warden.registerCachePlugin('pluginName', {
+  set(){
+    
+  },
+  get(){
+    
+  }
+});
 ```
