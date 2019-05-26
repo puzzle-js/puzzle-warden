@@ -15,7 +15,7 @@ Warden is an outgoing request optimizer for creating fast and scalable applicati
 - 🔌 **Support** Warden can be used with anything but it supports [request](https://github.com/request/request) out of the box. ✅
 - 😎 **Easy Implementation** Warden can be easily implemented with a few lines of codes. ✅
 - 🔁 **Request Retry** Requests will automatically be re-attempted on recoverable errors. ✅
-- 📇 **Schema Parser** Warden uses a schema which can be provided by you for parsing JSON faster. 📝
+- 📇 **Schema Stringifier** Warden uses a schema which can be provided by you for parsing JSON stringify. ✅
 - 🚥 **API Queue** Throttles API calls to protect target service. 📝
 - 👻 **Request Shadowing** Copies a fraction of traffic to a new deployment for observation. 📝
 - 🚉 **Reverse Proxy** It can be deployable as an external application which can serve as a reverse proxy. 📝
@@ -32,6 +32,7 @@ Warden is an outgoing request optimizer for creating fast and scalable applicati
 - [Retry](#retry)
 - [Holder](#holder)
 - [Api](#api)
+- [Schema](#schema)
 
 ### Installing
 

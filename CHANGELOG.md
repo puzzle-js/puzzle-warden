@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.6.0] - 2019-05-26
+### Added
+- Schema for faster parse & stringify json operations.
+- `cacheWithCookie` option for caching when `set-cookie` header exists.
+- Now route registering returns a handle that can be used to send request from that registration.
+
+### Changed
+- Removed Node Streams for faster processing. It made huge impact.
+- Improved Cache, cache now stores clear and smaller data
+
 ## [1.5.0] - 2019-05-09
 ### Added
 - Couchbase plugin

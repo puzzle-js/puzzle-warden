@@ -4,6 +4,7 @@ import {StreamHead} from "./stream-head";
 import {Holder} from "./holder";
 import {RequestWrapper} from "./request-wrapper";
 import {Retry} from "./retry";
+import {SchemaStringifier, SchemaStringifierConfiguration} from "./schema-stringifier";
 
 const enum StreamType {
   HOLDER = 'holder',
@@ -12,13 +13,15 @@ const enum StreamType {
   QUEUE = 'queue',
   CIRCUIT = 'circuit',
   HEAD = 'head',
-  RETRY = 'retry'
+  RETRY = 'retry',
+  SCHEMA_STRINGIFIER = 'schema'
 }
 
 enum ConfigurableStream {
   HOLDER = StreamType.HOLDER,
   CACHE = StreamType.CACHE,
-  RETRY = StreamType.RETRY
+  SCHEMA_STRINGIFIER = StreamType.SCHEMA_STRINGIFIER,
+  RETRY = StreamType.RETRY,
 }
 
 
@@ -37,13 +40,13 @@ class StreamFactory {
   create<U, T = {}>(streamType: string, configuration: T) {
     switch (streamType) {
       case StreamType.CACHE:
-        return this.cacheFactory.create(configuration as T) as unknown as U;
+        return this.cacheFactory.create(configuration) as unknown as U;
       case StreamType.HOLDER:
         return new Holder() as unknown as U;
-      // case StreamType.CIRCUIT:
-      //   throw new Error('Not implemented');
       case StreamType.RETRY:
         return Retry.create(configuration) as unknown as U;
+      case StreamType.SCHEMA_STRINGIFIER:
+        return new SchemaStringifier(configuration as unknown as SchemaStringifierConfiguration) as unknown as U;
       default:
         throw new Error('Unknown stream type');
     }

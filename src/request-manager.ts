@@ -8,6 +8,7 @@ import {CacheConfiguration} from "./cache-factory";
 import {Streamer} from "./streamer";
 import Cookie from "cookie";
 import {RetryInputConfiguration} from "./retry";
+import {SchemaStringifierConfiguration} from "./schema-stringifier";
 
 type KeyStreamPair = {
   keyMaker: KeyMaker;
@@ -26,7 +27,7 @@ interface RequestOptions extends request.CoreOptions {
   headers?: {
     [key: string]: string,
   };
-  body?: object;
+  body?: object | string;
 }
 
 interface RouteConfiguration {
@@ -36,6 +37,7 @@ interface RouteConfiguration {
   cache?: CacheConfiguration | boolean;
   holder?: boolean;
   retry?: RetryInputConfiguration | boolean | number;
+  schema?: SchemaStringifierConfiguration;
 }
 
 class RequestManager {
