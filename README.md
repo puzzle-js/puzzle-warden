@@ -27,6 +27,7 @@ Warden is an outgoing request optimizer for creating fast and scalable applicati
 - [Installing](#installing)
 - [Quick Guide](#quick-guide)
 - [Benchmarks](./benchmarks/BENCHMARK.md)
+- [Examples](./examples/)
 - [Identifier](#identifier)
 - [Registering Route](#registering-route)
 - [Cache](#cache)
