@@ -34,6 +34,7 @@ Warden is an outgoing request optimizer for creating fast and scalable applicati
 - [Retry](#retry)
 - [Holder](#holder)
 - [Schema](#schema)
+- [Debugger](#debugger)
 - [Api](#api)
 
 ### Installing
@@ -307,6 +308,24 @@ Default values and properties
 | logger     | ❌ |       | Logger will be called on each retry with retry count|
 
 
+### Debugger
+
+Warden comes with built-in debugger to provide information about request flow.
+
+To enable debug mode:
+```js
+warden.debug = true;
+```
+
+Flow will be visible on console.
+
+Example log:
+```
+4323 | foo_44: HOLDER ---> CACHE
+```
+
+This means the request with the unique id 4323 and identifier value foo_44 is moving from Holder to Cache
+
 ### Api
 
 #### warden.register()
@@ -358,7 +377,7 @@ warden.unregisterRoute('route');
 
 #### warden.registerCachePlugin()
 
-Unregisters route
+Registers cache plugin 
 ```js
 warden.registerCachePlugin('pluginName', {
   set(){
@@ -368,4 +387,12 @@ warden.registerCachePlugin('pluginName', {
     
   }
 });
+```
+
+#### warden.debug
+
+Enables debug mode or disables based on boolean
+
+```
+warden.debug = true;
 ```
