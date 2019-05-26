@@ -10,6 +10,9 @@
 - Removed Node Streams for faster processing. It made huge impact.
 - Improved Cache, cache now stores clear and smaller data
 
+### Fixed
+- Fixes issue #12 stale tests
+
 ## [1.5.0] - 2019-05-09
 ### Added
 - Couchbase plugin

@@ -12,7 +12,7 @@ const sandbox = sinon.createSandbox();
 
 describe("[request-wrapper.ts]", () => {
   beforeEach(() => {
-
+    sandbox.stub(request.Request.prototype, 'init');
   });
 
   afterEach(() => {

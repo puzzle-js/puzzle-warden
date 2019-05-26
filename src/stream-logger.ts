@@ -1,41 +1,46 @@
 import {RequestChunk, ResponseChunk, Streamer} from "./streamer";
 import chalk from "chalk";
 
-const COLORS = {
+const LOG_COLORS = {
   responseFailed: chalk.bold.bgRed.black,
   responseSuccessful: chalk.bold.bgGreen.black,
   requestNoStatus: chalk.bold.yellow
 };
 
 class StreamLogger {
-  static onRequest(chunk: RequestChunk, currentHandler: Streamer, previousStream?: Streamer, nextStream?: Streamer){
-    const keyText = StreamLogger.getKeyColor(chunk)(`${chunk.id} | ${chunk.key}:`);
+  static onRequest(chunk: RequestChunk, currentHandler: Streamer, previousStream?: Streamer, nextStream?: Streamer) {
+    const keyText = StreamLogger.getKeyColor(chunk)(StreamLogger.getKeyString(chunk));
 
     if (previousStream) {
-      console.debug(keyText, previousStream.name, '--->', currentHandler.name);
+      console.info(keyText, previousStream.name, '--->', currentHandler.name);
     } else {
-      console.debug(keyText, '|--->', currentHandler.name);
+      console.info(keyText, '|--->', currentHandler.name);
     }
   }
 
-  static onResponse(chunk: RequestChunk, currentHandler: Streamer, previousStream?: Streamer, nextStream?: Streamer){
-    const keyText = StreamLogger.getKeyColor(chunk)(`${chunk.id}|${chunk.key}:`);
+  static onResponse(chunk: RequestChunk, currentHandler: Streamer, previousStream?: Streamer, nextStream?: Streamer) {
+    const keyText = StreamLogger.getKeyColor(chunk)(StreamLogger.getKeyString(chunk));
 
     if (nextStream) {
-      console.debug(keyText, currentHandler.name, '<---', nextStream.name);
+      console.info(keyText, currentHandler.name, '<---', nextStream.name);
     } else {
-      console.debug(keyText, currentHandler.name, '<---|');
+      console.info(keyText, currentHandler.name, '<---|');
     }
   }
 
-  private static getKeyColor(chunk: ResponseChunk){
-    if(chunk.error) return COLORS.responseFailed;
-    if(chunk.response) return COLORS.responseSuccessful;
+  static getKeyColor(chunk: ResponseChunk) {
+    if (chunk.error) return LOG_COLORS.responseFailed;
+    if (chunk.response) return LOG_COLORS.responseSuccessful;
 
-    return COLORS.requestNoStatus;
+    return LOG_COLORS.requestNoStatus;
+  }
+
+  static getKeyString(chunk: RequestChunk) {
+    return `${chunk.id} | ${chunk.key}:`;
   }
 }
 
 export {
+  LOG_COLORS,
   StreamLogger
 };

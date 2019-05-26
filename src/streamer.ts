@@ -21,8 +21,8 @@ type NextHandler = (chunk: ResponseChunk | RequestChunk) => void;
 
 class Streamer {
   readonly name: string;
-  private nextStream?: Streamer;
-  private previousStream?: Streamer;
+  nextStream?: Streamer;
+  previousStream?: Streamer;
 
   constructor(name: string) {
     this.name = name;
@@ -47,13 +47,13 @@ class Streamer {
     this._onRequest(chunk);
   }
 
-  protected respond<T extends ResponseChunk>(chunk: T) {
+  respond<T extends ResponseChunk>(chunk: T) {
     if (this.previousStream) {
       this.previousStream._onResponse(chunk);
     }
   }
 
-  protected request<T extends RequestChunk>(chunk: T) {
+  request<T extends RequestChunk>(chunk: T) {
     if (this.nextStream) {
       this.nextStream._onRequest(chunk);
     }
@@ -68,12 +68,12 @@ class Streamer {
   }
 
   private _onRequest(chunk: RequestChunk) {
-    if(Warden.debug) StreamLogger.onRequest(chunk, this, this.previousStream, this.nextStream);
+    if (Warden.debug) StreamLogger.onRequest(chunk, this, this.previousStream, this.nextStream);
     this.onRequest(chunk, this.nextStream ? this.nextStream._onRequest : undefined);
   }
 
   private _onResponse(chunk: ResponseChunk) {
-    if(Warden.debug) StreamLogger.onResponse(chunk, this, this.previousStream, this.nextStream);
+    if (Warden.debug) StreamLogger.onResponse(chunk, this, this.previousStream, this.nextStream);
     this.onResponse(chunk, this.previousStream ? this.previousStream._onResponse : undefined);
   }
 }
