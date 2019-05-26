@@ -1,8 +1,9 @@
 import * as sinon from "sinon";
 import {expect} from "chai";
-import {SchemaStringifier} from "../src/schema-stringifier";
+import {SchemaStringifier, SchemaStringifierConfiguration} from "../src/schema-stringifier";
 import {createRequestChunk, createResponseChunk} from "./helpers";
 import faker from "faker";
+import {Streamer} from "../src/streamer";
 
 const sandbox = sinon.createSandbox();
 let schema: SchemaStringifier;
@@ -157,5 +158,23 @@ describe('[schema-stringigier.ts]', () => {
     // Assert
     expect(nextHandler.calledWithExactly(responseChunk)).to.eq(true);
     expect(parseStub.notCalled).to.eq(true);
+  });
+
+  it('should create new schema with fast-json-stringifier plugin', () => {
+    // Arrange
+    const schemaOptions = {
+      type: 'object',
+      properties: {
+        test: {
+          type: 'number'
+        }
+      }
+    } as SchemaStringifierConfiguration;
+
+    // Act
+    const stringifier = new SchemaStringifier(schemaOptions);
+
+    // Assert
+    expect(stringifier).to.be.instanceOf(SchemaStringifier);
   });
 });

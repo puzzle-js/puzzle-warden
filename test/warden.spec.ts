@@ -112,4 +112,26 @@ describe("[warden.ts]", () => {
     // Act
     warden.registerCachePlugin(name, plugin);
   });
+
+  it('should return warden debug from static value', () => {
+    // Arrange
+    const warden = new Warden(requestManager, requestWrapper, cacheFactory);
+
+    // Assert
+    expect(warden.debug).to.eq(Warden.debug);
+  });
+
+  it('should set warden debug for static value', () => {
+    // Arrange
+    const warden = new Warden(requestManager, requestWrapper, cacheFactory);
+
+    // Act
+    warden.debug = true;
+
+    // Assert
+    expect(warden.debug).to.eq(Warden.debug);
+    expect(Warden.debug).to.eq(true);
+
+    warden.debug = false;
+  });
 });

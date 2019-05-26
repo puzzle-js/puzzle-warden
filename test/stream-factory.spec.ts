@@ -10,6 +10,7 @@ import faker from "faker";
 import {StreamHead} from "../src/stream-head";
 import {Network} from "../src/network";
 import {Retry} from "../src/retry";
+import {SchemaStringifier, SchemaStringifierConfiguration} from "../src/schema-stringifier";
 
 const sandbox = sinon.createSandbox();
 
@@ -85,6 +86,22 @@ describe("[stream-factory.ts]", () => {
 
     // Assert
     expect(network).to.be.instanceOf(Network);
+  });
+
+  it("should return new SchemaStringifier instance", () => {
+    // Act
+    const schemaOptions = {
+      type: 'object',
+      properties: {
+        test: {
+          type: 'number'
+        }
+      }
+    } as SchemaStringifierConfiguration;
+    const schemaStringifier = streamFactory.create<SchemaStringifier>(StreamType.SCHEMA_STRINGIFIER, schemaOptions);
+
+    // Assert
+    expect(schemaStringifier).to.be.instanceOf(SchemaStringifier);
   });
 
 
