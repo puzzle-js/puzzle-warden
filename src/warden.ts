@@ -4,6 +4,7 @@ import {RequestWrapper} from "./request-wrapper";
 import {CacheFactory, CachePlugin} from "./cache-factory";
 
 class Warden {
+  static debug = false;
   private requestManager: RequestManager;
   private requestWrapper: RequestWrapper;
   private cacheFactory: CacheFactory;
@@ -20,13 +21,21 @@ class Warden {
     this.requestWrapper.wrap(requestManager);
   }
 
+  get debug(): boolean {
+    return Warden.debug;
+  }
+
+  set debug(enabled: boolean) {
+    Warden.debug = enabled;
+  }
+
   /**
    * Registers a new route to Warden
    * @param name
    * @param routeConfiguration
    */
   register(name: string, routeConfiguration: RouteConfiguration) {
-    this.requestManager.register(name, routeConfiguration);
+    return this.requestManager.register(name, routeConfiguration);
   }
 
   /**

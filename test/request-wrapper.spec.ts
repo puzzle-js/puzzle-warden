@@ -1,7 +1,7 @@
 import "reflect-metadata";
 
 import {expect} from "chai";
-import sinon, {SinonMock} from "sinon";
+import sinon from "sinon";
 import faker from "faker";
 import {RequestWrapper, WardenWrappedRequest} from "../src/request-wrapper";
 
@@ -12,7 +12,7 @@ const sandbox = sinon.createSandbox();
 
 describe("[request-wrapper.ts]", () => {
   beforeEach(() => {
-
+    sandbox.stub(request.Request.prototype, 'init');
   });
 
   afterEach(() => {
@@ -115,7 +115,7 @@ describe("[request-wrapper.ts]", () => {
     // Arrange
     const requestT = request.Request;
     const module = {} as any;
-    const module2= {} as any;
+    const module2 = {} as any;
     const requestWrapper = new RequestWrapper();
 
     // Act

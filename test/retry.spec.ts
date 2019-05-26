@@ -1,8 +1,8 @@
 import * as sinon from "sinon";
-import * as faker from "faker";
+import {SinonStub} from "sinon";
 import {expect} from "chai";
 import {Retry, RetryConfiguration} from "../src/retry";
-import {SinonStub} from "sinon";
+import faker = require("faker");
 
 const sandbox = sinon.createSandbox();
 let retryStream: Retry;
@@ -115,7 +115,7 @@ describe('[retry.ts]', () => {
     await retryStream.onRequest(chunk as any, spy);
 
     // Assert
-    expect(spy.calledWith(null, {
+    expect(spy.calledWith({
       ...chunk,
       retryCount: 0
     })).to.eq(true);
@@ -131,19 +131,20 @@ describe('[retry.ts]', () => {
       count: 1,
       delay: 0
     });
-    const request = sandbox.stub(retry, 'request');
+    const request = sandbox.stub(retry as any, 'request');
 
     // Act
     await retry.onResponse(chunk, spy);
 
     // Assert
     expect(request.notCalled).to.eq(true);
-    expect(spy.calledWithExactly(undefined, chunk)).to.eq(true);
+    expect(spy.calledWithExactly(chunk)).to.eq(true);
   });
 
   it('should retry incoming failed response if status code is 429 (too many requests)', async () => {
     // Arrange
     const chunk = {
+      id: faker.random.number(),
       retryCount: 0,
       response: {
         statusCode: 429
@@ -154,7 +155,7 @@ describe('[retry.ts]', () => {
       count: 1,
       delay: 0
     });
-    const request = sandbox.stub(retry, 'request') as SinonStub;
+    const request = sandbox.stub(retry as any, 'request') as SinonStub;
 
     // Act
     await retry.onResponse(chunk, spy);
@@ -163,16 +164,18 @@ describe('[retry.ts]', () => {
     expect(request.calledWith({
       retryCount: 1,
       cb: chunk.cb,
+      id: chunk.id,
       key: chunk.key,
       requestOptions: chunk.requestOptions
     })).to.eq(true);
-    expect(spy.calledWithExactly(undefined, null)).to.eq(true);
+    expect(spy.notCalled).to.eq(true);
   });
 
   it('should retry incoming failed response if status code is 500', async () => {
     // Arrange
     const chunk = {
       retryCount: 0,
+      id: faker.random.number(),
       response: {
         statusCode: 500
       }
@@ -182,7 +185,7 @@ describe('[retry.ts]', () => {
       count: 1,
       delay: 0
     });
-    const request = sandbox.stub(retry, 'request') as SinonStub;
+    const request = sandbox.stub(retry as any, 'request') as SinonStub;
 
     // Act
     await retry.onResponse(chunk, spy);
@@ -191,10 +194,11 @@ describe('[retry.ts]', () => {
     expect(request.calledWith({
       retryCount: 1,
       cb: chunk.cb,
+      id: chunk.id,
       key: chunk.key,
       requestOptions: chunk.requestOptions
     })).to.eq(true);
-    expect(spy.calledWithExactly(undefined, null)).to.eq(true);
+    expect(spy.notCalled).to.eq(true);
   });
 
   it('should retry incoming failed response if the request errored with one of specific error types', async () => {
@@ -203,14 +207,15 @@ describe('[retry.ts]', () => {
       error: {
         code: 'ECONNRESET'
       },
-      retryCount: 0
+      retryCount: 0,
+      id: faker.random.number()
     } as any;
     const spy = sandbox.stub();
     const retry = new Retry({
       count: 1,
       delay: 0
     });
-    const request = sandbox.stub(retry, 'request') as SinonStub;
+    const request = sandbox.stub(retry as any, 'request') as SinonStub;
 
     // Act
     await retry.onResponse(chunk, spy);
@@ -219,10 +224,11 @@ describe('[retry.ts]', () => {
     expect(request.calledWith({
       retryCount: 1,
       cb: chunk.cb,
+      id: chunk.id,
       key: chunk.key,
       requestOptions: chunk.requestOptions
     })).to.eq(true);
-    expect(spy.calledWithExactly(undefined, null)).to.eq(true);
+    expect(spy.notCalled).to.eq(true);
   });
 
   it('should call logger function if it is provided', async () => {
@@ -231,7 +237,8 @@ describe('[retry.ts]', () => {
       error: {
         code: 'ECONNRESET'
       },
-      retryCount: 0
+      retryCount: 0,
+      id: faker.random.number(),
     } as any;
     const spy = sandbox.stub();
     const logger = sandbox.stub();
@@ -240,7 +247,7 @@ describe('[retry.ts]', () => {
       delay: 0,
       logger
     });
-    const request = sandbox.stub(retry, 'request') as SinonStub;
+    const request = sandbox.stub(retry as any, 'request') as SinonStub;
 
     // Act
     await retry.onResponse(chunk, spy);
@@ -249,11 +256,12 @@ describe('[retry.ts]', () => {
     expect(request.calledWith({
       retryCount: 1,
       cb: chunk.cb,
+      id: chunk.id,
       key: chunk.key,
       requestOptions: chunk.requestOptions
     })).to.eq(true);
     expect(logger.calledWithExactly(1)).to.eq(true);
-    expect(spy.calledWithExactly(undefined, null)).to.eq(true);
+    expect(spy.notCalled).to.eq(true);
   });
 
   it('should retry incoming failed response if the request errored with delay', async () => {
@@ -262,14 +270,15 @@ describe('[retry.ts]', () => {
       error: {
         code: 'ECONNRESET'
       },
-      retryCount: 0
+      retryCount: 0,
+      id: faker.random.number()
     } as any;
     const spy = sandbox.stub();
     const retry = new Retry({
       count: 1,
       delay: 100
     });
-    const request = sandbox.stub(retry, 'request') as SinonStub;
+    const request = sandbox.stub(retry as any, 'request') as SinonStub;
 
     // Act
     await retry.onResponse(chunk, spy);
@@ -279,9 +288,10 @@ describe('[retry.ts]', () => {
     expect(request.calledWith({
       retryCount: 1,
       cb: chunk.cb,
+      id: chunk.id,
       key: chunk.key,
       requestOptions: chunk.requestOptions
     })).to.eq(true);
-    expect(spy.calledWithExactly(undefined, null)).to.eq(true);
+    expect(spy.notCalled).to.eq(true);
   });
 });

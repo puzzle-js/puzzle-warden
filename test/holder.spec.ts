@@ -1,10 +1,10 @@
 import "reflect-metadata";
 
 import {expect} from "chai";
-import sinon, {SinonMock} from "sinon";
+import sinon from "sinon";
 import faker from "faker";
 import {Holder} from "../src/holder";
-import {RequestChunk, ResponseChunk} from "../src/warden-stream";
+import {RequestChunk, ResponseChunk} from "../src/streamer";
 
 const sandbox = sinon.createSandbox();
 let holder: Holder;
@@ -37,7 +37,7 @@ describe("[holder.ts]", () => {
     holder.onRequest(chunk, spy);
 
     // Assert
-    expect(spy.calledWithExactly(undefined, chunk)).to.eq(true);
+    expect(spy.calledWithExactly(chunk)).to.eq(true);
   });
 
   it("should not pass same key for the second time", () => {
@@ -52,9 +52,8 @@ describe("[holder.ts]", () => {
     holder.onRequest(chunk, spy);
 
     // Assert
-    expect(spy.firstCall.calledWithExactly(undefined, chunk)).to.eq(true);
-    expect(spy.secondCall.calledWithExactly(undefined, null)).to.eq(true);
-    expect(spy.calledTwice).to.eq(true);
+    expect(spy.firstCall.calledWithExactly(chunk)).to.eq(true);
+    expect(spy.calledOnce).to.eq(true);
   });
 
 
@@ -70,7 +69,7 @@ describe("[holder.ts]", () => {
 
     // Assert
     expect(spy.calledOnce).to.eq(true);
-    expect(spy.calledWithExactly(undefined, chunk)).to.eq(true);
+    expect(spy.calledWithExactly(chunk)).to.eq(true);
   });
 
   it("should return all the holding requests when response received", () => {
@@ -80,16 +79,18 @@ describe("[holder.ts]", () => {
     const responseChunk = {
       key,
       response: {},
+      id: faker.random.number(),
       requestOptions: {},
       error: undefined
     } as any;
     const requestChunk = {
       key,
       cb: sandbox.stub(),
+      id: faker.random.number(),
       requestOptions: {}
     } as any;
     const requestSpy = sandbox.stub();
-    const respondSpy = sandbox.stub(holder, 'respond');
+    const respondSpy = sandbox.stub(holder as any, 'respond');
 
     // Act
     holder.onRequest(requestChunk, requestSpy);
@@ -100,11 +101,11 @@ describe("[holder.ts]", () => {
     expect(respondSpy.calledWith({
       key: responseChunk.key,
       response: responseChunk.response,
+      id: requestChunk.id,
       cb: requestChunk.cb,
       error: undefined,
       requestOptions: responseChunk.requestOptions
     })).to.eq(true);
-    expect(spy.calledOnce).to.eq(true);
-    expect(spy.calledWithExactly(undefined, null)).to.eq(true);
+    expect(spy.notCalled).to.eq(true);
   });
 });

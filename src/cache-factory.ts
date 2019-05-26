@@ -1,7 +1,6 @@
 import {MemoryCache} from "./memory-cache";
 import ms from "ms";
-import {RequestChunk, ResponseChunk, WardenStream} from "./warden-stream";
-import {TransformCallback} from "stream";
+import {Streamer} from "./streamer";
 import {CacheThenNetwork} from "./cache-then-network";
 
 interface CachePlugin {
@@ -19,19 +18,21 @@ interface CacheConfiguration {
   plugin?: string;
   strategy?: CACHING_STRATEGY;
   duration?: string | number;
+  cacheWithCookie?: boolean;
 }
 
-export interface Cache extends WardenStream {
-  onRequest(chunk: ResponseChunk, callback: TransformCallback): Promise<void>;
-
-  onRequest(chunk: RequestChunk, callback: TransformCallback): Promise<void>;
-}
 
 const defaultCachingDuration = 60000;
 
-const cachingStrategyImplementations = {
+type CacheStreamers = {
+  [key: string]: {
+    new(plugin: CachePlugin, cacheDangerous: boolean, ms: number): Streamer
+  };
+};
+
+const cachingStrategyImplementations: CacheStreamers = {
   [CACHING_STRATEGY.CacheThenNetwork]: CacheThenNetwork
-} as { [key: string]: { new(plugin: CachePlugin, ms: number): Cache } };
+};
 
 class CacheFactory {
   private plugins: { [key: string]: (new () => CachePlugin) | CachePlugin } = {};
@@ -45,13 +46,14 @@ class CacheFactory {
     const plugin = this.getPlugin(configuration.plugin);
     const cacheDuration = this.parseMs(configuration.duration);
     const strategy = this.getStrategy(configuration.strategy);
+    const cacheWithCookie = configuration.cacheWithCookie || false;
 
-    return new cachingStrategyImplementations[strategy](plugin, cacheDuration);
+    return new cachingStrategyImplementations[strategy](plugin, cacheWithCookie, cacheDuration);
   }
 
   getPlugin(plugin = 'memory'): CachePlugin {
-    const cachePlugin = (this.plugins[plugin] || this.plugins['memory']) as any;
-    if (typeof cachePlugin.get === 'function') {
+    const cachePlugin = (this.plugins[plugin] || this.plugins['memory']) as ((new () => CachePlugin) | CachePlugin);
+    if ('get' in cachePlugin && 'set' in cachePlugin) {
       return cachePlugin;
     } else {
       return new cachePlugin();

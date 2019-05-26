@@ -21,7 +21,7 @@ describe("[tokenizer.ts]", () => {
 
     // Act
     const keyMaker = tokenizer.tokenize(name, cacheKey);
-    const key = keyMaker('/path',{},{},{}, method);
+    const key = keyMaker('/path', {}, {}, {}, method);
 
     // Assert
     expect(keyMaker).to.be.a('function');
@@ -37,7 +37,7 @@ describe("[tokenizer.ts]", () => {
 
     // Act
     const keyMaker = tokenizer.tokenize(name, cacheKey);
-    const key = keyMaker('/he',{test:'c'},{test:'a'},{test:'c'}, method);
+    const key = keyMaker('/he', {test: 'c'}, {test: 'a'}, {test: 'c'}, method);
 
     // Assert
     expect(keyMaker).to.be.a('function');
@@ -53,7 +53,7 @@ describe("[tokenizer.ts]", () => {
 
     // Act
     const keyMaker = tokenizer.tokenize(name, cacheKey);
-    const key = keyMaker('/he',{},{test:'a'},{test:'c'}, method);
+    const key = keyMaker('/he', {}, {test: 'a'}, {test: 'c'}, method);
 
     // Assert
     expect(keyMaker).to.be.a('function');
@@ -69,7 +69,7 @@ describe("[tokenizer.ts]", () => {
 
     // Act
     const keyMaker = tokenizer.tokenize(name, cacheKey);
-    const key = keyMaker('/he',{test:'c'},{test:'a'},{test:'c'}, method);
+    const key = keyMaker('/he', {test: 'c'}, {test: 'a'}, {test: 'c'}, method);
 
     // Assert
     expect(keyMaker).to.be.a('function');
@@ -85,7 +85,7 @@ describe("[tokenizer.ts]", () => {
 
     // Act
     const keyMaker = tokenizer.tokenize(name, cacheKey);
-    const key = keyMaker('/he',{test:'c'},{test:'a'},{test:'c'}, method);
+    const key = keyMaker('/he', {test: 'c'}, {test: 'a'}, {test: 'c'}, method);
 
     // Assert
     expect(keyMaker).to.be.a('function');
@@ -100,7 +100,7 @@ describe("[tokenizer.ts]", () => {
 
     // Act
     const keyMaker = tokenizer.tokenize(name);
-    const key = keyMaker('/he',{test:'c'},{test:'a'},{test:'c'}, method);
+    const key = keyMaker('/he', {test: 'c'}, {test: 'a'}, {test: 'c'}, method);
 
     // Assert
     expect(keyMaker).to.be.a('function');

@@ -1,7 +1,7 @@
 import * as sinon from "sinon";
 import * as faker from "faker";
 import {expect} from "chai";
-import {Cluster, Bucket} from "couchbase";
+import {Cluster} from "couchbase";
 import {CouchbaseCache} from "../src/couchbase-cache";
 
 const sandbox = sinon.createSandbox();

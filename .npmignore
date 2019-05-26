@@ -8,3 +8,5 @@ jest.config.js
 warden_architecture.svg
 tslint.json
 .idea
+examples
+benchmarks

@@ -1,9 +1,8 @@
-import {RequestChunk, ResponseChunk, WardenStream} from "./warden-stream";
-import {TransformCallback} from "stream";
+import {RequestChunk, Streamer} from "./streamer";
 import {StreamType} from "./stream-factory";
 import {RequestWrapper} from "./request-wrapper";
 
-class Network extends WardenStream {
+class Network extends Streamer {
   private requestWrapper: RequestWrapper;
 
   constructor(
@@ -14,19 +13,14 @@ class Network extends WardenStream {
     this.requestWrapper = requestWrapper;
   }
 
-  onResponse(chunk: ResponseChunk, callback: TransformCallback): void {
-    callback(undefined, chunk);
-  }
-
-  onRequest(chunk: RequestChunk, callback: TransformCallback): void {
-    this.requestWrapper.request[chunk.requestOptions.method](chunk.requestOptions, (error, response) => {
+  onRequest(chunk: RequestChunk): void {
+    (this.requestWrapper.request as any)[chunk.requestOptions.method](chunk.requestOptions, (error: any, response: any) => {
       this.respond({
         ...chunk,
         response,
         error
       });
     });
-    callback(undefined, null);
   }
 }
 

@@ -19,18 +19,18 @@ jobs:
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
             - v1-dependencies-
-      - run: yarn install
+      - run: npm i
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-      - run: yarn test
+      - run: npm run test
       - store_artifacts:
           path: coverage
       - codecov/upload:
           file: coverage/*.json
           token: $CODECOV_TOKEN
-      - run: yarn build
+      - run: npm run build
       - persist_to_workspace:
           root: .
           paths:

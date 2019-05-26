@@ -5,10 +5,10 @@ import {RequestCallback} from "request";
 import Url from "fast-url-parser";
 import {ConfigurableStream, StreamFactory} from "./stream-factory";
 import {CacheConfiguration} from "./cache-factory";
-import {WardenStream} from "./warden-stream";
+import {Streamer} from "./streamer";
 import Cookie from "cookie";
 import {RetryInputConfiguration} from "./retry";
-import http from "http";
+import {SchemaStringifierConfiguration} from "./schema-stringifier";
 
 type KeyStreamPair = {
   keyMaker: KeyMaker;
@@ -19,30 +19,32 @@ interface StreamMap {
   [routeName: string]: KeyStreamPair[];
 }
 
-const DEFAULT_IDENTIFIER = `u_{Date.now()}`;
+type HTTP_METHOD = 'get' | 'post' | 'put' | 'del' | 'delete' | 'patch' | 'head' | 'options';
 
 interface RequestOptions extends request.CoreOptions {
   url: string;
-  method: 'get' | 'post';
+  method: HTTP_METHOD;
   headers?: {
     [key: string]: string,
   };
-  body?: object;
+  body?: object | string;
 }
 
 interface RouteConfiguration {
-  [key: string]: any;
+  [key: string]: object | string | number | boolean | undefined;
 
   identifier?: string;
   cache?: CacheConfiguration | boolean;
   holder?: boolean;
   retry?: RetryInputConfiguration | boolean | number;
+  schema?: SchemaStringifierConfiguration;
 }
 
 class RequestManager {
   private streams: StreamMap = {};
   private streamFactory: StreamFactory;
   private tokenizer: Tokenizer;
+  private requestId = 0;
 
   constructor(
     streamFactory: StreamFactory,
@@ -54,14 +56,14 @@ class RequestManager {
 
   register(name: string, routeConfiguration: RouteConfiguration) {
     const stream = this.streamFactory.createHead();
-    let streamLink: WardenStream = stream;
+    let streamLink: Streamer = stream;
     const network = this.streamFactory.createNetwork();
     const keyMaker = this.tokenizer.tokenize(name, routeConfiguration.identifier);
 
     Object.values(ConfigurableStream).forEach((streamType: string) => {
       const configuration = routeConfiguration[streamType];
       if (configuration) {
-        const stream = this.streamFactory.create<WardenStream>(streamType, configuration);
+        const stream = this.streamFactory.create<Streamer>(streamType, configuration);
         streamLink = streamLink.connect(stream);
       }
     });
@@ -72,6 +74,8 @@ class RequestManager {
       keyMaker,
       stream
     });
+
+    return this.handle.bind(this, name) as (requestOptions: RequestOptions, cb: RequestCallback) => void;
   }
 
   unregister(name: string) {
@@ -91,7 +95,7 @@ class RequestManager {
       requestOptions.method
     );
 
-    return this.streams[name][0].stream.start(key, requestOptions, cb);
+    return this.streams[name][0].stream.start(key, ++this.requestId, requestOptions, cb);
   }
 
   isRouteRegistered(name: string): boolean {
@@ -104,7 +108,7 @@ class RequestManager {
 }
 
 export {
-  DEFAULT_IDENTIFIER,
+  HTTP_METHOD,
   RequestOptions,
   RouteConfiguration,
   RequestManager
