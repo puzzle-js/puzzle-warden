@@ -190,9 +190,43 @@ Default values and properties
 Cache plugins control where cache will be stored. These are available plugins:
 
 - __Memory__ - ✅
-- Couchbase - ✅
+- [Couchbase](./src/couchbase-cache.ts) - ✅
 - [Custom Plugin Support](#warden.registerCachePlugin()) - ✅ 
 - Redis - 📝 [Todo](https://github.com/puzzle-js/puzzle-warden/projects/1#card-20220030)
+
+
+##### Custom Plugins
+
+Anything that implements interface below can be used as Cache Plugin.
+```typescript
+interface CachePlugin {
+  get<T>(key: string): Promise<T | null>;
+
+  set(key: string, value: unknown, ms?: number): Promise<void>;
+}
+```
+
+You first register the cache plugin
+```js
+warden.registerCachePlugin('mySuperCache', {
+  set(){},
+  get(){}
+});
+```
+
+Then make route configuration with your plugin name
+
+```js
+warden.register('test', {
+  identifier: '{query.foo}_{cookie.bar}',
+  cache: {
+    plugin: 'mySuperCache',
+    strategy: 'CacheThenNetwork',
+    duration: '2m'
+  },
+  holder: true
+});
+```
 
 #### Caching Strategy
 
