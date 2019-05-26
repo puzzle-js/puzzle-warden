@@ -1,6 +1,6 @@
 # Benchmark Results
 
-You will find comparison results for warden with [request](https://github.com/request/request). Used [nock](https://github.com/nock/nock) to simulate HTTP server and [custom test runner](./benchmarks/benchmarker.ts) to measure results. You can run same tests by yourself
+You will find comparison results for warden with [request](https://github.com/request/request). Used [nock](https://github.com/nock/nock) to simulate HTTP server and [custom test runner](./benchmarker.ts) to measure results. You can run same tests by yourself
 
 ```bash
 TS_NODE_FILES=true node -r ts-node/register  benchmarks/holder.ts
