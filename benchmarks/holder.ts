@@ -1,16 +1,19 @@
-import Benchmark from "benchmark";
 import nock from "nock";
 import request from "request";
 import {warden} from "../src";
+import {Benchmarker} from "./benchmarker";
 
-const suite = new Benchmark.Suite();
 const host = 'https://api.github.com';
 const path = '/repos/puzzle-js/puzzle-warden/license';
 
-const scope = nock(host)
+nock(host)
   .persist(true)
   .get(path)
-  .delay(80)
+  .delay({
+    head: 20,
+    body: 60
+  })
+  .query(true)
   .reply(200, {
     key: "mit",
     name: "MIT License",
@@ -20,48 +23,48 @@ const scope = nock(host)
   });
 
 const route = warden.register('raw', {
-  holder: true
+  holder: true,
+  identifier: '{query.foo}'
 });
+const test = new Benchmarker();
 
-suite.add('Request Module', (deferred: any) => {
-  request({
-    url: host + path,
-    json: true,
-    gzip: true,
-    method: 'get'
-  }, (err, res, body) => {
-    if (!err && res) {
-      deferred.resolve();
-    } else {
-      console.log(err);
-    }
+const randomizer = () => {
+  Math.random().toFixed(2); // => 1/100
+};
+
+test.register('Request Module', () => {
+  return new Promise((resolve, reject) => {
+    request({
+      url: `${host + path}?foo=${randomizer()}`,
+      json: true,
+      gzip: true,
+      method: 'get'
+    }, (err, res, body) => {
+      if (!err && res) {
+        resolve();
+      } else {
+        reject();
+      }
+    });
   });
-}, {defer: true});
+}, 1000);
 
-
-suite.add('Warden', (deferred: any) => {
-  route({
-    url: host + path,
-    json: true,
-    gzip: true,
-    method: 'get'
-  }, (err, res, body) => {
-    if (!err && res) {
-      deferred.resolve();
-    } else {
-      deferred.reject();
-    }
+test.register('Warden', () => {
+  return new Promise((resolve, reject) => {
+    route({
+      url: `${host + path}?foo=${randomizer()}`,
+      json: true,
+      gzip: true,
+      method: 'get'
+    }, (err, res, body) => {
+      if (!err && res) {
+        resolve();
+      } else {
+        reject();
+      }
+    });
   });
-}, {defer: true});
+}, 1000);
 
-suite.run({
-  async: true
-});
 
-suite.on('complete', function print(this: any) {
-  for (let i = 0; i < this.length; i++) {
-    console.log(this[i].toString());
-  }
-
-  console.log('Fastest is', this.filter('fastest').map('name')[0]);
-});
+test.run(100000, 500);

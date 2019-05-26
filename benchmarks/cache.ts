@@ -13,6 +13,7 @@ nock(host)
     head: 20,
     body: 60
   })
+  .query(true)
   .reply(200, {
     key: "mit",
     name: "MIT License",
@@ -21,14 +22,20 @@ nock(host)
     node_id: "MDc6TGljZW5zZTEz"
   });
 
-const route = warden.register('raw', {});
-
+const route = warden.register('raw', {
+  cache: true,
+  identifier: '{query.foo}'
+});
 const test = new Benchmarker();
+
+const randomizer = () => {
+  Math.random().toFixed(3); // => 1/1000
+};
 
 test.register('Request Module', () => {
   return new Promise((resolve, reject) => {
     request({
-      url: host + path,
+      url: `${host + path}?foo=${randomizer()}`,
       json: true,
       gzip: true,
       method: 'get'
@@ -45,7 +52,7 @@ test.register('Request Module', () => {
 test.register('Warden', () => {
   return new Promise((resolve, reject) => {
     route({
-      url: host + path,
+      url: `${host + path}?foo=${randomizer()}`,
       json: true,
       gzip: true,
       method: 'get'
@@ -60,4 +67,5 @@ test.register('Warden', () => {
 }, 1000);
 
 
-test.run(10000, 50);
+
+test.run(1000, 50);
