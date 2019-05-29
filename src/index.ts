@@ -14,8 +14,6 @@ const streamFactory = new StreamFactory(cacheFactory, requestWrapper);
 const requestManager = new RequestManager(streamFactory, tokenizer);
 const warden = new Warden(requestManager, requestWrapper, cacheFactory);
 
-// export {CouchbaseCache} from "./couchbase-cache";
-
 
 export = {
   warden
