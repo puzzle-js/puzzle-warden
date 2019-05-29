@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.7.0] - 2019-05-29
+### Removed
+- Removed Couchbase cache from Warden repository, moved to [individual repo](https://github.com/puzzle-js/warden-couchbase-plugin).
+
 ## [1.6.0] - 2019-05-26
 ### Added
 - Schema for faster parse & stringify json operations.
