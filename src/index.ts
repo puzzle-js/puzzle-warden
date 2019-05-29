@@ -15,6 +15,4 @@ const requestManager = new RequestManager(streamFactory, tokenizer);
 const warden = new Warden(requestManager, requestWrapper, cacheFactory);
 
 
-export = {
-  warden
-};
+export = warden;
