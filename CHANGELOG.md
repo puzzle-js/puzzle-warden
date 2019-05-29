@@ -1,6 +1,9 @@
 # Changelog
 
 ## [1.7.0] - 2019-05-29
+### Changed
+- Warden is now module require friendly.
+
 ### Removed
 - Removed Couchbase cache from Warden repository, moved to [individual repo](https://github.com/puzzle-js/warden-couchbase-plugin).
 
