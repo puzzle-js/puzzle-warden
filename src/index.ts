@@ -5,7 +5,7 @@ import {StreamFactory} from "./stream-factory";
 import {RequestManager} from "./request-manager";
 import {Warden} from "./warden";
 
-export {CouchbaseCache} from "./couchbase-cache";
+
 
 const cacheFactory = new CacheFactory();
 const tokenizer = new Tokenizer();
@@ -14,6 +14,9 @@ const streamFactory = new StreamFactory(cacheFactory, requestWrapper);
 const requestManager = new RequestManager(streamFactory, tokenizer);
 const warden = new Warden(requestManager, requestWrapper, cacheFactory);
 
-export {
+// export {CouchbaseCache} from "./couchbase-cache";
+
+
+export = {
   warden
 };
