@@ -16,7 +16,7 @@
   },
   "homepage": "https://puzzle-js.github.io/puzzle-warden/",
   "devDependencies": {
-    "@types/chai": "^4.1.7",
+    "@types/chai": "^4.2.0",
     "@types/chalk": "^2.2.0",
     "@types/cookie": "^0.3.2",
     "@types/faker": "^4.1.4",
