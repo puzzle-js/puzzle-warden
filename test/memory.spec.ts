@@ -1,10 +1,16 @@
 import "reflect-metadata";
 import {MemoryCache} from "../src/memory-cache";
 import {expect} from "chai";
-import {stub} from "sinon";
+import {stub, useFakeTimers} from "sinon";
 import faker = require("faker");
 
 describe("[memory.ts]", () => {
+  const clock = useFakeTimers();
+
+  afterAll(() => {
+    clock.restore();
+  });
+
   it("should set a value without expire", async () => {
     // Arrange
     const key = faker.random.word();
@@ -41,18 +47,34 @@ describe("[memory.ts]", () => {
     const key = faker.random.word();
     const value = faker.random.word();
     const memoryCache = new MemoryCache();
-    const spy = stub(Date, 'now').returns(100);
 
     // Act
-    await memoryCache.set(key, value, Date.now());
-
-    spy.returns(300);
+    await memoryCache.set(key, value, 100);
+    clock.tick(250);
 
     const cachedValue = await memoryCache.get(key);
-    spy.restore();
 
     // Assert
     expect(cachedValue).to.eq(null);
+  });
+
+  it('should clear timeout of existing value if set triggered', async () => {
+    // Arrange
+    const key = faker.random.word();
+    const value = faker.random.word();
+    const value2 = faker.random.word();
+    const memoryCache = new MemoryCache();
+
+    // Act
+    await memoryCache.set(key, value, 100);
+    await memoryCache.set(key, value2, 2000);
+
+    clock.tick(1000);
+
+    const cachedValue = await memoryCache.get(key);
+
+    // Assert
+    expect(cachedValue).to.eq(value2);
   });
 
   it("should return null when not found", async () => {
@@ -66,21 +88,6 @@ describe("[memory.ts]", () => {
     expect(cachedValue).to.eq(null);
   });
 
-  it("should invalidate cache and remove entries", async () => {
-    // Arrange
-    const key = faker.random.word();
-    const value = faker.random.word();
-    const memoryCache = new MemoryCache();
-    const expire = -20; //Auto expire
-
-    // Act
-    await memoryCache.set(key, value, expire);
-    memoryCache.invalidate();
-
-    // Assert
-    expect(Object.keys(memoryCache.cache).length).to.eq(0);
-  });
-
   it("should invalidate without removing valid entries", async () => {
     // Arrange
     const key = faker.random.word();
@@ -90,7 +97,7 @@ describe("[memory.ts]", () => {
 
     // Act
     await memoryCache.set(key, value, expire);
-    memoryCache.invalidate();
+
 
     // Assert
     expect(Object.keys(memoryCache.cache).length).to.eq(1);

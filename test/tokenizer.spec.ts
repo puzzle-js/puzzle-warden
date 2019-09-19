@@ -106,4 +106,23 @@ describe("[tokenizer.ts]", () => {
     expect(keyMaker).to.be.a('function');
     expect(key).to.eq('_name__/he_{"cookie":{"test":"c"},"headers":{"test":"a"},"query":{"test":"c"}}_get');
   });
+
+  it("should create new tokenizer from key with interpolation and custom fn with type", () => {
+    // Arrange
+    const tokenizer = new Tokenizer();
+    const name = '_name_';
+    const cacheKey = `{typeof cookie.missing == "undefined" || cookie.missing < 50 ? "1.0.0" : "2.0.0"}`;
+    const method = 'get';
+
+    // Act
+    const keyMaker = tokenizer.tokenize(name, cacheKey);
+    const key = keyMaker('/he', {test: 'c'}, {test: 'a'}, {test: 'c'}, method);
+
+    // Assert
+    expect(keyMaker).to.be.a('function');
+    expect(key).to.eq('_name__1.0.0');
+  });
 });
+
+
+
