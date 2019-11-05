@@ -78,7 +78,8 @@ describe("[stream-factory.ts]", () => {
 
   it("should return new Network instance", () => {
     // Act
-    const network = streamFactory.createNetwork();
+    const name = faker.random.word();
+    const network = streamFactory.createNetwork(name);
 
     // Assert
     expect(network).to.be.instanceOf(Network);
