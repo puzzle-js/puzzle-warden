@@ -1,17 +1,25 @@
-import request, {RequestCallback} from "request";
-import {RequestOptions} from "./request-manager";
+import {WardenRequestOptions} from "./request-manager";
 import {StreamLogger} from "./stream-logger";
 import {Warden} from "./warden";
+import * as http from "http";
+
+
+interface HttpResponse extends http.IncomingMessage {
+  body?: string | object | null | undefined;
+}
+
+type RequestCallback = (error: any, response: HttpResponse | undefined, body: string | object | null | undefined) => void;
+
 
 interface RequestChunk {
   id: number;
   key: string;
-  requestOptions: RequestOptions;
+  requestOptions: WardenRequestOptions;
   cb: RequestCallback;
 }
 
 interface ResponseChunk extends RequestChunk {
-  response?: request.Response;
+  response?: HttpResponse | undefined;
   error?: {
     code: string
   };
@@ -37,7 +45,7 @@ class Streamer {
     return wardenStream;
   }
 
-  start(key: string, id: number, requestOptions: RequestOptions, cb: RequestCallback) {
+  start(key: string, id: number, requestOptions: WardenRequestOptions, cb: RequestCallback) {
     const chunk = {
       id,
       key,
@@ -79,6 +87,8 @@ class Streamer {
 }
 
 export {
+  HttpResponse,
+  RequestCallback,
   NextHandler,
   Streamer,
   RequestChunk,

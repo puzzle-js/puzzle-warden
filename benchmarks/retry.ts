@@ -1,6 +1,6 @@
 import nock from "nock";
 import request from "request";
-import {warden} from "../src";
+import warden from "../src";
 import {Benchmarker} from "./benchmarker";
 
 const host = 'https://api.github.com';

@@ -1,26 +1,32 @@
 import {RequestChunk, Streamer} from "./streamer";
 import {StreamType} from "./stream-factory";
-import {RequestWrapper} from "./request-wrapper";
+import supra from "supra-http";
+import {RequestOptions} from "supra-http/dist/types";
 
 class Network extends Streamer {
-  private requestWrapper: RequestWrapper;
+  private requestName: string;
 
-  constructor(
-    requestWrapper: RequestWrapper
-  ) {
+  constructor(requestName: string) {
     super(StreamType.NETWORK);
 
-    this.requestWrapper = requestWrapper;
+    this.requestName = requestName;
   }
 
   onRequest(chunk: RequestChunk): void {
-    (this.requestWrapper.request as any)[chunk.requestOptions.method](chunk.requestOptions, (error: any, response: any) => {
-      this.respond({
-        ...chunk,
-        response,
-        error
+    supra
+      .request(this.requestName, chunk.requestOptions.url, chunk.requestOptions as Omit<RequestOptions, 'method'>)
+      .then(res => {
+        this.respond({
+          ...chunk,
+          response: Object.assign({body: res.json || res.body}, res.response),
+        });
+      })
+      .catch(error => {
+        this.respond({
+          ...chunk,
+          error
+        });
       });
-    });
   }
 }
 

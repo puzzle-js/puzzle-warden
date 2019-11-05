@@ -2,23 +2,20 @@ import "reflect-metadata";
 
 import {expect} from "chai";
 import sinon, {SinonMock} from "sinon";
-import {RequestManager, RequestOptions, RouteConfiguration} from "../src/request-manager";
+import {RequestManager, WardenRequestOptions, RouteConfiguration} from "../src/request-manager";
 import {CacheFactory} from "../src/cache-factory";
 import {StreamFactory, StreamType} from "../src/stream-factory";
 import {Tokenizer} from "../src/tokenizer";
 import faker from "faker";
-import {RequestWrapper} from "../src/request-wrapper";
 
 const sandbox = sinon.createSandbox();
 
 const cacheFactory = new CacheFactory();
-const requestWrapper = new RequestWrapper();
-const streamFactory = new StreamFactory(cacheFactory, requestWrapper);
+const streamFactory = new StreamFactory(cacheFactory);
 const tokenizer = new Tokenizer();
 
 
 let streamFactoryMock: SinonMock;
-let requestWrapperMock: SinonMock;
 let tokenizerMock: SinonMock;
 let requestManager: RequestManager;
 
@@ -26,7 +23,6 @@ describe("[request-manager]", () => {
   beforeEach(() => {
     streamFactoryMock = sandbox.mock(streamFactory);
     tokenizerMock = sandbox.mock(tokenizer);
-    requestWrapperMock = sandbox.mock(requestWrapper);
 
     requestManager = new RequestManager(streamFactory, tokenizer);
   });
@@ -57,7 +53,7 @@ describe("[request-manager]", () => {
     };
     const keyMaker = sandbox.stub();
     streamFactoryMock.expects('createHead').withExactArgs().returns(headStream);
-    streamFactoryMock.expects('createNetwork').withExactArgs().returns(networkStream);
+    streamFactoryMock.expects('createNetwork').withExactArgs(name).returns(networkStream);
     tokenizerMock.expects('tokenize').withExactArgs(name, routeConfiguration.identifier).returns(keyMaker);
 
     // Act
@@ -84,7 +80,7 @@ describe("[request-manager]", () => {
       .returns(headStream);
     streamFactoryMock
       .expects('createNetwork')
-      .withExactArgs()
+      .withExactArgs(name)
       .returns(networkStream);
     tokenizerMock
       .expects('tokenize')
@@ -114,7 +110,7 @@ describe("[request-manager]", () => {
     };
     const keyMaker = sandbox.stub();
     streamFactoryMock.expects('createHead').withExactArgs().returns(headStream);
-    streamFactoryMock.expects('createNetwork').withExactArgs().returns(networkStream);
+    streamFactoryMock.expects('createNetwork').withExactArgs(name).returns(networkStream);
     tokenizerMock.expects('tokenize').withExactArgs(name, routeConfiguration.identifier).returns(keyMaker);
 
     // Act
@@ -142,7 +138,7 @@ describe("[request-manager]", () => {
     };
     const keyMaker = sandbox.stub();
     streamFactoryMock.expects('createHead').withExactArgs().returns(headStream);
-    streamFactoryMock.expects('createNetwork').withExactArgs().returns(networkStream);
+    streamFactoryMock.expects('createNetwork').withExactArgs(name).returns(networkStream);
     streamFactoryMock.expects('create').withExactArgs(StreamType.CACHE, routeConfiguration.cache).returns(cacheStream);
     tokenizerMock.expects('tokenize').withExactArgs(name, routeConfiguration.identifier).returns(keyMaker);
 
@@ -157,7 +153,7 @@ describe("[request-manager]", () => {
   it("should handle new requests", () => {
     // Arrange
     const name = faker.random.word();
-    const requestOptions: RequestOptions = {
+    const requestOptions: WardenRequestOptions = {
       url: faker.internet.url(),
       headers: {},
       method: 'get'
@@ -175,7 +171,7 @@ describe("[request-manager]", () => {
     const key = faker.random.word();
     const keyMaker = sandbox.stub().returns(key);
     streamFactoryMock.expects('createHead').withExactArgs().returns(headStream);
-    streamFactoryMock.expects('createNetwork').withExactArgs().returns(networkStream);
+    streamFactoryMock.expects('createNetwork').withExactArgs(name).returns(networkStream);
     tokenizerMock.expects('tokenize').withExactArgs(name, routeConfiguration.identifier).returns(keyMaker);
     const stub = sandbox.stub();
 
@@ -191,7 +187,7 @@ describe("[request-manager]", () => {
   it("should handle request without custom headers", () => {
 // Arrange
     const name = faker.random.word();
-    const requestOptions: RequestOptions = {
+    const requestOptions: WardenRequestOptions = {
       url: faker.internet.url(),
       method: 'get'
     };
@@ -208,7 +204,7 @@ describe("[request-manager]", () => {
     const key = faker.random.word();
     const keyMaker = sandbox.stub().returns(key);
     streamFactoryMock.expects('createHead').withExactArgs().returns(headStream);
-    streamFactoryMock.expects('createNetwork').withExactArgs().returns(networkStream);
+    streamFactoryMock.expects('createNetwork').withExactArgs(name).returns(networkStream);
     tokenizerMock.expects('tokenize').withExactArgs(name, routeConfiguration.identifier).returns(keyMaker);
     const stub = sandbox.stub();
 
@@ -244,7 +240,7 @@ describe("[request-manager]", () => {
     };
     const keyMaker = sandbox.stub();
     streamFactoryMock.expects('createHead').withExactArgs().returns(headStream);
-    streamFactoryMock.expects('createNetwork').withExactArgs().returns(networkStream);
+    streamFactoryMock.expects('createNetwork').withExactArgs(name).returns(networkStream);
     tokenizerMock.expects('tokenize').withExactArgs(name, routeConfiguration.identifier).returns(keyMaker);
 
     // Act
@@ -270,7 +266,7 @@ describe("[request-manager]", () => {
     };
     const keyMaker = sandbox.stub();
     streamFactoryMock.expects('createHead').withExactArgs().returns(headStream);
-    streamFactoryMock.expects('createNetwork').withExactArgs().returns(networkStream);
+    streamFactoryMock.expects('createNetwork').withExactArgs(name).returns(networkStream);
     tokenizerMock.expects('tokenize').withExactArgs(name, routeConfiguration.identifier).returns(keyMaker);
 
     // Act

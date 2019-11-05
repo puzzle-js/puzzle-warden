@@ -1,14 +1,13 @@
 import {StreamHead} from "./stream-head";
 import {KeyMaker, Tokenizer} from "./tokenizer";
-import * as request from "request";
-import {RequestCallback} from "request";
 import Url from "fast-url-parser";
 import {ConfigurableStream, StreamFactory} from "./stream-factory";
 import {CacheConfiguration} from "./cache-factory";
-import {Streamer} from "./streamer";
+import {RequestCallback, Streamer} from "./streamer";
 import Cookie from "cookie";
 import {RetryInputConfiguration} from "./retry";
 import {SchemaStringifierConfiguration} from "./schema-stringifier";
+import {RequestOptions} from "supra-http/dist/types";
 
 type KeyStreamPair = {
   keyMaker: KeyMaker;
@@ -21,9 +20,10 @@ interface StreamMap {
 
 type HTTP_METHOD = 'get' | 'post' | 'put' | 'del' | 'delete' | 'patch' | 'head' | 'options';
 
-interface RequestOptions extends request.CoreOptions {
+interface WardenRequestOptions extends Omit<RequestOptions, 'method'> {
   url: string;
   method: HTTP_METHOD;
+  json?: boolean;
   headers?: {
     [key: string]: string,
   };
@@ -57,7 +57,7 @@ class RequestManager {
   register(name: string, routeConfiguration: RouteConfiguration) {
     const stream = this.streamFactory.createHead();
     let streamLink: Streamer = stream;
-    const network = this.streamFactory.createNetwork();
+    const network = this.streamFactory.createNetwork(name);
     const keyMaker = this.tokenizer.tokenize(name, routeConfiguration.identifier);
 
     Object.values(ConfigurableStream).forEach((streamType: string) => {
@@ -75,14 +75,14 @@ class RequestManager {
       stream
     });
 
-    return this.handle.bind(this, name) as (requestOptions: RequestOptions, cb: RequestCallback) => void;
+    return this.handle.bind(this, name) as (requestOptions: WardenRequestOptions, cb: RequestCallback) => void;
   }
 
   unregister(name: string) {
     delete this.streams[name];
   }
 
-  handle(name: string, requestOptions: RequestOptions, cb: RequestCallback) {
+  handle(name: string, requestOptions: WardenRequestOptions, cb: RequestCallback) {
     if (!this.streams[name]) throw new Error(`Route configuration not provided for ${name}`);
     const request = Url.parse(requestOptions.url, true);
     const headers = requestOptions.headers || {};
@@ -109,7 +109,7 @@ class RequestManager {
 
 export {
   HTTP_METHOD,
-  RequestOptions,
+  WardenRequestOptions,
   RouteConfiguration,
   RequestManager
 };

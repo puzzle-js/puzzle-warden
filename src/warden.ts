@@ -1,24 +1,18 @@
-import {RequestManager, RequestOptions, RouteConfiguration} from "./request-manager";
-import {CoreOptions, RequestCallback} from "request";
-import {RequestWrapper} from "./request-wrapper";
+import {RequestManager, WardenRequestOptions, RouteConfiguration} from "./request-manager";
 import {CacheFactory, CachePlugin} from "./cache-factory";
+import {RequestCallback} from "./streamer";
 
 class Warden {
   static debug = false;
   private requestManager: RequestManager;
-  private requestWrapper: RequestWrapper;
   private cacheFactory: CacheFactory;
 
   constructor(
     requestManager: RequestManager,
-    requestWrapper: RequestWrapper,
     cacheFactory: CacheFactory
   ) {
     this.requestManager = requestManager;
-    this.requestWrapper = requestWrapper;
     this.cacheFactory = cacheFactory;
-
-    this.requestWrapper.wrap(requestManager);
   }
 
   get debug(): boolean {
@@ -44,16 +38,8 @@ class Warden {
    * @param requestOptions
    * @param cb
    */
-  request(name: string, requestOptions: RequestOptions, cb: RequestCallback) {
+  request(name: string, requestOptions: WardenRequestOptions, cb: RequestCallback) {
     return this.requestManager.handle(name, requestOptions, cb);
-  }
-
-  /**
-   * Sets default request configuration
-   * @param options
-   */
-  requestConfig(options: CoreOptions) {
-    this.requestWrapper.config(options);
   }
 
   /**

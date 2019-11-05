@@ -19,7 +19,7 @@ Warden is an outgoing request optimizer for creating fast and scalable applicati
 - 🚥 **API Queue** Throttles API calls to protect target service. 📝
 - 👻 **Request Shadowing** Copies a fraction of traffic to a new deployment for observation. 📝
 - 🚉 **Reverse Proxy** It can be deployable as an external application which can serve as a reverse proxy. 📝
-- 📛 **Circuit Breaker** Immediately refuses new requests to provide time for the API to become healthy. 📝
+- 📛 **Circuit Breaker** Immediately refuses new requests to provide time for the API to become healthy. ✅
 
 ![Warden Achitecture](./warden_architecture.svg)
 

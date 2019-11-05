@@ -4,7 +4,6 @@ import {expect} from "chai";
 import sinon, {SinonMock} from "sinon";
 import {StreamFactory, StreamType} from "../src/stream-factory";
 import {CacheFactory} from "../src/cache-factory";
-import {RequestWrapper} from "../src/request-wrapper";
 import {Holder} from "../src/holder";
 import faker from "faker";
 import {StreamHead} from "../src/stream-head";
@@ -14,11 +13,9 @@ import {SchemaStringifier, SchemaStringifierConfiguration} from "../src/schema-s
 
 const sandbox = sinon.createSandbox();
 
-const requestWrapper = new RequestWrapper();
 const cacheFactory = new CacheFactory();
 
 let cacheFactoryMock: SinonMock;
-let requestWrapperMock: SinonMock;
 
 
 let streamFactory: StreamFactory;
@@ -26,9 +23,8 @@ let streamFactory: StreamFactory;
 describe("[stream-factory.ts]", () => {
   beforeEach(() => {
     cacheFactoryMock = sandbox.mock(cacheFactory);
-    requestWrapperMock = sandbox.mock(requestWrapper);
 
-    streamFactory = new StreamFactory(cacheFactory, requestWrapper);
+    streamFactory = new StreamFactory(cacheFactory);
   });
 
   afterEach(() => {
@@ -37,7 +33,7 @@ describe("[stream-factory.ts]", () => {
 
   it("should create new Stream Factory", () => {
     // Arrange
-    const streamFactory = new StreamFactory(cacheFactory, requestWrapper);
+    const streamFactory = new StreamFactory(cacheFactory);
 
     // Assert
     expect(streamFactory).to.be.instanceOf(StreamFactory);

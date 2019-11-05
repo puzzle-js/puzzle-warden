@@ -1,8 +1,6 @@
-import {NextHandler, RequestChunk, ResponseChunk, Streamer} from "./streamer";
-import {TransformCallback} from "stream";
+import {HttpResponse, NextHandler, RequestChunk, ResponseChunk, Streamer} from "./streamer";
 import {StreamType} from "./stream-factory";
 import {CachePlugin} from "./cache-factory";
-import request from "request";
 
 interface CacheDecoratedResponse extends ResponseChunk {
   cacheHit: boolean;
@@ -20,7 +18,7 @@ class CacheThenNetwork extends Streamer {
   constructor(plugin: CachePlugin, cacheWithCookie = false, ms?: number) {
     super(StreamType.CACHE);
 
-    this.ms = ms; 
+    this.ms = ms;
     this.cacheWithCookie = cacheWithCookie;
     this.storage = plugin;
   }
@@ -42,7 +40,7 @@ class CacheThenNetwork extends Streamer {
   }
 
   async onRequest(chunk: CacheDecoratedRequest, next: NextHandler): Promise<void> {
-    const cachedData = await this.storage.get(chunk.key) as request.Response;
+    const cachedData = await this.storage.get(chunk.key) as HttpResponse;
 
     if (cachedData) {
       this.respond<CacheDecoratedResponse>({

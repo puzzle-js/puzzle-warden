@@ -1,6 +1,6 @@
 import nock from "nock";
 import request from "request";
-import {warden} from "../src";
+import warden from "../src";
 import {Benchmarker} from "./benchmarker";
 
 const host = 'https://api.github.com';
@@ -47,7 +47,6 @@ test.register('Warden', () => {
     route({
       url: host + path,
       json: true,
-      gzip: true,
       method: 'get'
     }, (err, res, body) => {
       if (!err && res) {

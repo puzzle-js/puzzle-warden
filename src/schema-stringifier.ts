@@ -16,7 +16,10 @@ class SchemaStringifier extends Streamer {
   onRequest(chunk: RequestChunk, next: NextHandler) {
     if (chunk.requestOptions.json && typeof chunk.requestOptions.body === "object") {
       chunk.requestOptions.json = false;
-      chunk.requestOptions.headers = Object.assign({['content-type']: 'application/json'}, chunk.requestOptions.headers);
+      chunk.requestOptions.headers = {
+        'content-type': 'application/json',
+        ...chunk.requestOptions.headers
+      };
       chunk.requestOptions.body = this.stringifier(chunk.requestOptions.body);
     }
 

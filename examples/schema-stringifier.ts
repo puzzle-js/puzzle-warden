@@ -1,4 +1,4 @@
-import {warden} from "../src";
+import warden from "../src";
 
 warden.debug = true;
 
@@ -38,7 +38,6 @@ const route = warden.register('schema', {
 // You can use the request handler
 route({
   url: 'https://postman-echo.com/post',
-  gzip: true,
   method: 'post',
   body: {
     wardenVersion: 1.5,

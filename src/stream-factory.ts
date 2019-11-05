@@ -2,7 +2,6 @@ import {Network} from "./network";
 import {CacheFactory} from "./cache-factory";
 import {StreamHead} from "./stream-head";
 import {Holder} from "./holder";
-import {RequestWrapper} from "./request-wrapper";
 import {Retry} from "./retry";
 import {SchemaStringifier, SchemaStringifierConfiguration} from "./schema-stringifier";
 
@@ -27,14 +26,11 @@ enum ConfigurableStream {
 
 class StreamFactory {
   private readonly cacheFactory: CacheFactory;
-  private readonly requestWrapper: RequestWrapper;
 
   constructor(
     cacheFactory: CacheFactory,
-    requestWrapper: RequestWrapper
   ) {
     this.cacheFactory = cacheFactory;
-    this.requestWrapper = requestWrapper;
   }
 
   create<U, T = {}>(streamType: string, configuration: T) {
@@ -52,8 +48,8 @@ class StreamFactory {
     }
   }
 
-  createNetwork() {
-    return new Network(this.requestWrapper);
+  createNetwork(name: string) {
+    return new Network(name);
   }
 
   createHead() {

@@ -3,18 +3,16 @@ import "reflect-metadata";
 import {expect} from "chai";
 import sinon, {SinonMock} from "sinon";
 import faker from "faker";
+import nock from "nock";
+import * as http from "http";
 import {Network} from "../src/network";
-import {RequestWrapper} from "../src/request-wrapper";
-import request from "request";
 
-const requestWrapper = new RequestWrapper();
 const sandbox = sinon.createSandbox();
 
-let requestWrapperMock: SinonMock;
 
 describe("[network.ts]", () => {
   beforeEach(() => {
-    requestWrapperMock = sandbox.mock(requestWrapper);
+
   });
 
   afterEach(() => {
@@ -23,46 +21,139 @@ describe("[network.ts]", () => {
 
   it("should create new Network", () => {
     // Arrange
-    const network = new Network(requestWrapper);
+    const network = new Network(faker.random.word());
 
     // Assert
     expect(network).to.be.instanceOf(Network);
   });
 
-  it("should send outgoing request to request wrapper", () => {
+  it('should send request (get)', (done) => {
     // Arrange
+    const url = faker.internet.url();
+    const responseContent = {data: faker.random.word()};
     const spy = sandbox.stub();
+    const scope = nock(url).get('/').reply(200, responseContent);
     const chunk = {
       requestOptions: {
         method: 'get',
-        url: faker.internet.url()
+        url: `${url}/`,
+        json: true
       },
       key: faker.random.word(),
       cb: spy
     } as any;
-    const network = new Network(requestWrapper);
-    const response = {
-      body: faker.random.word()
-    };
-    const parsedData = {};
-    const responseStub = sandbox.stub(network as any, 'respond');
-    const requestStub = sandbox
-      .stub(requestWrapper.request, 'get')
-      .callsArgWith(1, null, response, parsedData) as any;
+    const network = new Network(faker.random.word());
+    sandbox.stub(network as any, 'respond')
+      .callsFake(chunk => {
+        expect(chunk).to.deep.include({
+          key: chunk.key,
+          cb: chunk.cb,
+          requestOptions: chunk.requestOptions
+        });
+
+        expect(chunk.response.body).to.deep.eq(responseContent);
+        done();
+    });
 
     // Act
     network.onRequest(chunk);
-
-    // Assert
-    expect(requestStub.calledWithExactly(chunk.requestOptions, sinon.match.any)).to.eq(true);
-    expect(spy.notCalled).to.eq(true);
-    expect(responseStub.calledWith({
-      key: chunk.key,
-      cb: chunk.cb,
-      response: response as unknown as request.Response,
-      error: null as any,
-      requestOptions: chunk.requestOptions as any
-    })).to.eq(true);
   });
 
+  it('should send request (post)', (done) => {
+    // Arrange
+    const url = faker.internet.url();
+    const responseContent = {data: faker.random.word()};
+    const spy = sandbox.stub();
+    const scope = nock(url).post('/', {request: true}).reply(200, responseContent);
+    const chunk = {
+      requestOptions: {
+        method: 'post',
+        url: `${url}/`,
+        body: {request: true},
+        json: true
+      },
+      key: faker.random.word(),
+      cb: spy
+    } as any;
+    const network = new Network(faker.random.word());
+    sandbox.stub(network as any, 'respond')
+      .callsFake(chunk => {
+        expect(chunk).to.deep.include({
+          key: chunk.key,
+          cb: chunk.cb,
+          requestOptions: chunk.requestOptions
+        });
+
+        expect(chunk.response.body).to.deep.eq(responseContent);
+        done();
+      });
+
+    // Act
+    network.onRequest(chunk);
+  });
+
+  it('should send request (get raw)', (done) => {
+    // Arrange
+    const url = faker.internet.url();
+    const responseContent = {data: faker.random.word()};
+    const spy = sandbox.stub();
+    const scope = nock(url).get('/').reply(200, responseContent);
+    const chunk = {
+      requestOptions: {
+        method: 'get',
+        url: `${url}/`
+      },
+      key: faker.random.word(),
+      cb: spy
+    } as any;
+    const network = new Network(faker.random.word());
+    sandbox
+      .stub(network as any, 'respond')
+      .callsFake(chunk => {
+        expect(chunk).to.deep.include({
+          key: chunk.key,
+          cb: chunk.cb,
+          requestOptions: chunk.requestOptions
+        });
+
+        expect(chunk.response.body).to.eq(JSON.stringify(responseContent));
+        done();
+      });
+
+    // Act
+    network.onRequest(chunk);
+  });
+
+  it('should send request (get raw) exception', (done) => {
+    // Arrange
+    const url = faker.internet.url();
+    const responseContent = {data: faker.random.word()};
+    const spy = sandbox.stub();
+    const scope = nock(url).get('/').replyWithError("Failed");
+    const chunk = {
+      requestOptions: {
+        method: 'get',
+        url: `${url}/`
+      },
+      key: faker.random.word(),
+      cb: spy
+    } as any;
+    const network = new Network(faker.random.word());
+    sandbox
+      .stub(network as any, 'respond')
+      .callsFake(chunk => {
+        expect(chunk).to.deep.include({
+          key: chunk.key,
+          cb: chunk.cb,
+          requestOptions: chunk.requestOptions,
+        });
+
+        expect(chunk.error.toString()).to.include("Failed");
+
+        done();
+      });
+
+    // Act
+    network.onRequest(chunk);
+  });
 });
