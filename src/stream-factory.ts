@@ -1,8 +1,8 @@
 import {Network} from "./network";
-import {CacheFactory} from "./cache-factory";
+import {CacheConfiguration, CacheFactory} from "./cache-factory";
 import {StreamHead} from "./stream-head";
 import {Holder} from "./holder";
-import {Retry} from "./retry";
+import {Retry, RetryInputConfiguration} from "./retry";
 import {SchemaStringifier, SchemaStringifierConfiguration} from "./schema-stringifier";
 
 const enum StreamType {
@@ -36,11 +36,11 @@ class StreamFactory {
   create<U, T = {}>(streamType: string, configuration: T) {
     switch (streamType) {
       case StreamType.CACHE:
-        return this.cacheFactory.create(configuration) as unknown as U;
+        return this.cacheFactory.create(configuration as CacheConfiguration) as unknown as U;
       case StreamType.HOLDER:
         return new Holder() as unknown as U;
       case StreamType.RETRY:
-        return Retry.create(configuration) as unknown as U;
+        return Retry.create(configuration as RetryInputConfiguration);
       case StreamType.SCHEMA_STRINGIFIER:
         return new SchemaStringifier(configuration as unknown as SchemaStringifierConfiguration) as unknown as U;
       default:

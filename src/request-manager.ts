@@ -60,7 +60,7 @@ class RequestManager {
     const network = this.streamFactory.createNetwork(name);
     const keyMaker = this.tokenizer.tokenize(name, routeConfiguration.identifier);
 
-    Object.values(ConfigurableStream).forEach((streamType: string) => {
+    (Object.values(ConfigurableStream) as string[]).forEach((streamType: string) => {
       const configuration = routeConfiguration[streamType];
       if (configuration) {
         const stream = this.streamFactory.create<Streamer>(streamType, configuration);
