@@ -25,7 +25,7 @@ class CacheThenNetwork extends Streamer {
 
   async onResponse(chunk: CacheDecoratedResponse, next: NextHandler): Promise<void> {
     if (!chunk.cacheHit && !chunk.error && chunk.response) {
-      if (chunk.response.headers["set-cookie"] && !this.cacheWithCookie) {
+      if (chunk.response.headers?.["set-cookie"] && !this.cacheWithCookie) {
         console.warn('Detected dangerous response with set-cookie header, not caching', chunk.key);
       } else {
         await this.storage.set(chunk.key, {
